@@ -1,0 +1,19 @@
+91: button.src = "/assest/iconbtn/yes_btn.png";
+144: okButton.src = "/assest/iconbtn/yes_btn.png";
+149: cancelButton.src = "/assest/iconbtn/close_btn.png";
+251: avatar: "/assest/image/imagebldp/001_avatar_laclac.png",
+257: avatar: "/assest/image/imagebldp/015_avatar_dauLan.png",
+263: avatar: "/assest/image/imagebldp/010_avatar_echxanh1.png",
+269: avatar: "/assest/image/imagebldp/003_avatar_duck.png",
+275: avatar: "/assest/image/imagebldp/012_avatar_hubcat.png",
+285: "/assest/image/imagebldp/001_avatar_laclac.png";
+769: "/assest/image/imagebldp/001_avatar_laclac.png",
+772: "/assest/image/imagebldp/015_avatar_dauLan.png",
+775: "/assest/image/imagebldp/010_avatar_echxanh1.png",
+778: "/assest/image/imagebldp/003_avatar_duck.png",
+788: "/assest/image/imagebldp/001_avatar_laclac.png";
+2167: "/assest/image/imagebldp/001_avatar_laclac.png";
+2221: url: `/assest/image/imagebldp/${idxStr}_avatar_${avatarNames[i]}.png`,
+3299: "/assest/image/imagebldp/001_avatar_laclac.png";
+3434: let avatar = "/assest/image/imagebldp/001_avatar_laclac.png";
+3440: avatar = "/assest/image/imagebldp/015_avatar_dauLan.png";

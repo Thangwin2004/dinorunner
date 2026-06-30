@@ -1,0 +1,10 @@
+768: this.laclacTexture = await Assets.load(
+771: this.daulanTexture = await Assets.load(
+774: this.echxanhTexture = await Assets.load(
+777: this.duckTexture = await Assets.load(
+791: const activeTex = await Assets.load(savedAvatar);
+2269: Assets.load(item.url)
+2296: Assets.load(item.url).then((tex) => {
+2978: Assets.load(entry.avatar)
+3066: Assets.load(playerEntry.avatar)
+3300: Assets.load(activeAvatar)
