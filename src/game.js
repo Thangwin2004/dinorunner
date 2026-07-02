@@ -1075,7 +1075,7 @@ export class GameController extends Container {
     this.mainMenuContainer.addChild(this.menuTitleText);
 
     this.menuSubtitleText = new Text({
-      text: "HÀNH TRÌNH VƯỢT CHƯỚNG NGẠI VẬT BƠ LẠC ĐẬU PHỘNG",
+      text: "",
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 12,
@@ -2540,9 +2540,9 @@ export class GameController extends Container {
 
       // Adjust player scale based on jumping/ducking (squash vertically for ducking)
       if (this.isDucking) {
-        this.playerSprite.scale.set(scale * 0.75, scale * 0.45);
+        this.playerSprite.scale.set(scale * 0.95, scale * 0.45);
       } else {
-        this.playerSprite.scale.set(scale * 0.75);
+        this.playerSprite.scale.set(scale * 0.95);
       }
 
       // Update shield overlay (centered around middle of body at y = -35)
