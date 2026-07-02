@@ -1106,7 +1106,7 @@ export class GameController extends Container {
       text: `🏆 KỶ LỤC ĐIỂM: ${this.highScore}`,
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: 16,
+        fontSize: 20,
         fill: 0xffea00,
         stroke: { color: 0xc2185b, width: 3 },
         dropShadow: {
@@ -1117,7 +1117,7 @@ export class GameController extends Container {
           alpha: 0.5,
         },
         fontWeight: "900",
-        letterSpacing: 1,
+        letterSpacing: 3,
       }),
     });
     this.menuHighScoreText.anchor.set(0.5);
@@ -1164,16 +1164,16 @@ export class GameController extends Container {
             { color: 0xffea00, offset: 1 },
           ],
         }),
-        stroke: { color: 0x880000, width: 8 },
+        stroke: { color: 0x880000, width: 5 },
         dropShadow: {
           color: 0x000000,
-          blur: 4,
+          blur: 3,
           angle: Math.PI / 2,
-          distance: 4,
+          distance: 3,
           alpha: 0.6,
         },
         fontWeight: "900",
-        letterSpacing: 1,
+        letterSpacing: 3,
       }),
     });
     this.scoreText.anchor.set(0, 0.5);
@@ -1185,7 +1185,7 @@ export class GameController extends Container {
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 18,
         fill: 0xffea00,
-        stroke: { color: 0x1565c0, width: 4 },
+        stroke: { color: 0x1565c0, width: 3 },
         dropShadow: {
           color: 0x000000,
           blur: 0,
@@ -1194,7 +1194,7 @@ export class GameController extends Container {
           alpha: 0.5,
         },
         fontWeight: "900",
-        letterSpacing: 1,
+        letterSpacing: 2,
       }),
     });
     this.highScoreText.anchor.set(1, 0.5);
