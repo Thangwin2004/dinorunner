@@ -1114,7 +1114,7 @@ export class GameController extends Container {
             { color: 0xffe066, offset: 1 },
           ],
         }),
-        stroke: { color: 0x794000, width: 4, join: "round" },
+        stroke: { color: 0x794000, width: 3, join: "round" },
         dropShadow: {
           color: 0x000000,
           blur: 0,
@@ -1123,7 +1123,7 @@ export class GameController extends Container {
           alpha: 0.3,
         },
         fontWeight: "900",
-        letterSpacing: 2,
+        letterSpacing: 6,
       }),
     });
     this.menuHighScoreText.anchor.set(0.5);
@@ -1170,7 +1170,7 @@ export class GameController extends Container {
             { color: 0xffe066, offset: 1 },
           ],
         }),
-        stroke: { color: 0x794000, width: 4, join: "round" },
+        stroke: { color: 0x794000, width: 3, join: "round" },
         dropShadow: {
           color: 0x000000,
           blur: 2,
@@ -1179,7 +1179,7 @@ export class GameController extends Container {
           alpha: 0.4,
         },
         fontWeight: "900",
-        letterSpacing: 3,
+        letterSpacing: 6,
       }),
     });
     this.scoreText.anchor.set(0, 0.5);
@@ -1200,7 +1200,7 @@ export class GameController extends Container {
           alpha: 0.3,
         },
         fontWeight: "900",
-        letterSpacing: 2,
+        letterSpacing: 4,
       }),
     });
     this.highScoreText.anchor.set(1, 0.5);
