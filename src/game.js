@@ -590,6 +590,7 @@ export class GameController extends Container {
       "↩️": "back_btn",
       "◀️": "back_btn",
       "▶️": "next_btn",
+      "⏯️": "continue_btn",
       "🏆": "trophy_btn",
       "🔄": "replay_btn",
       "🗑️": "delete_btn",
@@ -1655,8 +1656,8 @@ export class GameController extends Container {
     btnReplay.position.set(0, 60);
     this.pauseCard.addChild(btnReplay);
 
-    const btnResume = this.createIconOnlyButton("▶️", 26, () => {
-      // Calls switchState while gameState is still PAUSED, so isResuming is true, continuing the game
+    const btnResume = this.createIconOnlyButton("⏯️", 26, () => {
+      // Calls switchState while gameState is PAUSED...
       this.switchState("PLAYING");
     });
     btnResume.position.set(65, 60);
