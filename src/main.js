@@ -24,6 +24,17 @@ import { GameController } from "./game";
     document.body.appendChild(app.canvas);
   }
 
+  // 4. Hide Splash Screen smoothly
+  const splash = document.getElementById("splash-screen");
+  if (splash) {
+    splash.style.opacity = "0";
+    setTimeout(() => {
+      splash.style.display = "none";
+    }, 500);
+  }
+
+  // 5. Start Game Controller
+
   // Preload UI button assets
   const { Assets: PixiAssets } = await import("pixi.js");
 
