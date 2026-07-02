@@ -532,7 +532,7 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: Math.min(20, height * 0.45),
-        fill: 0xffffff,
+        fill: "#3e2723",
         align: "center",
       }),
     });
@@ -1059,8 +1059,8 @@ export class GameController extends Container {
         fill: new FillGradient({
           end: { x: 0, y: 1 },
           colorStops: [
-            { color: 0xffea00, offset: 0 },
-            { color: 0xff6600, offset: 1 },
+            { color: 0xff3366, offset: 0 },
+            { color: 0xcc0033, offset: 1 },
           ],
         }),
 
@@ -1079,7 +1079,7 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 12,
-        fill: 0xffffff,
+        fill: "#1e3a8a",
 
         fontWeight: "bold",
         letterSpacing: 1.5,
@@ -1097,7 +1097,7 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 15,
-        fill: 0xffea00,
+        fill: "#c2185b",
         fontWeight: "bold",
       }),
     });
@@ -1138,7 +1138,7 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 22,
-        fill: 0xffea00,
+        fill: "#d32f2f",
         fontWeight: "bold",
       }),
     });
@@ -1150,7 +1150,7 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 16,
-        fill: 0xffecb3,
+        fill: "#1e3a8a",
         fontWeight: "bold",
       }),
     });
