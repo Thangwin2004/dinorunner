@@ -3117,6 +3117,12 @@ export class GameController extends Container {
       sh * 0.22,
     );
 
+    // Solid Ground Base (Dirt and Grass)
+    this.bgOverlay
+      .rect(0, groundLevel, sw, sh - groundLevel)
+      .fill({ color: 0x8d6e63 });
+    this.bgOverlay.rect(0, groundLevel, sw, 12).fill({ color: 0x4caf50 });
+
     // Cheerful green ground outlines
     this.bgOverlay.save();
     this.bgOverlay.setStrokeStyle({ width: 2.0, color: 0x388e3c, alpha: 0.45 });
@@ -3126,7 +3132,7 @@ export class GameController extends Container {
     const waveHeight = 8;
     const waveLength = 36;
     const yBase = groundLevel + 12;
-    this.bgOverlay.setStrokeStyle({ width: 1.0, color: 0x388e3c, alpha: 0.18 });
+    this.bgOverlay.setStrokeStyle({ width: 1.5, color: 0x5d4037, alpha: 0.25 });
     for (let x = -waveLength; x < sw + waveLength; x += waveLength) {
       this.bgOverlay
         .moveTo(x, yBase)
