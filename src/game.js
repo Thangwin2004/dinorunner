@@ -534,7 +534,6 @@ export class GameController extends Container {
         fontSize: Math.min(20, height * 0.45),
         fill: 0xffffff,
         align: "center",
-        stroke: { color: 0x000000, width: 4.5, join: "round" },
       }),
     });
     label.anchor.set(0.5);
@@ -714,7 +713,6 @@ export class GameController extends Container {
           fontSize: radius * 1.0,
           fill: 0xffffff,
           align: "center",
-          stroke: { color: 0x000000, width: 3.5, join: "round" },
         }),
       });
       txt.anchor.set(0.5);
@@ -1065,7 +1063,6 @@ export class GameController extends Container {
             { color: 0xff6600, offset: 1 },
           ],
         }),
-        stroke: { color: 0x241d4f, width: 6, join: "round" },
 
         fontWeight: "900",
         letterSpacing: 2,
@@ -1083,7 +1080,7 @@ export class GameController extends Container {
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 12,
         fill: 0xffffff,
-        stroke: { color: 0x241d4f, width: 3.5, join: "round" },
+
         fontWeight: "bold",
         letterSpacing: 1.5,
         wordWrap: true,
@@ -1102,7 +1099,6 @@ export class GameController extends Container {
         fontSize: 15,
         fill: 0xffea00,
         fontWeight: "bold",
-        stroke: { color: 0x4a000a, width: 3.5 },
       }),
     });
     this.menuHighScoreText.anchor.set(0.5);
@@ -1236,7 +1232,6 @@ export class GameController extends Container {
         fontSize: 18,
         fill: 0xffffff,
         align: "center",
-        stroke: { color: 0x000000, width: 4.5, join: "round" },
       }),
     });
     titleText.anchor.set(0.5);
@@ -1307,7 +1302,6 @@ export class GameController extends Container {
         fill: "#360207",
         fontWeight: "bold",
         letterSpacing: 0.8,
-        stroke: { color: 0xffffff, width: 3.5, join: "round" },
       }),
     });
     label.anchor.set(0, 0.5);
@@ -1411,7 +1405,6 @@ export class GameController extends Container {
         fontSize: 18,
         fill: 0xffffff,
         align: "center",
-        stroke: { color: 0x000000, width: 4.5, join: "round" },
       }),
     });
     title.anchor.set(0.5);
@@ -1556,7 +1549,6 @@ export class GameController extends Container {
         fill: 0xffffff,
         fontWeight: "bold",
         letterSpacing: 1.5,
-        stroke: { color: 0x000000, width: 4.5, join: "round" },
       }),
     });
     titleText.anchor.set(0.5);
@@ -1685,7 +1677,6 @@ export class GameController extends Container {
         fontSize: 16,
         fill: 0xffffff,
         align: "center",
-        stroke: { color: 0x000000, width: 4.5, join: "round" },
       }),
     });
     title.anchor.set(0.5);
@@ -1726,7 +1717,6 @@ export class GameController extends Container {
         fontSize: 11,
         fill: 0xffffff,
         align: "center",
-        stroke: { color: 0x000000, width: 3 },
       }),
     });
     bannerText.anchor.set(0.5);
@@ -1739,7 +1729,6 @@ export class GameController extends Container {
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 20,
         fill: 0x241d4f,
-        stroke: { color: 0xffffff, width: 4, join: "round" },
       }),
     });
     this.gameOverScoreText.anchor.set(0.5);
@@ -1754,7 +1743,6 @@ export class GameController extends Container {
         fontSize: 13,
         fill: 0xcc0000,
         fontWeight: "bold",
-        stroke: { color: 0xffffff, width: 3, join: "round" },
       }),
     });
     this.gameOverMsgText.anchor.set(0.5);
@@ -1989,7 +1977,6 @@ export class GameController extends Container {
         fontSize: 18,
         fill: 0xffffff,
         align: "center",
-        stroke: { color: 0x000000, width: 4.5, join: "round" },
       }),
     });
     title.anchor.set(0.5);
@@ -2111,7 +2098,6 @@ export class GameController extends Container {
         fontSize: 16,
         fill: 0xffffff,
         fontWeight: "bold",
-        stroke: { color: 0x000000, width: 4.5, join: "round" },
       }),
     });
     titleText.anchor.set(0.5);
@@ -2838,7 +2824,6 @@ export class GameController extends Container {
           fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: isTop3 ? 22 : 14,
           fill: "#241d4f",
-          stroke: { color: 0xffffff, width: isTop3 ? 3 : 2.5 },
         }),
       });
       rankText.anchor.set(0.5);
@@ -2924,7 +2909,6 @@ export class GameController extends Container {
           fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: isTop3 ? 22 : 14,
           fill: "#241d4f",
-          stroke: { color: 0xffffff, width: isTop3 ? 3 : 2.5 },
         }),
       });
       rankText.anchor.set(0.5);
