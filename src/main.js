@@ -26,7 +26,7 @@ import { GameController } from "./game";
 
   // Preload UI button assets
   const { Assets: PixiAssets } = await import("pixi.js");
-  PixiAssets.add({ alias: "google_logo", src: "/google_logo.png" });
+
   PixiAssets.add({ alias: "home_btn", src: "/assest/iconbtn/Home_btn.png" });
   PixiAssets.add({
     alias: "settings_btn",
@@ -62,6 +62,10 @@ import { GameController } from "./game";
     alias: "continue_btn",
     src: "/assest/iconbtn/continue_btn.png",
   });
+  PixiAssets.add({
+    alias: "next_btn",
+    src: "/assest/iconbtn/next_btn.png",
+  });
   PixiAssets.add({ alias: "quest_btn", src: "/assest/iconbtn/quest_btn.png" });
   PixiAssets.add({ alias: "user_btn", src: "/assest/iconbtn/user_btn.png" });
   PixiAssets.add({
@@ -70,7 +74,7 @@ import { GameController } from "./game";
   });
 
   await PixiAssets.load([
-    "google_logo",
+
     "home_btn",
     "settings_btn",
     "close_btn",
@@ -85,6 +89,7 @@ import { GameController } from "./game";
     "x2_btn",
     "revive_btn",
     "continue_btn",
+    "next_btn",
     "quest_btn",
     "user_btn",
     "avatar_laclac",

@@ -206,14 +206,12 @@ export const AdManager = {
 };
 
 const LOCAL_STORAGE_KEY = "bolacdauphong_dino_stats";
-let currentUser = null; // Profile of the currently signed-in Google user
+
 
 // Get high scores from localStorage
 function getStats() {
   try {
-    const key = currentUser
-      ? `${LOCAL_STORAGE_KEY}_${currentUser.id}`
-      : LOCAL_STORAGE_KEY;
+    const key = LOCAL_STORAGE_KEY;
     const data = window.localStorage.getItem(key);
     if (data) {
       return JSON.parse(data);
@@ -230,9 +228,7 @@ function getStats() {
 // Save stats to localStorage
 function saveStats(stats) {
   try {
-    const key = currentUser
-      ? `${LOCAL_STORAGE_KEY}_${currentUser.id}`
-      : LOCAL_STORAGE_KEY;
+    const key = LOCAL_STORAGE_KEY;
     window.localStorage.setItem(key, JSON.stringify(stats));
   } catch (e) {
     console.error("Error writing localStorage:", e);
@@ -277,12 +273,8 @@ function getLeaderboardData() {
     },
   ];
 
-  // Add player entry
-  const playerName = currentUser ? currentUser.name : "Bạn (Khách)";
-  const playerAvatar = currentUser
-    ? currentUser.avatar
-    : window.selectedAvatarUrl ||
-      "/assest/image/imagebldp/001_avatar_laclac.png";
+  const playerName = "Bạn";
+  const playerAvatar = window.selectedAvatarUrl || "/assest/image/imagebldp/001_avatar_laclac.png";
 
   entries.push({
     name: playerName,
@@ -534,15 +526,7 @@ export class GameController extends Container {
           console.warn("Asset lookup failed for button emoji:", firstWord, e);
         }
       }
-    } else if (text.startsWith("GOOGLE_ICON:")) {
-      try {
-        emojiTexture = Assets.get("google_logo");
-        labelText = text.substring("GOOGLE_ICON:".length);
-      } catch (e) {
-        console.warn("Asset lookup failed for google_logo:", e);
-      }
     }
-
     const label = new Text({
       text: labelText.toUpperCase(),
       style: new TextStyle({
@@ -607,7 +591,7 @@ export class GameController extends Container {
       "❌": "close_btn",
       "↩️": "back_btn",
       "◀️": "back_btn",
-      "▶️": "continue_btn",
+      "▶️": "next_btn",
       "🏆": "trophy_btn",
       "🔄": "replay_btn",
       "🗑️": "delete_btn",
@@ -781,8 +765,8 @@ export class GameController extends Container {
       // Preload obstacles
       await Assets.load("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png");
       await Assets.load("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png");
-      await Assets.load("/assest/image/Ref-20260630T071202Z-3-001/Ref/Character/dragon.png");
-      await Assets.load("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet.png");
+      await Assets.load("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png");
+      await Assets.load("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png");
 
       if (this.destroyed) return;
 
@@ -1123,12 +1107,7 @@ export class GameController extends Container {
     });
     this.mainMenuContainer.addChild(this.playBtn);
 
-    // Make mascot frame interactive to trigger Google login
-    this.menuMascotFrame.eventMode = "static";
-    this.menuMascotFrame.cursor = "pointer";
-    this.menuMascotFrame.on("pointerdown", () => {
-      this.showGoogleLoginModal();
-    });
+
 
     // Circular bottom sub-buttons
     this.achievementsBtn = this.createIconOnlyButton("🏆", 28, () => {
@@ -1304,7 +1283,7 @@ export class GameController extends Container {
     this.setupCharSelectUI();
   }
 
-  createToggleRow(labelText, yPos, initialMuteState, onToggle) {
+  createToggleRow(labelText, yPos, getState, onToggle) {
     const row = new Container();
     row.position.set(0, yPos);
 
@@ -1334,7 +1313,7 @@ export class GameController extends Container {
     const trackTexOn = Assets.get("toggle_on");
     const trackTexOff = Assets.get("toggle_off");
 
-    const track = new Sprite(initialMuteState ? trackTexOff : trackTexOn);
+    const track = new Sprite(getState() ? trackTexOff : trackTexOn);
     track.anchor.set(0.5);
     track.width = 100;
     track.height = 50;
@@ -1360,6 +1339,10 @@ export class GameController extends Container {
       audio.playCollect(); // Or click sound
       const isMuted = onToggle();
       track.texture = isMuted ? trackTexOff : trackTexOn;
+    };
+
+    row.updateVisuals = () => {
+      track.texture = getState() ? trackTexOff : trackTexOn;
     };
 
     track.on("pointerdown", handleToggle);
@@ -1440,23 +1423,23 @@ export class GameController extends Container {
     this.settingsCard.addChild(closeBtn);
 
     // Music row
-    const musicRow = this.createToggleRow(
+    this.mainMusicRow = this.createToggleRow(
       "NHẠC NỀN",
       -60,
-      audio.musicMuted,
+      () => audio.musicMuted,
       () => {
         audio.toggleMusicMute();
         return audio.musicMuted;
       },
     );
-    this.settingsCard.addChild(musicRow);
+    this.settingsCard.addChild(this.mainMusicRow);
 
     // SFX row
-    const sfxRow = this.createToggleRow("HIỆU ỨNG", -10, audio.sfxMuted, () => {
+    this.mainSfxRow = this.createToggleRow("HIỆU ỨNG", -10, () => audio.sfxMuted, () => {
       audio.toggleSfxMute();
       return audio.sfxMuted;
     });
-    this.settingsCard.addChild(sfxRow);
+    this.settingsCard.addChild(this.mainSfxRow);
 
     // Reset button
     const resetBtn = this.create3DButton(
@@ -1573,32 +1556,25 @@ export class GameController extends Container {
     titleText.position.set(0, ribbonY);
     this.pauseCard.addChild(titleText);
 
-    // Close button (X) on top-right
-    const closeBtn = this.createIconOnlyButton("❌", 20, () => {
-      this.gameState = "PLAYING";
-      this.switchState("PLAYING");
-    });
-    closeBtn.position.set(cardW / 2 - 20, -cardH / 2 + 20);
-    this.pauseCard.addChild(closeBtn);
 
     // Music row
-    const musicRow = this.createToggleRow(
+    this.pauseMusicRow = this.createToggleRow(
       "NHẠC NỀN",
       -60,
-      audio.musicMuted,
+      () => audio.musicMuted,
       () => {
         audio.toggleMusicMute();
         return audio.musicMuted;
       },
     );
-    this.pauseCard.addChild(musicRow);
+    this.pauseCard.addChild(this.pauseMusicRow);
 
     // SFX row
-    const sfxRow = this.createToggleRow("HIỆU ỨNG", -10, audio.sfxMuted, () => {
+    this.pauseSfxRow = this.createToggleRow("HIỆU ỨNG", -10, () => audio.sfxMuted, () => {
       audio.toggleSfxMute();
       return audio.sfxMuted;
     });
-    this.pauseCard.addChild(sfxRow);
+    this.pauseCard.addChild(this.pauseSfxRow);
 
     // Bottom buttons row: Home, Replay, Resume
     const btnHome = this.createIconOnlyButton("🏠", 26, async () => {
@@ -2132,12 +2108,7 @@ export class GameController extends Container {
     titleText.position.set(0, ribbonY);
     this.instructionsCard.addChild(titleText);
 
-    // Close button (X) on top-right
-    const closeBtn = this.createIconOnlyButton("❌", 20, () => {
-      this.switchState("MAIN_MENU");
-    });
-    closeBtn.position.set(cardW / 2 - 20, -cardH / 2 + 20);
-    this.instructionsCard.addChild(closeBtn);
+
 
     // Instructions Lines
     const textStyle = new TextStyle({
@@ -2310,15 +2281,7 @@ export class GameController extends Container {
           this.playerColors = this.getAvatarColors(item.url);
         });
 
-        // Trigger user profile widget update if applicable
-        if (currentUser) {
-          currentUser.avatar = item.url;
-          window.localStorage.setItem(
-            "google_user",
-            JSON.stringify(currentUser),
-          );
-          this.updateUserUI();
-        }
+        this.updateUserUI();
 
         audio.playClick();
         this.updateCharSelectDisplay();
@@ -2335,6 +2298,11 @@ export class GameController extends Container {
   }
 
   switchState(newState) {
+    if (this.gameState === "GAME_OVER" && newState !== "GAME_OVER") {
+      audio.stopGameOver();
+      audio.syncMuteState();
+    }
+
     const isResuming = newState === "PLAYING" && this.gameState === "PAUSED";
     const isRestarting =
       newState === "PLAYING" && this.gameState === "GAME_OVER";
@@ -2389,16 +2357,11 @@ export class GameController extends Container {
     } else if (newState === "ACHIEVEMENTS") {
       this.updateAchievementsDisplay();
     } else if (newState === "SETTINGS") {
-      if (this.musicToggle) {
-        this.musicToggle.texture = Assets.get(
-          audio.musicMuted ? "toggle_off" : "toggle_on",
-        );
-      }
-      if (this.sfxToggle) {
-        this.sfxToggle.texture = Assets.get(
-          audio.sfxMuted ? "toggle_off" : "toggle_on",
-        );
-      }
+      if (this.mainMusicRow) this.mainMusicRow.updateVisuals();
+      if (this.mainSfxRow) this.mainSfxRow.updateVisuals();
+    } else if (newState === "PAUSED") {
+      if (this.pauseMusicRow) this.pauseMusicRow.updateVisuals();
+      if (this.pauseSfxRow) this.pauseSfxRow.updateVisuals();
     } else if (newState === "CHAR_SELECT") {
       this.updateCharSelectDisplay();
     }
@@ -2407,6 +2370,8 @@ export class GameController extends Container {
   }
 
   resetGame() {
+    audio.syncMuteState();
+    audio.stopGameOver();
     this.score = 0;
     this.speed = 6;
     this.gameTime = 0;
@@ -2618,6 +2583,9 @@ export class GameController extends Container {
         // Bobbing peanut collectible
         obs.bobTimer = (obs.bobTimer || 0) + elapsed * 0.1;
         obs.sprite.y = obs.baseY + Math.sin(obs.bobTimer) * 8 * scale;
+      } else if (obs.type === 2 && obs.sprite.children.length > 0) {
+        // Spinning flying slipper
+        obs.sprite.children[0].rotation -= 0.15 * elapsed;
       }
 
       // Check collision
@@ -2671,26 +2639,32 @@ export class GameController extends Container {
     if (type === 0) {
       // Stone -> Car Tire (lopxeoto)
       const sprite = Sprite.from("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png");
-      sprite.width = 60 * scale;
-      sprite.height = 60 * scale;
+      sprite.width = 75 * scale;
+      sprite.height = 75 * scale;
       sprite.anchor.set(0.5, 1);
+      sprite.y = 10 * scale; // sink into ground a bit
       container.addChild(sprite);
     } else if (type === 1) {
       // Spikes -> Wooden Fence
       const sprite = Sprite.from("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png");
-      sprite.width = 80 * scale;
-      sprite.height = 60 * scale;
+      sprite.width = 100 * scale;
+      sprite.height = 75 * scale;
       sprite.anchor.set(0.5, 1);
+      sprite.y = 10 * scale; // sink into ground a bit
       container.addChild(sprite);
     } else if (type === 2) {
-      // Flying Bird -> Dragon
-      spawnY = groundLevel - 65 * scale;
+      // Flying Bird -> Slipper
+      // Randomize height:
+      // High: groundLevel - 130 * scale (must duck, jumping hits it)
+      // Low: groundLevel - 85 * scale (can duck or jump)
+      const isHighSlipper = Math.random() > 0.5;
+      spawnY = groundLevel - (isHighSlipper ? 130 : 85) * scale;
       width = 50 * scale; 
       height = 40 * scale;
 
-      const sprite = Sprite.from("/assest/image/Ref-20260630T071202Z-3-001/Ref/Character/dragon.png");
-      sprite.width = 70 * scale;
-      sprite.height = 70 * scale;
+      const sprite = Sprite.from("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png");
+      sprite.width = 65 * scale;
+      sprite.height = 65 * scale;
       sprite.anchor.set(0.5, 0.5);
       container.addChild(sprite);
       
@@ -2715,9 +2689,9 @@ export class GameController extends Container {
       width = 36 * scale; 
       height = 20 * scale;
 
-      const sprite = Sprite.from("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet.png");
-      sprite.width = 50 * scale;
-      sprite.height = 50 * scale;
+      const sprite = Sprite.from("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png");
+      sprite.width = 60 * scale;
+      sprite.height = 60 * scale;
       sprite.anchor.set(0.5, 0.5);
       container.addChild(sprite);
     }
@@ -2815,21 +2789,40 @@ export class GameController extends Container {
       // Row Background rounded rectangle
       const rowBg = new Graphics();
       const isEven = i % 2 === 0;
+      let bgColor = isEven ? 0xfffcf0 : 0xf2eedb;
+      let strokeColor = 0xdcd6bf;
+      let strokeWidth = 1;
+
+      if (i === 0) {
+        bgColor = 0xfff4b3; // Gold highlight
+        strokeColor = 0xffa500;
+        strokeWidth = 2;
+      } else if (i === 1) {
+        bgColor = 0xe8eaed; // Silver highlight
+        strokeColor = 0xa0aab5;
+        strokeWidth = 2;
+      } else if (i === 2) {
+        bgColor = 0xffe4c4; // Bronze highlight
+        strokeColor = 0xcf7936;
+        strokeWidth = 2;
+      }
+
       rowBg
         .roundRect(-225, ry - 18, 450, 36, 6)
-        .fill({ color: isEven ? 0xfffcf0 : 0xf2eedb })
-        .stroke({ color: 0xdcd6bf, width: 1 });
+        .fill({ color: bgColor })
+        .stroke({ color: strokeColor, width: strokeWidth });
       this.leadersContainer.addChild(rowBg);
 
       // Rank Medal or Text
       const rankMedals = ["🥇", "🥈", "🥉"];
+      const isTop3 = i < 3;
       const rankText = new Text({
         text: rankMedals[i] || `${i + 1}`,
         style: new TextStyle({
           fontFamily: "Arial Black, Impact, sans-serif",
-          fontSize: 14,
+          fontSize: isTop3 ? 22 : 14,
           fill: "#241d4f",
-          stroke: { color: 0xffffff, width: 2.5 },
+          stroke: { color: 0xffffff, width: isTop3 ? 3 : 2.5 },
         }),
       });
       rankText.anchor.set(0.5);
@@ -2908,16 +2901,17 @@ export class GameController extends Container {
     if (playerEntry) {
       const ry = 165;
 
+      const isTop3 = playerRank <= 3;
       const rankText = new Text({
         text:
-          playerRank <= 3
+          isTop3
             ? ["🥇", "🥈", "🥉"][playerRank - 1]
             : `${playerRank}`,
         style: new TextStyle({
           fontFamily: "Arial Black, Impact, sans-serif",
-          fontSize: 14,
+          fontSize: isTop3 ? 22 : 14,
           fill: "#241d4f",
-          stroke: { color: 0xffffff, width: 2.5 },
+          stroke: { color: 0xffffff, width: isTop3 ? 3 : 2.5 },
         }),
       });
       rankText.anchor.set(0.5);
@@ -3292,159 +3286,7 @@ export class GameController extends Container {
     }
   }
 
-  // =========================================================================
-  // Google Sign-In & DOM Overlays Integration (Mirroring Memory Card)
-  // =========================================================================
   initDOMOverlays() {
-    // 2. Google Modal Account Items (Fallback mock list)
-    const modal = document.getElementById("google-login-modal");
-    const accountItems = document.querySelectorAll(".google-account-item");
-    accountItems.forEach((item) => {
-      item.addEventListener("click", () => {
-        const accountType = item.getAttribute("data-account");
-        let accountId = "laclac123";
-        let name = "Lạc Lạc (Bơ Lạc)";
-        let email = "laclac.bolac@gmail.com";
-        let avatar = "/assest/image/imagebldp/001_avatar_laclac.png";
-
-        if (accountType === "dauphong") {
-          accountId = "dauphong456";
-          name = "Đậu Phộng";
-          email = "dauphong.bolac@gmail.com";
-          avatar = "/assest/image/imagebldp/015_avatar_dauLan.png";
-        }
-
-        currentUser = { id: accountId, name, email, avatar };
-        window.localStorage.setItem("google_user", JSON.stringify(currentUser));
-
-        if (modal) modal.classList.remove("active");
-
-        this.updateUserUI();
-        audio.playClick();
-      });
-    });
-
-    // 3. Mock Modal Close Button
-    const closeBtn = document.getElementById("google-modal-close-btn");
-    if (closeBtn && modal) {
-      closeBtn.addEventListener("click", () => {
-        modal.classList.remove("active");
-        audio.playClick();
-      });
-    }
-
-    // 4. Logout trigger
-    const signoutBtn = document.getElementById("user-signout");
-    if (signoutBtn) {
-      signoutBtn.addEventListener("click", () => {
-        currentUser = null;
-        window.localStorage.removeItem("google_user");
-        this.updateUserUI();
-        audio.playClick();
-      });
-    }
-
-    // 5. Connect Iframe parent postMessage triggers for Google account sync
-    window.addEventListener("message", (event) => {
-      if (event.data && event.data.type) {
-        if (event.data.type === "google_login_success" && event.data.user) {
-          currentUser = event.data.user;
-          window.localStorage.setItem(
-            "google_user",
-            JSON.stringify(currentUser),
-          );
-          this.updateUserUI();
-        } else if (event.data.type === "trigger_google_logout") {
-          currentUser = null;
-          window.localStorage.removeItem("google_user");
-          this.updateUserUI();
-        }
-      }
-    });
-
-    // 6. Real Google Identity Services (GSI) Integration with polling fallback
-    const initRealGoogleSignIn = () => {
-      try {
-        if (window.google && window.google.accounts) {
-          window.google.accounts.id.initialize({
-            client_id:
-              import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-              "55776077309-8pco7q4b260ghldp.apps.googleusercontent.com",
-            callback: (response) => {
-              try {
-                const jwt = response.credential;
-                const base64Url = jwt.split(".")[1];
-                const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-                const jsonPayload = decodeURIComponent(
-                  window
-                    .atob(base64)
-                    .split("")
-                    .map(
-                      (c) =>
-                        "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2),
-                    )
-                    .join(""),
-                );
-
-                const profile = JSON.parse(jsonPayload);
-                currentUser = {
-                  id: profile.sub,
-                  name: profile.name,
-                  email: profile.email,
-                  avatar: profile.picture,
-                };
-
-                window.localStorage.setItem(
-                  "google_user",
-                  JSON.stringify(currentUser),
-                );
-                if (modal) modal.classList.remove("active");
-                this.updateUserUI();
-
-                // Send success message to parent iframe if running inside portal
-                if (window.parent !== window) {
-                  window.parent.postMessage(
-                    { type: "google_login_success", user: currentUser },
-                    "*",
-                  );
-                }
-              } catch (err) {
-                console.error("Failed to parse Google JWT credential:", err);
-              }
-            },
-          });
-
-          // Render the official Google Sign-in button
-          const realBtnContainer = document.getElementById(
-            "google-real-signin-btn",
-          );
-          if (realBtnContainer) {
-            window.google.accounts.id.renderButton(realBtnContainer, {
-              theme: "outline",
-              size: "large",
-              width: 280,
-            });
-          }
-        } else {
-          // Retry later until script is loaded
-          setTimeout(initRealGoogleSignIn, 100);
-        }
-      } catch (e) {
-        console.warn("GSI client initialization was blocked or failed:", e);
-      }
-    };
-    initRealGoogleSignIn();
-
-    // Restore last session on load
-    const savedUser = window.localStorage.getItem("google_user");
-    if (savedUser) {
-      try {
-        currentUser = JSON.parse(savedUser);
-        this.updateUserUI();
-      } catch {
-        window.localStorage.removeItem("google_user");
-      }
-    }
 
     // Connect keyboard events for player controls
     window.addEventListener("keydown", (e) => {
@@ -3467,6 +3309,7 @@ export class GameController extends Container {
       }
       if (e.key === "ArrowDown") {
         e.preventDefault();
+        if (!this.isDucking) audio.playSlide();
         this.isDucking = true;
       }
     });
@@ -3499,6 +3342,7 @@ export class GameController extends Container {
         const dy = e.global.y - this.touchStartY;
         if (dy > 30) {
           // Swipe down: Duck
+          if (!this.isDucking) audio.playSlide();
           this.isDucking = true;
           this.isSwiping = false;
         } else if (dy < -30) {
@@ -3535,37 +3379,7 @@ export class GameController extends Container {
     }
   }
 
-  showGoogleLoginModal() {
-    // Notify parent if embedded in portals
-    if (window.parent !== window) {
-      window.parent.postMessage({ type: "trigger_google_login" }, "*");
-    }
-    const modal = document.getElementById("google-login-modal");
-    if (modal) {
-      modal.classList.add("active");
-    }
-  }
-
   updateUserUI() {
-    const profileWidget = document.getElementById("user-profile");
-    const avatarImg = document.getElementById("user-avatar");
-    const nameSpan = document.getElementById("user-name");
-
-    if (currentUser) {
-      if (profileWidget) profileWidget.style.display = "flex";
-      if (avatarImg) avatarImg.src = currentUser.avatar;
-      if (nameSpan) nameSpan.textContent = currentUser.name;
-
-      if (this.googleLoginBtn) {
-        this.googleLoginBtn.visible = false;
-      }
-    } else {
-      if (profileWidget) profileWidget.style.display = "none";
-
-      if (this.googleLoginBtn) {
-        this.googleLoginBtn.visible = true;
-      }
-    }
 
     // Load stats for current user
     this.highScore = getStats().highScore;

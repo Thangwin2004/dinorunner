@@ -4,18 +4,17 @@ class AudioManager {
     this.bgm = null;
     this.musicMuted = false;
     this.sfxMuted = false;
+    this.initialized = false;
   }
 
   init() {
-    if (this.ctx) return;
+    if (this.initialized) return;
+    this.initialized = true;
     try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx) {
-        this.ctx = new AudioCtx();
-      }
       this.bgm = new Audio("/assest/music/music.mp3");
       this.bgm.loop = true;
       this.bgm.volume = 0.02; // Giảm nhạc nền cực nhỏ
+      this.bgm.muted = this.musicMuted;
 
       // SFX
       this.sfxHit = new Audio("/assest/music/CharHit.mp3");
@@ -24,6 +23,8 @@ class AudioManager {
       this.sfxBird.volume = 0.7;
       this.sfxJump = new Audio("/assest/music/Jump.mp3");
       this.sfxJump.volume = 0.7;
+      this.sfxSlide = new Audio("/assest/music/SurfMud1.mp3");
+      this.sfxSlide.volume = 0.7;
       this.sfxCoin = new Audio("/assest/music/Button1.mp3");
       this.sfxCoin.volume = 0.8;
 
@@ -37,9 +38,21 @@ class AudioManager {
     }
   }
 
+  syncMuteState() {
+    if (this.bgm) {
+      this.bgm.muted = this.musicMuted;
+      if (this.musicMuted) {
+        this.bgm.pause();
+      } else {
+        this.bgm.play().catch(e => console.log(e));
+      }
+    }
+  }
+
   toggleMusicMute() {
     this.musicMuted = !this.musicMuted;
     if (this.bgm) {
+      this.bgm.muted = this.musicMuted;
       if (this.musicMuted) {
         this.bgm.pause();
       } else {
@@ -68,6 +81,13 @@ class AudioManager {
     if (this.sfxMuted) return;
     this.sfxJump.currentTime = 0;
     this.sfxJump.play().catch(e => console.log(e));
+  }
+
+  playSlide() {
+    this.init();
+    if (this.sfxMuted) return;
+    this.sfxSlide.currentTime = 0;
+    this.sfxSlide.play().catch(e => console.log(e));
   }
 
   playCollision() {
@@ -114,13 +134,21 @@ class AudioManager {
 
   playGameOver() {
     this.init();
-    if (this.sfxMuted) return;
+    if (this.bgm) this.bgm.pause(); // Tạm dừng nhạc nền khi có nhạc Game Over
+    if (this.musicMuted) return; // Nhạc Game Over thuộc về nhạc nền, không phải SFX
     if (!this.sfxGameOver) {
       this.sfxGameOver = new Audio("/assest/music/EndGame.wav");
       this.sfxGameOver.volume = 0.5;
     }
     this.sfxGameOver.currentTime = 0;
     this.sfxGameOver.play().catch(e => console.log(e));
+  }
+
+  stopGameOver() {
+    if (this.sfxGameOver) {
+      this.sfxGameOver.pause();
+      this.sfxGameOver.currentTime = 0;
+    }
   }
 
   playCollect() {
