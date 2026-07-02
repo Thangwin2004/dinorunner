@@ -123,15 +123,11 @@ class AudioManager {
       this.bgmGain.gain.value = this.musicMuted ? 0 : 1;
     }
 
-    if (this.bgm) {
-      if (this.musicMuted) {
-        this.bgm.pause();
-      } else {
-        if (this.ctx && this.ctx.state === "suspended") {
-          this.ctx.resume();
-        }
-        this.bgm.play().catch((e) => console.log(e));
+    if (this.bgm && !this.musicMuted) {
+      if (this.ctx && this.ctx.state === "suspended") {
+        this.ctx.resume();
       }
+      this.bgm.play().catch((e) => console.log(e));
     }
   }
 
