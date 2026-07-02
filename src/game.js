@@ -1190,8 +1190,14 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 18,
-        fill: 0xffffff,
-        stroke: { color: 0x1565c0, width: 3, join: "round" },
+        fill: new FillGradient({
+          end: { x: 0, y: 1 },
+          colorStops: [
+            { color: 0xffffff, offset: 0 },
+            { color: 0xffe066, offset: 1 },
+          ],
+        }),
+        stroke: { color: 0x794000, width: 3, join: "round" },
         dropShadow: {
           color: 0x000000,
           blur: 0,
@@ -1787,8 +1793,14 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 28,
-        fill: 0xffea00,
-        stroke: { color: 0x1f2937, width: 3, join: "round" },
+        fill: new FillGradient({
+          end: { x: 0, y: 1 },
+          colorStops: [
+            { color: 0xffffff, offset: 0 },
+            { color: 0xffe066, offset: 1 },
+          ],
+        }),
+        stroke: { color: 0x794000, width: 3, join: "round" },
         dropShadow: {
           color: 0x000000,
           blur: 2,
@@ -1810,8 +1822,14 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 16,
-        fill: 0xffffff,
-        stroke: { color: 0xc62828, width: 2, join: "round" },
+        fill: new FillGradient({
+          end: { x: 0, y: 1 },
+          colorStops: [
+            { color: 0xffffff, offset: 0 },
+            { color: 0xffe066, offset: 1 },
+          ],
+        }),
+        stroke: { color: 0x794000, width: 2, join: "round" },
         dropShadow: {
           color: 0x000000,
           blur: 0,
