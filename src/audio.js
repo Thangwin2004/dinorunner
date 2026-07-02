@@ -44,7 +44,7 @@ class AudioManager {
       if (this.musicMuted) {
         this.bgm.pause();
       } else {
-        this.bgm.play().catch(e => console.log(e));
+        this.bgm.play().catch((e) => console.log(e));
       }
     }
   }
@@ -80,35 +80,35 @@ class AudioManager {
     this.init();
     if (this.sfxMuted) return;
     this.sfxJump.currentTime = 0;
-    this.sfxJump.play().catch(e => console.log(e));
+    this.sfxJump.play().catch((e) => console.log(e));
   }
 
   playSlide() {
     this.init();
     if (this.sfxMuted) return;
     this.sfxSlide.currentTime = 0;
-    this.sfxSlide.play().catch(e => console.log(e));
+    this.sfxSlide.play().catch((e) => console.log(e));
   }
 
   playCollision() {
     this.init();
     if (this.sfxMuted) return;
     this.sfxHit.currentTime = 0;
-    this.sfxHit.play().catch(e => console.log(e));
+    this.sfxHit.play().catch((e) => console.log(e));
   }
 
   playBird() {
     this.init();
     if (this.sfxMuted) return;
     this.sfxBird.currentTime = 0;
-    this.sfxBird.play().catch(e => console.log(e));
+    this.sfxBird.play().catch((e) => console.log(e));
   }
 
   playCoin() {
     this.init();
     if (this.sfxMuted) return;
     this.sfxCoin.currentTime = 0;
-    this.sfxCoin.play().catch(e => console.log(e));
+    this.sfxCoin.play().catch((e) => console.log(e));
   }
   playMilestone() {
     this.init();
@@ -118,7 +118,7 @@ class AudioManager {
       this.sfxMilestone.volume = 0.6;
     }
     this.sfxMilestone.currentTime = 0;
-    this.sfxMilestone.play().catch(e => console.log(e));
+    this.sfxMilestone.play().catch((e) => console.log(e));
   }
 
   playClick() {
@@ -129,7 +129,7 @@ class AudioManager {
       this.sfxClick.volume = 0.5;
     }
     this.sfxClick.currentTime = 0;
-    this.sfxClick.play().catch(e => console.log(e));
+    this.sfxClick.play().catch((e) => console.log(e));
   }
 
   playGameOver() {
@@ -141,7 +141,7 @@ class AudioManager {
       this.sfxGameOver.volume = 0.5;
     }
     this.sfxGameOver.currentTime = 0;
-    this.sfxGameOver.play().catch(e => console.log(e));
+    this.sfxGameOver.play().catch((e) => console.log(e));
   }
 
   stopGameOver() {
@@ -159,7 +159,7 @@ class AudioManager {
       this.sfxCollect.volume = 0.5;
     }
     this.sfxCollect.currentTime = 0;
-    this.sfxCollect.play().catch(e => console.log(e));
+    this.sfxCollect.play().catch((e) => console.log(e));
   }
 }
 

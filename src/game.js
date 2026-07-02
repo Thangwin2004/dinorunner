@@ -207,7 +207,6 @@ export const AdManager = {
 
 const LOCAL_STORAGE_KEY = "bolacdauphong_dino_stats";
 
-
 // Get high scores from localStorage
 function getStats() {
   try {
@@ -274,7 +273,8 @@ function getLeaderboardData() {
   ];
 
   const playerName = "Bạn";
-  const playerAvatar = window.selectedAvatarUrl || "/assest/image/imagebldp/001_avatar_laclac.png";
+  const playerAvatar =
+    window.selectedAvatarUrl || "/assest/image/imagebldp/001_avatar_laclac.png";
 
   entries.push({
     name: playerName,
@@ -763,10 +763,18 @@ export class GameController extends Container {
       );
 
       // Preload obstacles
-      await Assets.load("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png");
-      await Assets.load("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png");
-      await Assets.load("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png");
-      await Assets.load("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png");
+      await Assets.load(
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
+      );
+      await Assets.load(
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
+      );
+      await Assets.load(
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
+      );
+      await Assets.load(
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
+      );
 
       if (this.destroyed) return;
 
@@ -1107,8 +1115,6 @@ export class GameController extends Container {
     });
     this.mainMenuContainer.addChild(this.playBtn);
 
-
-
     // Circular bottom sub-buttons
     this.achievementsBtn = this.createIconOnlyButton("🏆", 28, () => {
       this.switchState("ACHIEVEMENTS");
@@ -1435,10 +1441,15 @@ export class GameController extends Container {
     this.settingsCard.addChild(this.mainMusicRow);
 
     // SFX row
-    this.mainSfxRow = this.createToggleRow("HIỆU ỨNG", -10, () => audio.sfxMuted, () => {
-      audio.toggleSfxMute();
-      return audio.sfxMuted;
-    });
+    this.mainSfxRow = this.createToggleRow(
+      "HIỆU ỨNG",
+      -10,
+      () => audio.sfxMuted,
+      () => {
+        audio.toggleSfxMute();
+        return audio.sfxMuted;
+      },
+    );
     this.settingsCard.addChild(this.mainSfxRow);
 
     // Reset button
@@ -1556,7 +1567,6 @@ export class GameController extends Container {
     titleText.position.set(0, ribbonY);
     this.pauseCard.addChild(titleText);
 
-
     // Music row
     this.pauseMusicRow = this.createToggleRow(
       "NHẠC NỀN",
@@ -1570,10 +1580,15 @@ export class GameController extends Container {
     this.pauseCard.addChild(this.pauseMusicRow);
 
     // SFX row
-    this.pauseSfxRow = this.createToggleRow("HIỆU ỨNG", -10, () => audio.sfxMuted, () => {
-      audio.toggleSfxMute();
-      return audio.sfxMuted;
-    });
+    this.pauseSfxRow = this.createToggleRow(
+      "HIỆU ỨNG",
+      -10,
+      () => audio.sfxMuted,
+      () => {
+        audio.toggleSfxMute();
+        return audio.sfxMuted;
+      },
+    );
     this.pauseCard.addChild(this.pauseSfxRow);
 
     // Bottom buttons row: Home, Replay, Resume
@@ -2108,8 +2123,6 @@ export class GameController extends Container {
     titleText.position.set(0, ribbonY);
     this.instructionsCard.addChild(titleText);
 
-
-
     // Instructions Lines
     const textStyle = new TextStyle({
       fontFamily: "Outfit, Arial, sans-serif",
@@ -2638,7 +2651,9 @@ export class GameController extends Container {
 
     if (type === 0) {
       // Stone -> Car Tire (lopxeoto)
-      const sprite = Sprite.from("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png");
+      const sprite = Sprite.from(
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
+      );
       sprite.width = 75 * scale;
       sprite.height = 75 * scale;
       sprite.anchor.set(0.5, 1);
@@ -2646,7 +2661,9 @@ export class GameController extends Container {
       container.addChild(sprite);
     } else if (type === 1) {
       // Spikes -> Wooden Fence
-      const sprite = Sprite.from("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png");
+      const sprite = Sprite.from(
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
+      );
       sprite.width = 100 * scale;
       sprite.height = 75 * scale;
       sprite.anchor.set(0.5, 1);
@@ -2659,15 +2676,17 @@ export class GameController extends Container {
       // Low: groundLevel - 85 * scale (can duck or jump)
       const isHighSlipper = Math.random() > 0.5;
       spawnY = groundLevel - (isHighSlipper ? 130 : 85) * scale;
-      width = 50 * scale; 
+      width = 50 * scale;
       height = 40 * scale;
 
-      const sprite = Sprite.from("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png");
+      const sprite = Sprite.from(
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
+      );
       sprite.width = 65 * scale;
       sprite.height = 65 * scale;
       sprite.anchor.set(0.5, 0.5);
       container.addChild(sprite);
-      
+
       // SFX for bird spawn
       audio.playBird();
 
@@ -2677,7 +2696,7 @@ export class GameController extends Container {
         yoyo: true,
         repeat: -1,
         duration: 0.4,
-        ease: "sine.inOut"
+        ease: "sine.inOut",
       });
     } else if (type === 3) {
       // Peanut collectible!
@@ -2686,10 +2705,12 @@ export class GameController extends Container {
           ? groundLevel - 18 * scale
           : groundLevel - 72 * scale;
       baseY = spawnY;
-      width = 36 * scale; 
+      width = 36 * scale;
       height = 20 * scale;
 
-      const sprite = Sprite.from("/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png");
+      const sprite = Sprite.from(
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
+      );
       sprite.width = 60 * scale;
       sprite.height = 60 * scale;
       sprite.anchor.set(0.5, 0.5);
@@ -2903,10 +2924,7 @@ export class GameController extends Container {
 
       const isTop3 = playerRank <= 3;
       const rankText = new Text({
-        text:
-          isTop3
-            ? ["🥇", "🥈", "🥉"][playerRank - 1]
-            : `${playerRank}`,
+        text: isTop3 ? ["🥇", "🥈", "🥉"][playerRank - 1] : `${playerRank}`,
         style: new TextStyle({
           fontFamily: "Arial Black, Impact, sans-serif",
           fontSize: isTop3 ? 22 : 14,
@@ -3287,7 +3305,6 @@ export class GameController extends Container {
   }
 
   initDOMOverlays() {
-
     // Connect keyboard events for player controls
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape" || e.key === "Esc") {
@@ -3380,7 +3397,6 @@ export class GameController extends Container {
   }
 
   updateUserUI() {
-
     // Load stats for current user
     this.highScore = getStats().highScore;
     this.highScoreText.text = `KỶ LỤC: ${this.highScore}`;

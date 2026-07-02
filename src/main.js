@@ -74,7 +74,6 @@ import { GameController } from "./game";
   });
 
   await PixiAssets.load([
-
     "home_btn",
     "settings_btn",
     "close_btn",
