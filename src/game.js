@@ -1757,9 +1757,9 @@ export class GameController extends Container {
       text: "KỶ LỤC MỚI!",
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: 12,
+        fontSize: 14,
         fill: 0xffffff,
-        stroke: { color: 0x8a0000, width: 2 },
+        stroke: { color: 0x8a0000, width: 2, join: "round" },
         dropShadow: {
           color: 0x000000,
           blur: 0,
@@ -1768,7 +1768,7 @@ export class GameController extends Container {
           alpha: 0.5,
         },
         fontWeight: "900",
-        letterSpacing: 1,
+        letterSpacing: 3,
         align: "center",
       }),
     });
@@ -1780,9 +1780,9 @@ export class GameController extends Container {
       text: "ĐIỂM SỐ: 0",
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: 24,
+        fontSize: 28,
         fill: 0xffea00,
-        stroke: { color: 0x1f2937, width: 4 },
+        stroke: { color: 0x1f2937, width: 3, join: "round" },
         dropShadow: {
           color: 0x000000,
           blur: 2,
@@ -1791,7 +1791,7 @@ export class GameController extends Container {
           alpha: 0.5,
         },
         fontWeight: "900",
-        letterSpacing: 1,
+        letterSpacing: 4,
       }),
     });
     this.gameOverScoreText.anchor.set(0.5);
@@ -1803,9 +1803,9 @@ export class GameController extends Container {
       text: "KỶ LỤC CŨ: 0",
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: 14,
+        fontSize: 16,
         fill: 0xffffff,
-        stroke: { color: 0xc62828, width: 3 },
+        stroke: { color: 0xc62828, width: 2, join: "round" },
         dropShadow: {
           color: 0x000000,
           blur: 0,
@@ -1814,7 +1814,7 @@ export class GameController extends Container {
           alpha: 0.5,
         },
         fontWeight: "900",
-        letterSpacing: 1,
+        letterSpacing: 3,
       }),
     });
     this.gameOverMsgText.anchor.set(0.5);
