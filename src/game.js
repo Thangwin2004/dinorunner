@@ -530,12 +530,11 @@ export class GameController extends Container {
     const label = new Text({
       text: labelText.toUpperCase(),
       style: new TextStyle({
-        fontFamily: "Arial Black, Impact, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: Math.min(20, height * 0.45),
         fill: 0xffffff,
         align: "center",
         stroke: { color: 0x000000, width: 4.5, join: "round" },
-        dropShadow: { color: 0x000000, blur: 2, distance: 2, alpha: 0.4 },
       }),
     });
     label.anchor.set(0.5);
@@ -711,7 +710,7 @@ export class GameController extends Container {
       const txt = new Text({
         text: emoji,
         style: new TextStyle({
-          fontFamily: "Arial Black, Impact, sans-serif",
+          fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: radius * 1.0,
           fill: 0xffffff,
           align: "center",
@@ -1057,7 +1056,7 @@ export class GameController extends Container {
     this.menuTitleText = new Text({
       text: "BỘ LẠC PHIÊU LƯU KÝ",
       style: new TextStyle({
-        fontFamily: "Outfit, Arial Black, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 38,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -1067,7 +1066,7 @@ export class GameController extends Container {
           ],
         }),
         stroke: { color: 0x241d4f, width: 6, join: "round" },
-        dropShadow: { color: 0x241d4f, blur: 6, distance: 4, alpha: 0.6 },
+
         fontWeight: "900",
         letterSpacing: 2,
         wordWrap: true,
@@ -1081,7 +1080,7 @@ export class GameController extends Container {
     this.menuSubtitleText = new Text({
       text: "HÀNH TRÌNH VƯỢT CHƯỚNG NGẠI VẬT BƠ LẠC ĐẬU PHỘNG",
       style: new TextStyle({
-        fontFamily: "Outfit, Arial Black, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 12,
         fill: 0xffffff,
         stroke: { color: 0x241d4f, width: 3.5, join: "round" },
@@ -1099,12 +1098,11 @@ export class GameController extends Container {
     this.menuHighScoreText = new Text({
       text: `🏆 KỶ LỤC ĐIỂM: ${this.highScore}`,
       style: new TextStyle({
-        fontFamily: "Outfit, Arial Black, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 15,
         fill: 0xffea00,
         fontWeight: "bold",
         stroke: { color: 0x4a000a, width: 3.5 },
-        dropShadow: { color: 0x000000, blur: 2, distance: 1.5, alpha: 0.4 },
       }),
     });
     this.menuHighScoreText.anchor.set(0.5);
@@ -1142,7 +1140,7 @@ export class GameController extends Container {
     this.scoreText = new Text({
       text: "ĐIỂM: 0",
       style: new TextStyle({
-        fontFamily: "Orbitron, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 22,
         fill: 0xffea00,
         fontWeight: "bold",
@@ -1154,7 +1152,7 @@ export class GameController extends Container {
     this.highScoreText = new Text({
       text: "KỶ LỤC: 0",
       style: new TextStyle({
-        fontFamily: "Orbitron, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 16,
         fill: 0xffecb3,
         fontWeight: "bold",
@@ -1234,7 +1232,7 @@ export class GameController extends Container {
     const titleText = new Text({
       text: "BẢNG VÀNG THÀNH TÍCH",
       style: new TextStyle({
-        fontFamily: "Arial Black, Impact, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 18,
         fill: 0xffffff,
         align: "center",
@@ -1247,7 +1245,7 @@ export class GameController extends Container {
 
     // 3. Header Labels
     const headerStyle = new TextStyle({
-      fontFamily: "Outfit, sans-serif",
+      fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
       fontSize: 13,
       fontWeight: "bold",
       fill: "#5900b3",
@@ -1304,7 +1302,7 @@ export class GameController extends Container {
     const label = new Text({
       text: labelText.toUpperCase(),
       style: new TextStyle({
-        fontFamily: "Arial Black, Impact, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 18,
         fill: "#360207",
         fontWeight: "bold",
@@ -1409,12 +1407,11 @@ export class GameController extends Container {
     const title = new Text({
       text: "CÀI ĐẶT GAME",
       style: new TextStyle({
-        fontFamily: "Arial Black, Impact, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 18,
         fill: 0xffffff,
         align: "center",
         stroke: { color: 0x000000, width: 4.5, join: "round" },
-        dropShadow: { color: 0x000000, blur: 2, distance: 1.5, alpha: 0.4 },
       }),
     });
     title.anchor.set(0.5);
@@ -1479,7 +1476,7 @@ export class GameController extends Container {
     const versionText = new Text({
       text: "Phiên bản: 1.0.0",
       style: {
-        fontFamily: "Outfit, Arial, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 12,
         fill: "#aaaaaa",
       },
@@ -1554,13 +1551,12 @@ export class GameController extends Container {
     const titleText = new Text({
       text: "CÀI ĐẶT GAME",
       style: new TextStyle({
-        fontFamily: "Arial Black, Impact, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 18,
         fill: 0xffffff,
         fontWeight: "bold",
         letterSpacing: 1.5,
         stroke: { color: 0x000000, width: 4.5, join: "round" },
-        dropShadow: { color: 0x000000, blur: 2, distance: 1.5, alpha: 0.4 },
       }),
     });
     titleText.anchor.set(0.5);
@@ -1685,7 +1681,7 @@ export class GameController extends Container {
     const title = new Text({
       text: "TRÒ CHƠI KẾT THÚC",
       style: new TextStyle({
-        fontFamily: "Arial Black, Impact, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 16,
         fill: 0xffffff,
         align: "center",
@@ -1726,7 +1722,7 @@ export class GameController extends Container {
     const bannerText = new Text({
       text: "KỶ LỤC MỚI!",
       style: new TextStyle({
-        fontFamily: "Arial Black, Impact, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 11,
         fill: 0xffffff,
         align: "center",
@@ -1740,7 +1736,7 @@ export class GameController extends Container {
     this.gameOverScoreText = new Text({
       text: "ĐIỂM SỐ: 0",
       style: new TextStyle({
-        fontFamily: "Arial Black, Impact, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 20,
         fill: 0x241d4f,
         stroke: { color: 0xffffff, width: 4, join: "round" },
@@ -1754,7 +1750,7 @@ export class GameController extends Container {
     this.gameOverMsgText = new Text({
       text: "KỶ LỤC CŨ: 0",
       style: new TextStyle({
-        fontFamily: "Outfit, Arial Black, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 13,
         fill: 0xcc0000,
         fontWeight: "bold",
@@ -1989,7 +1985,7 @@ export class GameController extends Container {
     const title = new Text({
       text: "CHỌN NHÂN VẬT",
       style: new TextStyle({
-        fontFamily: "Arial Black, Impact, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 18,
         fill: 0xffffff,
         align: "center",
@@ -2024,7 +2020,7 @@ export class GameController extends Container {
     this.charPageText = new Text({
       text: "TRANG 1/4",
       style: new TextStyle({
-        fontFamily: "Outfit, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 14,
         fontWeight: "bold",
         fill: "#360207",
@@ -2111,12 +2107,11 @@ export class GameController extends Container {
     const titleText = new Text({
       text: "HƯỚNG DẪN CHƠI",
       style: new TextStyle({
-        fontFamily: "Arial Black, Impact, sans-serif",
+        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 16,
         fill: 0xffffff,
         fontWeight: "bold",
         stroke: { color: 0x000000, width: 4.5, join: "round" },
-        dropShadow: { color: 0x000000, blur: 2, distance: 1.5, alpha: 0.4 },
       }),
     });
     titleText.anchor.set(0.5);
@@ -2125,7 +2120,7 @@ export class GameController extends Container {
 
     // Instructions Lines
     const textStyle = new TextStyle({
-      fontFamily: "Outfit, Arial, sans-serif",
+      fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
       fontSize: 13,
       fontWeight: "bold",
       fill: "#360207",
@@ -2840,7 +2835,7 @@ export class GameController extends Container {
       const rankText = new Text({
         text: rankMedals[i] || `${i + 1}`,
         style: new TextStyle({
-          fontFamily: "Arial Black, Impact, sans-serif",
+          fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: isTop3 ? 22 : 14,
           fill: "#241d4f",
           stroke: { color: 0xffffff, width: isTop3 ? 3 : 2.5 },
@@ -2882,7 +2877,7 @@ export class GameController extends Container {
       const nameText = new Text({
         text: entry.name,
         style: new TextStyle({
-          fontFamily: "Outfit, sans-serif",
+          fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: 13,
           fontWeight: "bold",
           fill: entry.isPlayer ? "#b30059" : "#241d4f",
@@ -2896,7 +2891,7 @@ export class GameController extends Container {
       const scoreText = new Text({
         text: `${entry.score}`,
         style: new TextStyle({
-          fontFamily: "Orbitron, sans-serif",
+          fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: 13,
           fontWeight: "900",
           fill: "#241d4f",
@@ -2926,7 +2921,7 @@ export class GameController extends Container {
       const rankText = new Text({
         text: isTop3 ? ["🥇", "🥈", "🥉"][playerRank - 1] : `${playerRank}`,
         style: new TextStyle({
-          fontFamily: "Arial Black, Impact, sans-serif",
+          fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: isTop3 ? 22 : 14,
           fill: "#241d4f",
           stroke: { color: 0xffffff, width: isTop3 ? 3 : 2.5 },
@@ -2967,7 +2962,7 @@ export class GameController extends Container {
       const nameText = new Text({
         text: `${playerEntry.name} (Bạn)`,
         style: new TextStyle({
-          fontFamily: "Outfit, sans-serif",
+          fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: 13,
           fontWeight: "bold",
           fill: "#b30059",
@@ -2980,7 +2975,7 @@ export class GameController extends Container {
       const scoreText = new Text({
         text: `${playerEntry.score}`,
         style: new TextStyle({
-          fontFamily: "Orbitron, sans-serif",
+          fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: 13,
           fontWeight: "900",
           fill: "#241d4f",
