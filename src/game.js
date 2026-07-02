@@ -3209,10 +3209,12 @@ export class GameController extends Container {
       );
       this.menuHighScoreText.position.set(sw / 2, sh * 0.44);
 
-      this.playBtn.position.set(sw / 2, sh * 0.56);
+      const playY = Math.max(sh * 0.44 + 70 * scale, sh * 0.56);
+      this.playBtn.position.set(sw / 2, playY);
       this.playBtn.scale.set(scale);
 
-      const buttonsY = sh * 0.67;
+      // Push bottom sub-buttons down to fill space but keep safe distance
+      const buttonsY = Math.max(playY + 90 * scale, sh * 0.8);
 
       this.achievementsBtn.position.set(sw / 2 - 105 * scale, buttonsY);
       this.achievementsBtn.scale.set(scale);
