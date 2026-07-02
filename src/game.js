@@ -1025,24 +1025,27 @@ export class GameController extends Container {
     this.menuMascotFrame = new Container();
     this.mainMenuContainer.addChild(this.menuMascotFrame);
 
+    this.menuMascotInner = new Container();
+    this.menuMascotFrame.addChild(this.menuMascotInner);
+
     this.menuMascotSprite = new Sprite();
     this.menuMascotSprite.anchor.set(0.5);
-    this.menuMascotSprite.width = 72;
-    this.menuMascotSprite.height = 72;
-    this.menuMascotFrame.addChild(this.menuMascotSprite);
+    this.menuMascotSprite.width = 120;
+    this.menuMascotSprite.height = 120;
+    this.menuMascotInner.addChild(this.menuMascotSprite);
 
-    const mascotMask = new Graphics().circle(0, 0, 36).fill(0xffffff);
+    const mascotMask = new Graphics().circle(0, 0, 60).fill(0xffffff);
     this.menuMascotSprite.mask = mascotMask;
-    this.menuMascotFrame.addChild(mascotMask);
+    this.menuMascotInner.addChild(mascotMask);
 
     const mascotBorder = new Graphics()
-      .circle(0, 0, 36)
+      .circle(0, 0, 60)
       .fill({ color: 0xffffff, alpha: 0.15 })
-      .stroke({ width: 3.5, color: 0xffea00 });
-    this.menuMascotFrame.addChild(mascotBorder);
+      .stroke({ width: 4.5, color: 0xffea00 });
+    this.menuMascotInner.addChild(mascotBorder);
 
     // Bouncing mascot animation
-    gsap.to(this.menuMascotFrame.scale, {
+    gsap.to(this.menuMascotInner.scale, {
       x: 1.05,
       y: 0.95,
       duration: 0.8,
