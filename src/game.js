@@ -1106,18 +1106,24 @@ export class GameController extends Container {
       text: `🏆 KỶ LỤC ĐIỂM: ${this.highScore}`,
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: 20,
-        fill: 0xffea00,
-        stroke: { color: 0xc2185b, width: 3 },
+        fontSize: 28,
+        fill: new FillGradient({
+          end: { x: 0, y: 1 },
+          colorStops: [
+            { color: 0xffffff, offset: 0 },
+            { color: 0xffe066, offset: 1 },
+          ],
+        }),
+        stroke: { color: 0x794000, width: 4, join: "round" },
         dropShadow: {
           color: 0x000000,
           blur: 0,
           angle: Math.PI / 4,
-          distance: 2,
-          alpha: 0.5,
+          distance: 3,
+          alpha: 0.3,
         },
         fontWeight: "900",
-        letterSpacing: 3,
+        letterSpacing: 2,
       }),
     });
     this.menuHighScoreText.anchor.set(0.5);
@@ -1156,21 +1162,21 @@ export class GameController extends Container {
       text: "ĐIỂM: 0",
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: 26,
+        fontSize: 28,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
           colorStops: [
             { color: 0xffffff, offset: 0 },
-            { color: 0xffea00, offset: 1 },
+            { color: 0xffe066, offset: 1 },
           ],
         }),
-        stroke: { color: 0x880000, width: 5 },
+        stroke: { color: 0x794000, width: 4, join: "round" },
         dropShadow: {
           color: 0x000000,
-          blur: 3,
+          blur: 2,
           angle: Math.PI / 2,
-          distance: 3,
-          alpha: 0.6,
+          distance: 2,
+          alpha: 0.4,
         },
         fontWeight: "900",
         letterSpacing: 3,
@@ -1184,14 +1190,14 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 18,
-        fill: 0xffea00,
-        stroke: { color: 0x1565c0, width: 3 },
+        fill: 0xffffff,
+        stroke: { color: 0x1565c0, width: 3, join: "round" },
         dropShadow: {
           color: 0x000000,
           blur: 0,
           angle: Math.PI / 4,
           distance: 2,
-          alpha: 0.5,
+          alpha: 0.3,
         },
         fontWeight: "900",
         letterSpacing: 2,
