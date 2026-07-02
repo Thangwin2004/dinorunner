@@ -290,10 +290,10 @@ function getLeaderboardData() {
 
 const palettes = {
   yellow: {
-    top: 0xffe500,
-    bottom: 0xff9900,
-    shadow: 0x8a4500,
-    stroke: 0xfff8b3,
+    top: 0xffd54f,
+    bottom: 0xffb300,
+    shadow: 0xff8f00,
+    stroke: 0xffecb3,
   },
   green: {
     top: 0x7fff00,
@@ -301,15 +301,15 @@ const palettes = {
     shadow: 0x006600,
     stroke: 0xd4ffd4,
   },
-  pink: { top: 0xff66b2, bottom: 0xcc0066, shadow: 0x800040, stroke: 0xffe6f2 },
-  blue: { top: 0x33ccff, bottom: 0x0088cc, shadow: 0x004466, stroke: 0xe6f9ff },
+  pink: { top: 0xf06292, bottom: 0xc2185b, shadow: 0x880e4f, stroke: 0xf8bbd0 },
+  blue: { top: 0x64b5f6, bottom: 0x1976d2, shadow: 0x0d47a1, stroke: 0xe3f2fd },
   purple: {
-    top: 0xb266ff,
-    bottom: 0x5900b3,
-    shadow: 0x330066,
+    top: 0xffb74d,
+    bottom: 0xf57c00,
+    shadow: 0xbf360c,
     stroke: 0xf2e6ff,
   },
-  red: { top: 0xf95e8b, bottom: 0xd93955, shadow: 0x92233f, stroke: 0xffd4e2 },
+  red: { top: 0xe57373, bottom: 0xe53935, shadow: 0xb71c1c, stroke: 0xffcdd2 },
 };
 
 const getColorStyle = (colorValue, label = "") => {
@@ -532,7 +532,7 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: Math.min(20, height * 0.45),
-        fill: "#3e2723",
+        fill: "#37474f",
         align: "center",
       }),
     });
@@ -1059,8 +1059,8 @@ export class GameController extends Container {
         fill: new FillGradient({
           end: { x: 0, y: 1 },
           colorStops: [
-            { color: 0xff3366, offset: 0 },
-            { color: 0xcc0033, offset: 1 },
+            { color: 0xff7043, offset: 0 },
+            { color: 0xc62828, offset: 1 },
           ],
         }),
 
@@ -1079,7 +1079,7 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 12,
-        fill: "#1e3a8a",
+        fill: "#1565c0",
 
         fontWeight: "bold",
         letterSpacing: 1.5,
@@ -1150,7 +1150,7 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 16,
-        fill: "#1e3a8a",
+        fill: "#1565c0",
         fontWeight: "bold",
       }),
     });
@@ -1181,7 +1181,7 @@ export class GameController extends Container {
     // 1. Card Base Styling (purple 3D border, cream card face)
     const shadow = new Graphics()
       .roundRect(-cardW / 2, -cardH / 2 + 6, cardW, cardH, 20)
-      .fill({ color: 0x330066 });
+      .fill({ color: 0xbf360c });
     this.leaderboardCard.addChild(shadow);
 
     const cardBorder = new Graphics();
@@ -1189,8 +1189,8 @@ export class GameController extends Container {
       start: { x: 0, y: -cardH / 2 },
       end: { x: 0, y: cardH / 2 },
       colorStops: [
-        { offset: 0, color: 0xb266ff },
-        { offset: 1, color: 0x5900b3 },
+        { offset: 0, color: 0xffb74d },
+        { offset: 1, color: 0xf57c00 },
       ],
     });
     cardBorder
@@ -1201,7 +1201,7 @@ export class GameController extends Container {
 
     const cardFace = new Graphics()
       .roundRect(-cardW / 2 + 8, -cardH / 2 + 8, cardW - 16, cardH - 16, 14)
-      .fill({ color: 0xfbfaf5 });
+      .fill({ color: 0xffffff });
     this.leaderboardCard.addChild(cardFace);
 
     // 2. Floating 3D Title Ribbon (Pink/Magenta)
@@ -1299,7 +1299,7 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 18,
-        fill: "#360207",
+        fill: "#37474f",
         fontWeight: "bold",
         letterSpacing: 0.8,
       }),
@@ -1366,12 +1366,12 @@ export class GameController extends Container {
     // 3D Shadow Base
     const shadow = new Graphics()
       .roundRect(-cardW / 2, -cardH / 2 + 6, cardW, cardH, 20)
-      .fill({ color: 0x330066 });
+      .fill({ color: 0xbf360c });
     this.settingsCard.addChild(shadow);
 
     const cardFace = new Graphics()
       .roundRect(-cardW / 2 + 8, -cardH / 2 + 8, cardW - 16, cardH - 16, 14)
-      .fill({ color: 0xfbfaf5 });
+      .fill({ color: 0xffffff });
     this.settingsCard.addChild(cardFace);
 
     // Title Ribbon
@@ -1380,7 +1380,7 @@ export class GameController extends Container {
     const ribbonY = -cardH / 2;
     const ribbonShadow = new Graphics()
       .roundRect(-ribbonW / 2, ribbonY - ribbonH / 2 + 4, ribbonW, ribbonH, 10)
-      .fill({ color: 0x004466 });
+      .fill({ color: 0x0d47a1 });
     this.settingsCard.addChild(ribbonShadow);
 
     const ribbon = new Graphics();
@@ -1388,14 +1388,14 @@ export class GameController extends Container {
       start: { x: 0, y: -21 },
       end: { x: 0, y: 21 },
       colorStops: [
-        { offset: 0, color: 0x33ccff },
-        { offset: 1, color: 0x0088cc },
+        { offset: 0, color: 0x64b5f6 },
+        { offset: 1, color: 0x1976d2 },
       ],
     });
     ribbon
       .roundRect(-ribbonW / 2, ribbonY - ribbonH / 2, ribbonW, ribbonH, 10)
       .fill({ fill: ribbonGrad })
-      .stroke({ color: 0xe6f9ff, width: 2 });
+      .stroke({ color: 0xe3f2fd, width: 2 });
     this.settingsCard.addChild(ribbon);
 
     const title = new Text({
@@ -1498,15 +1498,15 @@ export class GameController extends Container {
     // 2. Purple 3D Border
     const borderBg = new Graphics()
       .roundRect(-cardW / 2, -cardH / 2 + 6, cardW, cardH, 20)
-      .fill({ color: 0x330066 }) // Shadow Base
+      .fill({ color: 0xbf360c }) // Shadow Base
       .roundRect(-cardW / 2, -cardH / 2, cardW, cardH, 20)
       .fill({
         fill: new FillGradient({
           start: { x: 0, y: -cardH / 2 },
           end: { x: 0, y: cardH / 2 },
           colorStops: [
-            { offset: 0, color: 0xb266ff },
-            { offset: 1, color: 0x5900b3 },
+            { offset: 0, color: 0xffb74d },
+            { offset: 1, color: 0xf57c00 },
           ],
         }),
       })
@@ -1516,7 +1516,7 @@ export class GameController extends Container {
     // 3. Bright Cream Card Face
     const cardFace = new Graphics()
       .roundRect(-cardW / 2 + 8, -cardH / 2 + 8, cardW - 16, cardH - 16, 14)
-      .fill({ color: 0xfbfaf5 });
+      .fill({ color: 0xffffff });
     this.pauseCard.addChild(cardFace);
 
     // 4. Floating 3D Title Ribbon (Cyan-Blue)
@@ -1525,19 +1525,19 @@ export class GameController extends Container {
     const ribbonY = -cardH / 2;
     const ribbon = new Graphics()
       .roundRect(-ribbonW / 2, ribbonY - ribbonH / 2 + 4, ribbonW, ribbonH, 10)
-      .fill({ color: 0x004466 }) // Ribbon shadow
+      .fill({ color: 0x0d47a1 }) // Ribbon shadow
       .roundRect(-ribbonW / 2, ribbonY - ribbonH / 2, ribbonW, ribbonH, 10)
       .fill({
         fill: new FillGradient({
           start: { x: 0, y: ribbonY - ribbonH / 2 },
           end: { x: 0, y: ribbonY + ribbonH / 2 },
           colorStops: [
-            { offset: 0, color: 0x33ccff },
-            { offset: 1, color: 0x0088cc },
+            { offset: 0, color: 0x64b5f6 },
+            { offset: 1, color: 0x1976d2 },
           ],
         }),
       })
-      .stroke({ color: 0xe6f9ff, width: 2 });
+      .stroke({ color: 0xe3f2fd, width: 2 });
     this.pauseCard.addChild(ribbon);
 
     // Title text inside ribbon
@@ -1621,7 +1621,7 @@ export class GameController extends Container {
     // 3D Shadow Base
     const shadow = new Graphics()
       .roundRect(-cardW / 2, -cardH / 2 + 6, cardW, cardH, 20)
-      .fill({ color: 0x330066 });
+      .fill({ color: 0xbf360c });
     this.gameOverCard.addChild(shadow);
 
     // Main Card Border
@@ -1630,8 +1630,8 @@ export class GameController extends Container {
       start: { x: 0, y: -cardH / 2 },
       end: { x: 0, y: cardH / 2 },
       colorStops: [
-        { offset: 0, color: 0xb266ff },
-        { offset: 1, color: 0x5900b3 },
+        { offset: 0, color: 0xffb74d },
+        { offset: 1, color: 0xf57c00 },
       ],
     });
     cardBorder
@@ -1643,7 +1643,7 @@ export class GameController extends Container {
     // Cream Card Face
     const cardFace = new Graphics()
       .roundRect(-cardW / 2 + 8, -cardH / 2 + 8, cardW - 16, cardH - 16, 14)
-      .fill({ color: 0xfbfaf5 });
+      .fill({ color: 0xffffff });
     this.gameOverCard.addChild(cardFace);
 
     // Title Ribbon
@@ -1728,7 +1728,7 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 20,
-        fill: 0x241d4f,
+        fill: 0x263238,
       }),
     });
     this.gameOverScoreText.anchor.set(0.5);
@@ -1924,7 +1924,7 @@ export class GameController extends Container {
     // 3D Shadow Base
     const shadow = new Graphics()
       .roundRect(-cardW / 2, -cardH / 2 + 6, cardW, cardH, 20)
-      .fill({ color: 0x330066 });
+      .fill({ color: 0xbf360c });
     this.charSelectCard.addChild(shadow);
 
     // Main Card Border
@@ -1933,8 +1933,8 @@ export class GameController extends Container {
       start: { x: 0, y: -cardH / 2 },
       end: { x: 0, y: cardH / 2 },
       colorStops: [
-        { offset: 0, color: 0xb266ff },
-        { offset: 1, color: 0x5900b3 },
+        { offset: 0, color: 0xffb74d },
+        { offset: 1, color: 0xf57c00 },
       ],
     });
     cardBorder
@@ -1946,13 +1946,13 @@ export class GameController extends Container {
     // Cream Card Face
     const cardFace = new Graphics()
       .roundRect(-cardW / 2 + 8, -cardH / 2 + 8, cardW - 16, cardH - 16, 14)
-      .fill({ color: 0xfbfaf5 });
+      .fill({ color: 0xffffff });
     this.charSelectCard.addChild(cardFace);
 
     // Title Ribbon
     const ribbonShadow = new Graphics()
       .roundRect(-120, -cardH / 2 - 21 + 4, 240, 42, 10)
-      .fill({ color: 0x004466 });
+      .fill({ color: 0x0d47a1 });
     this.charSelectCard.addChild(ribbonShadow);
 
     const ribbon = new Graphics();
@@ -1960,14 +1960,14 @@ export class GameController extends Container {
       start: { x: 0, y: -21 },
       end: { x: 0, y: 21 },
       colorStops: [
-        { offset: 0, color: 0x33ccff },
-        { offset: 1, color: 0x0088cc },
+        { offset: 0, color: 0x64b5f6 },
+        { offset: 1, color: 0x1976d2 },
       ],
     });
     ribbon
       .roundRect(-120, -cardH / 2 - 21, 240, 42, 10)
       .fill({ fill: ribbonGrad })
-      .stroke({ color: 0xe6f9ff, width: 2 });
+      .stroke({ color: 0xe3f2fd, width: 2 });
     this.charSelectCard.addChild(ribbon);
 
     const title = new Text({
@@ -2010,7 +2010,7 @@ export class GameController extends Container {
         fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
         fontSize: 14,
         fontWeight: "bold",
-        fill: "#360207",
+        fill: "#37474f",
       }),
     });
     this.charPageText.anchor.set(0.5);
@@ -2046,15 +2046,15 @@ export class GameController extends Container {
     // 2. Purple 3D Border
     const borderBg = new Graphics()
       .roundRect(-cardW / 2, -cardH / 2 + 6, cardW, cardH, 20)
-      .fill({ color: 0x330066 })
+      .fill({ color: 0xbf360c })
       .roundRect(-cardW / 2, -cardH / 2, cardW, cardH, 20)
       .fill({
         fill: new FillGradient({
           start: { x: 0, y: -cardH / 2 },
           end: { x: 0, y: cardH / 2 },
           colorStops: [
-            { offset: 0, color: 0xb266ff },
-            { offset: 1, color: 0x5900b3 },
+            { offset: 0, color: 0xffb74d },
+            { offset: 1, color: 0xf57c00 },
           ],
         }),
       })
@@ -2064,7 +2064,7 @@ export class GameController extends Container {
     // 3. Bright Cream Card Face
     const cardFace = new Graphics()
       .roundRect(-cardW / 2 + 8, -cardH / 2 + 8, cardW - 16, cardH - 16, 14)
-      .fill({ color: 0xfbfaf5 });
+      .fill({ color: 0xffffff });
     this.instructionsCard.addChild(cardFace);
 
     // 4. Floating 3D Title Ribbon (Orange/Yellow gradient)
@@ -2109,7 +2109,7 @@ export class GameController extends Container {
       fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
       fontSize: 13,
       fontWeight: "bold",
-      fill: "#360207",
+      fill: "#37474f",
     });
 
     const lines = [
@@ -2553,7 +2553,7 @@ export class GameController extends Container {
         const pulseRadius = 40 + Math.sin(this.gameTime * 15) * 5;
         this.playerShieldGraphics
           .circle(0, -28, pulseRadius)
-          .fill({ color: 0x33ccff, alpha: 0.15 })
+          .fill({ color: 0x64b5f6, alpha: 0.15 })
           .stroke({ width: 2, color: 0x00ffff, alpha: 0.6 });
       } else {
         this.playerShieldGraphics.visible = false;
@@ -2796,15 +2796,15 @@ export class GameController extends Container {
       let strokeWidth = 1;
 
       if (i === 0) {
-        bgColor = 0xfff4b3; // Gold highlight
+        bgColor = 0xfff8e1; // Gold highlight
         strokeColor = 0xffa500;
         strokeWidth = 2;
       } else if (i === 1) {
-        bgColor = 0xe8eaed; // Silver highlight
+        bgColor = 0xf5f5f5; // Silver highlight
         strokeColor = 0xa0aab5;
         strokeWidth = 2;
       } else if (i === 2) {
-        bgColor = 0xffe4c4; // Bronze highlight
+        bgColor = 0xfff3e0; // Bronze highlight
         strokeColor = 0xcf7936;
         strokeWidth = 2;
       }
@@ -2823,7 +2823,7 @@ export class GameController extends Container {
         style: new TextStyle({
           fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: isTop3 ? 22 : 14,
-          fill: "#241d4f",
+          fill: "#263238",
         }),
       });
       rankText.anchor.set(0.5);
@@ -2865,7 +2865,7 @@ export class GameController extends Container {
           fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: 13,
           fontWeight: "bold",
-          fill: entry.isPlayer ? "#b30059" : "#241d4f",
+          fill: entry.isPlayer ? "#e53935" : "#263238",
         }),
       });
       nameText.anchor.set(0, 0.5);
@@ -2879,7 +2879,7 @@ export class GameController extends Container {
           fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: 13,
           fontWeight: "900",
-          fill: "#241d4f",
+          fill: "#263238",
         }),
       });
       scoreText.anchor.set(1, 0.5);
@@ -2908,7 +2908,7 @@ export class GameController extends Container {
         style: new TextStyle({
           fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: isTop3 ? 22 : 14,
-          fill: "#241d4f",
+          fill: "#263238",
         }),
       });
       rankText.anchor.set(0.5);
@@ -2949,7 +2949,7 @@ export class GameController extends Container {
           fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: 13,
           fontWeight: "bold",
-          fill: "#b30059",
+          fill: "#e53935",
         }),
       });
       nameText.anchor.set(0, 0.5);
@@ -2962,7 +2962,7 @@ export class GameController extends Container {
           fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
           fontSize: 13,
           fontWeight: "900",
-          fill: "#241d4f",
+          fill: "#263238",
         }),
       });
       scoreText.anchor.set(1, 0.5);
@@ -2980,8 +2980,8 @@ export class GameController extends Container {
       start: { x: 0, y: 0 },
       end: { x: sw, y: sh },
       colorStops: [
-        { offset: 0, color: 0x8ae6ff }, // Bright cyan sky
-        { offset: 1, color: 0xfff9e6 }, // Warm sun-kissed horizon
+        { offset: 0, color: 0xb3e5fc }, // Bright cyan sky
+        { offset: 1, color: 0xe1f5fe }, // Warm sun-kissed horizon
       ],
     });
     this.bgOverlay.clear().rect(0, 0, sw, sh).fill(bgGrad);
@@ -3098,35 +3098,35 @@ export class GameController extends Container {
     drawMountainRange(
       this.distantMountains,
       distHeights,
-      0xa5b8ed, // Soft pastel blue/lavender
+      0xb0bec5, // Soft pastel blue/lavender
       0.65,
       sh * 0.45,
     );
     drawMountainRange(
       this.midMountains,
       midHeights,
-      0x78c9a3, // Cheerful mint green
+      0x81c784, // Cheerful mint green
       0.8,
       sh * 0.32,
     );
     drawMountainRange(
       this.closeMountains,
       closeHeights,
-      0x54ab65, // Bright grassy green
+      0x4caf50, // Bright grassy green
       1.0,
       sh * 0.22,
     );
 
     // Cheerful green ground outlines
     this.bgOverlay.save();
-    this.bgOverlay.setStrokeStyle({ width: 2.0, color: 0x3d824b, alpha: 0.45 });
+    this.bgOverlay.setStrokeStyle({ width: 2.0, color: 0x388e3c, alpha: 0.45 });
     this.bgOverlay.moveTo(0, groundLevel).lineTo(sw, groundLevel).stroke();
 
     // Traditional lacquer wave details below ground
     const waveHeight = 8;
     const waveLength = 36;
     const yBase = groundLevel + 12;
-    this.bgOverlay.setStrokeStyle({ width: 1.0, color: 0x3d824b, alpha: 0.18 });
+    this.bgOverlay.setStrokeStyle({ width: 1.0, color: 0x388e3c, alpha: 0.18 });
     for (let x = -waveLength; x < sw + waveLength; x += waveLength) {
       this.bgOverlay
         .moveTo(x, yBase)
