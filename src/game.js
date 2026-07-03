@@ -39,7 +39,7 @@ function gameAlert(message) {
           text-align: center;
           transform: scale(0.85);
           transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          font-family: 'Outfit', sans-serif;
+          font-family: 'Be Vietnam Pro', sans-serif;
         }
         .game-alert-text {
           color: #360207;
@@ -530,7 +530,7 @@ export class GameController extends Container {
     const label = new Text({
       text: labelText.toUpperCase(),
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Baloo 2",
         fontSize: Math.min(18, height * 0.45),
         fill: "#ffffff",
         fontWeight: "900",
@@ -713,7 +713,7 @@ export class GameController extends Container {
       const txt = new Text({
         text: emoji,
         style: new TextStyle({
-          fontFamily: "Nunito, sans-serif",
+          fontFamily: "Baloo 2",
           fontSize: radius * 1.0,
           fill: 0xffffff,
           align: "center",
@@ -1063,7 +1063,7 @@ export class GameController extends Container {
     this.menuTitleText = new Text({
       text: "BỘ LẠC PHIÊU LƯU KÝ",
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Baloo 2",
         fontSize: 42,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -1094,7 +1094,7 @@ export class GameController extends Container {
     this.menuSubtitleText = new Text({
       text: "",
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Baloo 2",
         fontSize: 12,
         fill: "#1565c0",
 
@@ -1113,7 +1113,7 @@ export class GameController extends Container {
     this.menuHighScoreText = new Text({
       text: `🏆 KỶ LỤC ĐIỂM: ${this.highScore}`,
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Baloo 2",
         fontSize: 28,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -1170,7 +1170,7 @@ export class GameController extends Container {
     this.scoreText = new Text({
       text: "ĐIỂM: 0",
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Baloo 2",
         fontSize: 28,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -1198,7 +1198,7 @@ export class GameController extends Container {
     this.highScoreText = new Text({
       text: "KỶ LỤC: 0",
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Baloo 2",
         fontSize: 18,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -1294,7 +1294,7 @@ export class GameController extends Container {
     const titleText = new Text({
       text: "BẢNG VÀNG",
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Baloo 2",
         fontSize: 20,
         fontWeight: "900",
         fill: 0xffffff,
@@ -1309,7 +1309,7 @@ export class GameController extends Container {
 
     // 3. Header Labels
     const headerStyle = new TextStyle({
-      fontFamily: "Nunito, sans-serif",
+      fontFamily: "Baloo 2",
       fontSize: 13,
       fontWeight: "900",
       fill: "#ffffff",
@@ -1374,19 +1374,30 @@ export class GameController extends Container {
 
     // Left label (enlarged cartoon text matching the style of the confirmation modal in image 2)
     const label = new Text({
-      text: labelText.toUpperCase(),
+      text: labelText, // No toUpperCase() to show case exactly as passed
       style: new TextStyle({
-        fontFamily: "Nunito",
-        fontSize: 20,
-        fill: "#360207",
-        fontWeight: "900",
-        letterSpacing: 1.2,
-        stroke: { color: "#360207", width: 0.5 }, // Subtle matching stroke to sharpen edges
+        fontFamily: "Baloo 2",
+        fontSize: 22,
+        fill: "#4b1616",
+        fontWeight: "700",
+        stroke: { color: "#ffffff", width: 0.6 }, // Thin white outline to make diacritics pop
       }),
     });
     label.roundPixels = true; // Set roundPixels explicitly on the instance
     label.anchor.set(0, 0.5);
     row.addChild(label);
+
+    // Test label added directly to the main stage to check sharpness
+    if (!this._testTextAdded) {
+      this._testTextAdded = true;
+      const test = new Text({
+        text: "TEST SHARPNESS 123",
+        style: label.style,
+      });
+      test.position.set(20, 20);
+      test.roundPixels = true;
+      this.app.stage.addChild(test);
+    }
 
     const trackTexOn = Assets.get("toggle_on");
     const trackTexOff = Assets.get("toggle_off");
@@ -1405,7 +1416,7 @@ export class GameController extends Container {
       row.isMobileLayout = isMobile;
       const rowW = isMobile ? 300 : 410;
       const rowH = isMobile ? 54 : 64;
-      const fontSize = isMobile ? 16 : 20;
+      const fontSize = isMobile ? 18 : 22;
 
       label.style.fontSize = fontSize;
       label.onViewUpdate(); // Force texture rebuild and boundary calculation immediately!
@@ -1417,7 +1428,62 @@ export class GameController extends Container {
         .stroke({ color: 0xddeaff, width: 3 });
 
       const labelX = isMobile ? -130 : -180;
-      label.position.set(labelX, -1);
+      label.position.set(Math.round(labelX), 0);
+
+      // Print detailed checks to the browser console for verification
+      console.log(
+        `[Font Check] "${labelText}" Global Position:`,
+        label.getGlobalPosition(),
+      );
+      console.log(
+        `[Scale Check] "${labelText}" scale:`,
+        label.scale.x,
+        label.scale.y,
+      );
+      console.log(
+        `[Scale Check] "${labelText}" worldTransform.a / d:`,
+        label.worldTransform
+          ? `${label.worldTransform.a} / ${label.worldTransform.d}`
+          : "N/A",
+      );
+      console.log(
+        `[Scale Check] "${labelText}" parent worldTransform.a / d:`,
+        label.parent && label.parent.worldTransform
+          ? `${label.parent.worldTransform.a} / ${label.parent.worldTransform.d}`
+          : "N/A",
+      );
+      console.log(
+        `[Scale Check] "${labelText}" settingsCard worldTransform.a / d:`,
+        this.settingsCard && this.settingsCard.worldTransform
+          ? `${this.settingsCard.worldTransform.a} / ${this.settingsCard.worldTransform.d}`
+          : "N/A",
+      );
+      if (label.texture) {
+        console.log(
+          `[Res Check] "${labelText}" texture frame:`,
+          label.texture.frame.width,
+          "x",
+          label.texture.frame.height,
+        );
+        if (label.texture.source) {
+          console.log(
+            `[Res Check] "${labelText}" texture source:`,
+            label.texture.source.width,
+            "x",
+            label.texture.source.height,
+          );
+        }
+      }
+      console.log(
+        `[Res Check] "${labelText}" display size:`,
+        label.width,
+        "x",
+        label.height,
+      );
+      console.log(
+        `[Font Check] Baloo 2 font loaded check:`,
+        document.fonts.check("700 20px 'Baloo 2'"),
+      );
 
       track.width = isMobile ? 64 : 76;
       track.height = isMobile ? 40 : 48;
@@ -1504,7 +1570,7 @@ export class GameController extends Container {
     this.settingsTitle = new Text({
       text: "CÀI ĐẶT",
       style: new TextStyle({
-        fontFamily: "Nunito",
+        fontFamily: "Baloo 2",
         fontSize: 22,
         fontWeight: "900",
         fill: 0xffffff,
@@ -1524,7 +1590,7 @@ export class GameController extends Container {
 
     // Music row
     this.mainMusicRow = this.createToggleRow(
-      "NHẠC NỀN",
+      "🎵 Nhạc nền",
       -75,
       () => audio.musicMuted,
       () => {
@@ -1536,7 +1602,7 @@ export class GameController extends Container {
 
     // SFX row
     this.mainSfxRow = this.createToggleRow(
-      "HIỆU ỨNG",
+      "🔊 Hiệu ứng",
       0,
       () => audio.sfxMuted,
       () => {
@@ -1572,7 +1638,7 @@ export class GameController extends Container {
     this.settingsVersionText = new Text({
       text: "Phiên bản: 1.0.0",
       style: {
-        fontFamily: "Nunito",
+        fontFamily: "Baloo 2",
         fontSize: 12,
         fill: "#aaaaaa",
       },
@@ -1647,7 +1713,7 @@ export class GameController extends Container {
     const titleText = new Text({
       text: "CÀI ĐẶT",
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Baloo 2",
         fontSize: 22,
         fontWeight: "900",
         fill: 0xffffff,
@@ -1661,7 +1727,7 @@ export class GameController extends Container {
 
     // Music row
     this.pauseMusicRow = this.createToggleRow(
-      "NHẠC NỀN",
+      "🎵 Nhạc nền",
       -70,
       () => audio.musicMuted,
       () => {
@@ -1673,7 +1739,7 @@ export class GameController extends Container {
 
     // SFX row
     this.pauseSfxRow = this.createToggleRow(
-      "HIỆU ỨNG",
+      "🔊 Hiệu ứng",
       5,
       () => audio.sfxMuted,
       () => {
@@ -1777,7 +1843,7 @@ export class GameController extends Container {
     const title = new Text({
       text: "TRÒ CHƠI KẾT THÚC",
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Baloo 2",
         fontSize: 20,
         fontWeight: "900",
         fill: 0xffffff,
@@ -1820,7 +1886,7 @@ export class GameController extends Container {
     const bannerText = new Text({
       text: "KỶ LỤC MỚI!",
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Baloo 2",
         fontSize: 14,
         fill: 0xffffff,
         stroke: { color: 0x8a0000, width: 2, join: "round" },
@@ -1844,7 +1910,7 @@ export class GameController extends Container {
     this.gameOverScoreText = new Text({
       text: "ĐIỂM SỐ: 0",
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Baloo 2",
         fontSize: 28,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -1874,7 +1940,7 @@ export class GameController extends Container {
     this.gameOverMsgText = new Text({
       text: "KỶ LỤC CŨ: 0",
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Baloo 2",
         fontSize: 16,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -2124,7 +2190,7 @@ export class GameController extends Container {
     const title = new Text({
       text: "CHỌN NHÂN VẬT",
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Baloo 2",
         fontSize: 22,
         fontWeight: "900",
         fill: 0xffffff,
@@ -2161,7 +2227,7 @@ export class GameController extends Container {
     this.charPageText = new Text({
       text: "TRANG 1/4",
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Baloo 2",
         fontSize: 18,
         fontWeight: "900",
         fill: "#bf360c",
@@ -2208,7 +2274,7 @@ export class GameController extends Container {
     this.instructionsTitle = new Text({
       text: "HƯỚNG DẪN CHƠI",
       style: new TextStyle({
-        fontFamily: "Nunito",
+        fontFamily: "Baloo 2",
         fontSize: 22,
         fontWeight: "900",
         fill: 0xffffff,
@@ -2258,7 +2324,7 @@ export class GameController extends Container {
         row.labelText = new Text({
           text: data.label,
           style: new TextStyle({
-            fontFamily: "Nunito",
+            fontFamily: "Baloo 2",
             fontWeight: "800",
             fontSize: 13,
             fill: 0x3e2723, // Warm dark brown
@@ -2467,10 +2533,17 @@ export class GameController extends Container {
       newState === "GAME_OVER";
     this.gameOverContainer.visible = newState === "GAME_OVER";
     this.achievementsContainer.visible = newState === "ACHIEVEMENTS";
-    this.settingsContainer.visible = newState === "SETTINGS";
+    this.settingsContainer.visible = false; // Always false, bypassed for HTML settings popup
     this.pauseContainer.visible = newState === "PAUSED";
     this.charSelectContainer.visible = newState === "CHAR_SELECT";
     this.instructionsContainer.visible = newState === "INSTRUCTIONS";
+
+    // Toggle HTML Settings Overlay
+    if (newState === "SETTINGS") {
+      this.showHTMLSettings();
+    } else {
+      this.hideHTMLSettings();
+    }
 
     // Hide or show the user profile widget depending on state to prevent overlapping during gameplay
     const profileWidget = document.getElementById("user-profile");
@@ -3044,7 +3117,7 @@ export class GameController extends Container {
       const rankText = new Text({
         text: rankMedals[i] || `${i + 1}`,
         style: new TextStyle({
-          fontFamily: "Nunito, sans-serif",
+          fontFamily: "Baloo 2",
           fontSize: isTop3 ? 22 : 14,
           fill: "#263238",
         }),
@@ -3086,7 +3159,7 @@ export class GameController extends Container {
       const nameText = new Text({
         text: entry.name,
         style: new TextStyle({
-          fontFamily: "Nunito, sans-serif",
+          fontFamily: "Baloo 2",
           fontSize: 13,
           fontWeight: "bold",
           fill: entry.isPlayer ? "#e53935" : "#263238",
@@ -3101,7 +3174,7 @@ export class GameController extends Container {
       const scoreText = new Text({
         text: `${entry.score}`,
         style: new TextStyle({
-          fontFamily: "Nunito, sans-serif",
+          fontFamily: "Baloo 2",
           fontSize: 13,
           fontWeight: "900",
           fill: "#263238",
@@ -3132,7 +3205,7 @@ export class GameController extends Container {
       const rankText = new Text({
         text: isTop3 ? ["🥇", "🥈", "🥉"][playerRank - 1] : `${playerRank}`,
         style: new TextStyle({
-          fontFamily: "Nunito, sans-serif",
+          fontFamily: "Baloo 2",
           fontSize: isTop3 ? 22 : 14,
           fill: "#263238",
         }),
@@ -3173,7 +3246,7 @@ export class GameController extends Container {
       const nameText = new Text({
         text: `${playerEntry.name} (Bạn)`,
         style: new TextStyle({
-          fontFamily: "Nunito, sans-serif",
+          fontFamily: "Baloo 2",
           fontSize: 13,
           fontWeight: "bold",
           fill: "#e53935",
@@ -3187,7 +3260,7 @@ export class GameController extends Container {
       const scoreText = new Text({
         text: `${playerEntry.score}`,
         style: new TextStyle({
-          fontFamily: "Nunito, sans-serif",
+          fontFamily: "Baloo 2",
           fontSize: 13,
           fontWeight: "900",
           fill: "#263238",
@@ -3855,6 +3928,290 @@ export class GameController extends Container {
     // Re-draw achievements list if open
     if (this.gameState === "ACHIEVEMENTS") {
       this.updateAchievementsDisplay();
+    }
+  }
+
+  showHTMLSettings() {
+    if (!document.getElementById("game-settings-styles")) {
+      const style = document.createElement("style");
+      style.id = "game-settings-styles";
+      style.textContent = `
+        .game-settings-overlay {
+          position: fixed;
+          top: 0; left: 0;
+          width: 100dvw; height: 100dvh;
+          background: rgba(0, 0, 0, 0.65);
+          backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
+          display: flex; justify-content: center; align-items: center;
+          z-index: 100000;
+          opacity: 0;
+          transition: opacity 0.25s ease;
+          box-sizing: border-box;
+        }
+        .game-settings-card {
+          background: #fbfaf5;
+          border: 5px solid #f57c00;
+          box-shadow: inset 0 0 0 2.5px #ffea00, 0 6px 0 #bf360c, 0 12px 25px rgba(0, 0, 0, 0.35);
+          border-radius: 20px;
+          padding: 36px 24px 20px 24px;
+          width: 90%; max-width: 420px;
+          text-align: center;
+          position: relative;
+          transform: scale(0.85);
+          transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.25s ease;
+          font-family: 'Be Vietnam Pro', sans-serif;
+          box-sizing: border-box;
+          opacity: 0;
+        }
+        .game-settings-title {
+          position: absolute;
+          top: -25px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: linear-gradient(180deg, #ff9800 0%, #f57c00 100%);
+          border: 2.5px solid #fff8b3;
+          border-radius: 12px;
+          box-shadow: 0 4px 0 #bf360c;
+          color: #ffffff;
+          font-family: 'Be Vietnam Pro', sans-serif;
+          font-size: 22px;
+          font-weight: 800;
+          letter-spacing: 1.5px;
+          padding: 6px 36px;
+          text-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+          white-space: nowrap;
+          text-transform: uppercase;
+        }
+        .game-settings-close-btn {
+          position: absolute;
+          top: -16px;
+          right: -16px;
+          width: 40px;
+          height: 40px;
+          border: none;
+          background: url(/assest/iconbtn/close_btn.png) no-repeat center center;
+          background-size: contain;
+          cursor: pointer;
+          transition: transform 0.15s ease;
+          z-index: 100100;
+        }
+        .game-settings-close-btn:hover {
+          transform: scale(1.1);
+        }
+        .game-settings-close-btn:active {
+          transform: scale(0.9);
+        }
+        .game-settings-row-container {
+          margin-top: 18px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          width: 100%;
+        }
+        .game-settings-row {
+          background: #ffffff;
+          border: 3.5px solid #ddeaff;
+          border-radius: 15px;
+          padding: 10px 18px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          box-sizing: border-box;
+          height: 62px;
+        }
+        .game-settings-label {
+          font-family: 'Be Vietnam Pro', sans-serif;
+          font-size: 20px;
+          font-weight: 700;
+          color: #360207;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .game-settings-toggle-btn {
+          width: 68px;
+          height: 42px;
+          border: none;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-color: transparent;
+          cursor: pointer;
+          transition: transform 0.1s ease;
+        }
+        .game-settings-toggle-btn:hover {
+          transform: scale(1.06);
+        }
+        .game-settings-toggle-btn:active {
+          transform: scale(0.95);
+        }
+        .game-settings-reset-btn {
+          background: linear-gradient(180deg, #ff6b6b 0%, #e53935 100%);
+          border: none;
+          box-shadow: 0 4px 0 #bf360c;
+          border-radius: 12px;
+          color: #ffffff;
+          font-family: 'Be Vietnam Pro', sans-serif;
+          font-size: 16px;
+          font-weight: 800;
+          padding: 10px 24px;
+          cursor: pointer;
+          margin-top: 20px;
+          transition: transform 0.1s ease, filter 0.1s ease;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+        .game-settings-reset-icon {
+          width: 24px;
+          height: 24px;
+          object-fit: contain;
+        }
+        .game-settings-reset-btn:hover {
+          transform: scale(1.05);
+          filter: brightness(1.05);
+        }
+        .game-settings-reset-btn:active {
+          transform: translateY(2px);
+          box-shadow: 0 2px 0 #bf360c;
+        }
+        .game-settings-version {
+          font-family: 'Be Vietnam Pro', sans-serif;
+          font-size: 12px;
+          color: #a58f8f;
+          margin-top: 14px;
+          font-weight: 600;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    const existing = document.getElementById("game-settings-overlay-id");
+    if (existing) existing.remove();
+
+    const overlay = document.createElement("div");
+    overlay.id = "game-settings-overlay-id";
+    overlay.className = "game-settings-overlay";
+
+    const card = document.createElement("div");
+    card.className = "game-settings-card";
+
+    // Close Button
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "game-settings-close-btn";
+    closeBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.switchState("MAIN_MENU");
+    });
+    card.appendChild(closeBtn);
+
+    // Title
+    const title = document.createElement("div");
+    title.className = "game-settings-title";
+    title.innerText = "CÀI ĐẶT";
+    card.appendChild(title);
+
+    // Row Container
+    const rowContainer = document.createElement("div");
+    rowContainer.className = "game-settings-row-container";
+
+    // Music Row
+    const musicRow = document.createElement("div");
+    musicRow.className = "game-settings-row";
+
+    const musicLabel = document.createElement("span");
+    musicLabel.className = "game-settings-label";
+    musicLabel.innerText = "🎵 Nhạc nền";
+    musicRow.appendChild(musicLabel);
+
+    const musicToggle = document.createElement("button");
+    musicToggle.className = "game-settings-toggle-btn";
+    musicToggle.style.backgroundImage = `url(${audio.musicMuted ? "/assest/iconbtn/toggle_off.png" : "/assest/iconbtn/toggle_on.png"})`;
+    musicToggle.addEventListener("click", () => {
+      audio.playClick();
+      audio.toggleMusicMute();
+      musicToggle.style.backgroundImage = `url(${audio.musicMuted ? "/assest/iconbtn/toggle_off.png" : "/assest/iconbtn/toggle_on.png"})`;
+    });
+    musicRow.appendChild(musicToggle);
+    rowContainer.appendChild(musicRow);
+
+    // SFX Row
+    const sfxRow = document.createElement("div");
+    sfxRow.className = "game-settings-row";
+
+    const sfxLabel = document.createElement("span");
+    sfxLabel.className = "game-settings-label";
+    sfxLabel.innerText = "🔊 Hiệu ứng";
+    sfxRow.appendChild(sfxLabel);
+
+    const sfxToggle = document.createElement("button");
+    sfxToggle.className = "game-settings-toggle-btn";
+    sfxToggle.style.backgroundImage = `url(${audio.sfxMuted ? "/assest/iconbtn/toggle_off.png" : "/assest/iconbtn/toggle_on.png"})`;
+    sfxToggle.addEventListener("click", () => {
+      audio.toggleSfxMute();
+      audio.playClick();
+      sfxToggle.style.backgroundImage = `url(${audio.sfxMuted ? "/assest/iconbtn/toggle_off.png" : "/assest/iconbtn/toggle_on.png"})`;
+    });
+    sfxRow.appendChild(sfxToggle);
+    rowContainer.appendChild(sfxRow);
+
+    card.appendChild(rowContainer);
+
+    // Reset High Score Button
+    const resetBtn = document.createElement("button");
+    resetBtn.className = "game-settings-reset-btn";
+    resetBtn.innerHTML = `<img src="/assest/iconbtn/delete_btn.png" class="game-settings-reset-icon" alt="" /> XÓA LỊCH SỬ`;
+    resetBtn.addEventListener("click", async () => {
+      audio.playClick();
+      const confirmReset = await gameConfirm(
+        "Bạn có chắc chắn muốn xóa toàn bộ dữ liệu kỷ lục không?",
+      );
+      if (confirmReset) {
+        saveStats({
+          highScore: 0,
+          history: [],
+        });
+        this.highScore = 0;
+        this.updateAchievementsDisplay();
+        await gameAlert("Đã xóa toàn bộ dữ liệu thành công!");
+        this.switchState("MAIN_MENU");
+      }
+    });
+    card.appendChild(resetBtn);
+
+    // Version Text
+    const versionText = document.createElement("div");
+    versionText.className = "game-settings-version";
+    versionText.innerText = "Phiên bản: 1.0.0";
+    card.appendChild(versionText);
+
+    overlay.appendChild(card);
+    const appContainer = document.getElementById("app") || document.body;
+    appContainer.appendChild(overlay);
+
+    // Trigger animations
+    requestAnimationFrame(() => {
+      overlay.style.opacity = "1";
+      card.style.opacity = "1";
+      card.style.transform = "scale(1)";
+    });
+  }
+
+  hideHTMLSettings() {
+    const overlay = document.getElementById("game-settings-overlay-id");
+    if (overlay) {
+      const card = overlay.querySelector(".game-settings-card");
+      overlay.style.opacity = "0";
+      if (card) {
+        card.style.opacity = "0";
+        card.style.transform = "scale(0.85)";
+      }
+      setTimeout(() => {
+        overlay.remove();
+      }, 250);
     }
   }
 }
