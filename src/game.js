@@ -1387,18 +1387,6 @@ export class GameController extends Container {
     label.anchor.set(0, 0.5);
     row.addChild(label);
 
-    // Test label added directly to the main stage to check sharpness
-    if (!this._testTextAdded) {
-      this._testTextAdded = true;
-      const test = new Text({
-        text: "TEST SHARPNESS 123",
-        style: label.style,
-      });
-      test.position.set(20, 20);
-      test.roundPixels = true;
-      this.app.stage.addChild(test);
-    }
-
     const trackTexOn = Assets.get("toggle_on");
     const trackTexOff = Assets.get("toggle_off");
 
@@ -1429,61 +1417,6 @@ export class GameController extends Container {
 
       const labelX = isMobile ? -130 : -180;
       label.position.set(Math.round(labelX), 0);
-
-      // Print detailed checks to the browser console for verification
-      console.log(
-        `[Font Check] "${labelText}" Global Position:`,
-        label.getGlobalPosition(),
-      );
-      console.log(
-        `[Scale Check] "${labelText}" scale:`,
-        label.scale.x,
-        label.scale.y,
-      );
-      console.log(
-        `[Scale Check] "${labelText}" worldTransform.a / d:`,
-        label.worldTransform
-          ? `${label.worldTransform.a} / ${label.worldTransform.d}`
-          : "N/A",
-      );
-      console.log(
-        `[Scale Check] "${labelText}" parent worldTransform.a / d:`,
-        label.parent && label.parent.worldTransform
-          ? `${label.parent.worldTransform.a} / ${label.parent.worldTransform.d}`
-          : "N/A",
-      );
-      console.log(
-        `[Scale Check] "${labelText}" settingsCard worldTransform.a / d:`,
-        this.settingsCard && this.settingsCard.worldTransform
-          ? `${this.settingsCard.worldTransform.a} / ${this.settingsCard.worldTransform.d}`
-          : "N/A",
-      );
-      if (label.texture) {
-        console.log(
-          `[Res Check] "${labelText}" texture frame:`,
-          label.texture.frame.width,
-          "x",
-          label.texture.frame.height,
-        );
-        if (label.texture.source) {
-          console.log(
-            `[Res Check] "${labelText}" texture source:`,
-            label.texture.source.width,
-            "x",
-            label.texture.source.height,
-          );
-        }
-      }
-      console.log(
-        `[Res Check] "${labelText}" display size:`,
-        label.width,
-        "x",
-        label.height,
-      );
-      console.log(
-        `[Font Check] Baloo 2 font loaded check:`,
-        document.fonts.check("700 20px 'Baloo 2'"),
-      );
 
       track.width = isMobile ? 64 : 76;
       track.height = isMobile ? 40 : 48;
