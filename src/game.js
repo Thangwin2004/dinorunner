@@ -4156,7 +4156,7 @@ export class GameController extends Container {
         /* Achievements popup */
         .game-achievements-list {
           margin-top: 18px;
-          max-height: 250px;
+          max-height: min(350px, 50vh);
           overflow-y: auto;
           display: flex;
           flex-direction: column;

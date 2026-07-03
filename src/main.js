@@ -1,5 +1,8 @@
-import { Application } from "pixi.js";
+import { Application, Text } from "pixi.js";
 import { GameController } from "./game";
+
+Text.defaultResolution = 3;
+Text.defaultAutoResolution = false;
 
 (async () => {
   // Wait for Google Fonts to be loaded before initializing the app or starting the game
