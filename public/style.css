@@ -1,3 +1,14 @@
+*:not(input):not(textarea) {
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  -khtml-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  outline: none !important;
+}
+
 html, body {
   position: fixed;
   top: 0;
@@ -12,8 +23,6 @@ html, body {
   background-color: #0a0b1e;
   font-family: "Outfit", sans-serif;
   overflow: hidden;
-  user-select: none;
-  -webkit-user-select: none;
   touch-action: none;
 }
 
@@ -322,4 +331,159 @@ html, body {
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 2px;
+}
+
+/* --- GAME HUD OVERLAY --- */
+#game-hud-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 90;
+  box-sizing: border-box;
+}
+#hud-score {
+  position: absolute;
+  top: 20px; left: 24px;
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 2.5px 2.5px 0px #794000, -2.5px -2.5px 0px #794000, 2.5px -2.5px 0px #794000, -2.5px 2.5px 0px #794000;
+  letter-spacing: 3px;
+}
+#hud-highscore {
+  position: absolute;
+  top: 24px; right: 84px;
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  color: #ffea00;
+  text-shadow: 2px 2px 0px #794000, -2px -2px 0px #794000, 2px -2px 0px #794000, -2px 2px 0px #794000;
+  letter-spacing: 2px;
+}
+#hud-pause-btn {
+  position: absolute;
+  top: 16px; right: 18px;
+  pointer-events: auto;
+  width: 44px; height: 44px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.15s ease;
+}
+#hud-pause-btn:hover {
+  transform: scale(1.15);
+}
+#hud-pause-btn:active {
+  transform: scale(0.85);
+}
+.hud-pause-icon {
+  width: 14px;
+  height: 18px;
+  display: flex;
+  justify-content: space-between;
+}
+.hud-pause-icon::before,
+.hud-pause-icon::after {
+  content: '';
+  width: 4.5px;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 1.5px;
+  box-shadow: 1px 1.5px 0px #794000;
+}
+
+/* --- GAME MAIN MENU OVERLAY --- */
+#game-menu-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+#menu-title {
+  margin-top: 30vh;
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 38px;
+  font-weight: 900;
+  text-align: center;
+  color: #ffea00;
+  text-shadow: 3px 3px 0px #ff3d00, -1px -1px 0px #ff3d00, 1px -1px 0px #ff3d00, -1px 1px 0px #ff3d00;
+  letter-spacing: 2px;
+}
+#menu-highscore {
+  margin-top: 10px;
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 2.5px 2.5px 0px #794000, -2.5px -2.5px 0px #794000, 2.5px -2.5px 0px #794000, -2.5px 2.5px 0px #794000;
+  letter-spacing: 2px;
+}
+#menu-play-btn {
+  pointer-events: auto;
+  margin-top: 24px;
+  padding: 10px 54px;
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: #ffffff;
+  background: linear-gradient(180deg, #95ED39 0%, #4EAC0C 100%);
+  border: 3px solid #ffffff;
+  border-radius: 30px;
+  box-shadow: 0 5px 0 #087903, 0 8px 15px rgba(0,0,0,0.35);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+#menu-play-btn:hover {
+  transform: scale(1.06);
+}
+#menu-play-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #087903, 0 4px 8px rgba(0,0,0,0.35);
+}
+#menu-bottom-buttons {
+  pointer-events: auto;
+  position: absolute;
+  bottom: 40px;
+  display: flex;
+  gap: 18px;
+}
+.menu-bottom-btn {
+  width: 56px;
+  height: 56px;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.menu-bottom-btn:hover {
+  transform: scale(1.1);
+}
+.menu-bottom-btn:active {
+  transform: scale(0.9);
+}
+#menu-btn-achievements {
+  background-image: url('/assest/iconbtn/trophy_btn.png');
+}
+#menu-btn-char {
+  background-image: url('/assest/iconbtn/user_btn.png');
+}
+#menu-btn-instructions {
+  background-image: url('/assest/iconbtn/quest_btn.png');
+}
+#menu-btn-settings {
+  background-image: url('/assest/iconbtn/setting_btn.png');
 }

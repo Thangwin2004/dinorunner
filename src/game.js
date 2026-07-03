@@ -376,6 +376,7 @@ export class GameController extends Container {
     this.hasDoubledThisRun = false;
     this.shieldTime = 0;
     this.charSelectPage = 0;
+    this.isAdShowing = false;
 
     // Load Highscore
     this.highScore = getStats().highScore;
@@ -2057,8 +2058,44 @@ export class GameController extends Container {
     audio.playCollect();
     this.score += 10;
     this.spawnSparkleParticles(obs.sprite.x, obs.sprite.y);
+    this.spawnFloatingText("+10", obs.sprite.x, obs.sprite.y);
     this.gamePlayContainer.removeChild(obs.sprite);
     this.obstacles.splice(index, 1);
+  }
+
+  spawnFloatingText(text, x, y) {
+    const sw = this.app.screen.width;
+    const sh = this.app.screen.height;
+    const scale = Math.min(1.0, sw / 450, sh / 650);
+
+    const floatText = new Text({
+      text: text,
+      style: new TextStyle({
+        fontFamily: "Baloo 2",
+        fontSize: 24,
+        fontWeight: "900",
+        fill: 0xffea00, // Gold yellow
+        stroke: { color: 0x5d4037, width: 4 }, // Dark brown stroke
+        align: "center",
+      }),
+      resolution: 3,
+    });
+    floatText.anchor.set(0.5);
+    floatText.position.set(x, y - 20 * scale);
+    floatText.scale.set(scale);
+    this.gamePlayContainer.addChild(floatText);
+
+    // Float upwards and fade out
+    gsap.to(floatText, {
+      y: floatText.y - 60 * scale,
+      alpha: 0,
+      duration: 0.8,
+      ease: "power1.out",
+      onComplete: () => {
+        this.gamePlayContainer.removeChild(floatText);
+        floatText.destroy();
+      },
+    });
   }
 
   setupCharSelectUI() {
@@ -2472,6 +2509,20 @@ export class GameController extends Container {
     this.instructionsContainer.visible = false;
 
     // Toggle HTML Overlays
+    const hudOverlay = document.getElementById("game-hud-overlay");
+    const menuOverlay = document.getElementById("game-menu-overlay");
+
+    if (hudOverlay) {
+      hudOverlay.style.display =
+        newState === "PLAYING" || newState === "PAUSED" ? "block" : "none";
+    }
+
+    if (menuOverlay) {
+      menuOverlay.style.display = newState === "MAIN_MENU" ? "flex" : "none";
+    }
+
+    this.syncDOMScoreAndHighScore();
+
     if (newState === "SETTINGS") {
       this.showHTMLSettings();
     } else {
@@ -2527,8 +2578,15 @@ export class GameController extends Container {
         this.defeatCount = (this.defeatCount || 0) + 1;
         if (this.defeatCount >= 3) {
           this.defeatCount = 0;
+          this.isAdShowing = true;
+          this.resetGame();
+          // Hide HUD during ad
+          if (hudOverlay) hudOverlay.style.display = "none";
           AdManager.showInterstitial().then(() => {
-            this.resetGame();
+            this.isAdShowing = false;
+            // Show HUD again
+            if (hudOverlay) hudOverlay.style.display = "block";
+            this.syncDOMScoreAndHighScore();
           });
           return;
         }
@@ -2600,7 +2658,7 @@ export class GameController extends Container {
       this.closeMountains.x = -(this.closeX % sw);
     }
 
-    if (this.gameState === "PLAYING") {
+    if (this.gameState === "PLAYING" && !this.isAdShowing) {
       this.updateGameplay(elapsed);
     }
   }
@@ -2616,6 +2674,10 @@ export class GameController extends Container {
     this.score += 0.15 * elapsed;
     const currentIntScore = Math.floor(this.score);
     this.scoreText.text = `ĐIỂM: ${currentIntScore}`;
+    const domScore = document.getElementById("hud-score");
+    if (domScore) {
+      domScore.innerText = `ĐIỂM: ${currentIntScore}`;
+    }
 
     // Play milestone sound every 100 points
     if (
@@ -2763,9 +2825,17 @@ export class GameController extends Container {
       obs.sprite.x -= this.speed * elapsed;
 
       if (obs.type === 3 && obs.baseY) {
-        // Bobbing peanut collectible
-        obs.bobTimer = (obs.bobTimer || 0) + elapsed * 0.1;
-        obs.sprite.y = obs.baseY + Math.sin(obs.bobTimer) * 8 * scale;
+        // Bobbing point items
+        obs.bobTimer = (obs.bobTimer || 0) + elapsed * 0.12;
+        obs.sprite.y = obs.baseY + Math.sin(obs.bobTimer) * 12 * scale;
+
+        // Spin and pulse scale gently
+        if (obs.sprite.children.length > 0) {
+          const itemSprite = obs.sprite.children[0];
+          itemSprite.rotation += 0.03 * elapsed;
+          const scalePulse = 1.0 + Math.sin(obs.bobTimer * 2) * 0.08;
+          itemSprite.scale.set(scalePulse);
+        }
       } else if (
         obs.type === 2 &&
         obs.isSlipper &&
@@ -3874,6 +3944,76 @@ export class GameController extends Container {
         this.isSwiping = false;
       }
     });
+
+    // Hide blurry PixiJS text and button objects so we use clean HTML ones instead
+    this.menuTitleText.visible = false;
+    this.menuSubtitleText.visible = false;
+    this.menuHighScoreText.visible = false;
+    this.playBtn.visible = false;
+    this.achievementsBtn.visible = false;
+    this.charSelectBtn.visible = false;
+    this.instructionsBtn.visible = false;
+    this.settingsBtn.visible = false;
+
+    this.scoreText.visible = false;
+    this.highScoreText.visible = false;
+    this.pauseBtn.visible = false;
+
+    // Bind HTML HUD and Menu Buttons
+    const menuPlayBtn = document.getElementById("menu-play-btn");
+    if (menuPlayBtn) {
+      menuPlayBtn.onclick = () => {
+        audio.playClick();
+        this.switchState("PLAYING");
+      };
+    }
+
+    const hudPauseBtn = document.getElementById("hud-pause-btn");
+    if (hudPauseBtn) {
+      hudPauseBtn.onclick = (e) => {
+        e.stopPropagation(); // Avoid jumping when tapping pause
+        audio.playClick();
+        if (this.gameState === "PLAYING") {
+          this.switchState("PAUSED");
+        }
+      };
+    }
+
+    const btnAchievements = document.getElementById("menu-btn-achievements");
+    if (btnAchievements) {
+      btnAchievements.onclick = (e) => {
+        e.stopPropagation();
+        audio.playClick();
+        this.switchState("ACHIEVEMENTS");
+      };
+    }
+
+    const btnChar = document.getElementById("menu-btn-char");
+    if (btnChar) {
+      btnChar.onclick = (e) => {
+        e.stopPropagation();
+        audio.playClick();
+        this.switchState("CHAR_SELECT");
+      };
+    }
+
+    const btnInstructions = document.getElementById("menu-btn-instructions");
+    if (btnInstructions) {
+      btnInstructions.onclick = (e) => {
+        e.stopPropagation();
+        audio.playClick();
+        this.switchState("INSTRUCTIONS");
+      };
+    }
+
+    const btnSettings = document.getElementById("menu-btn-settings");
+    if (btnSettings) {
+      btnSettings.onclick = (e) => {
+        e.stopPropagation();
+        audio.playClick();
+        this.switchState("SETTINGS");
+      };
+    }
   }
 
   jump() {
@@ -3888,10 +4028,26 @@ export class GameController extends Container {
     // Load stats for current user
     this.highScore = getStats().highScore;
     this.highScoreText.text = `KỶ LỤC: ${this.highScore}`;
+    this.syncDOMScoreAndHighScore();
 
     // Re-draw achievements list if open
     if (this.gameState === "ACHIEVEMENTS") {
       this.updateAchievementsDisplay();
+    }
+  }
+
+  syncDOMScoreAndHighScore() {
+    const domScore = document.getElementById("hud-score");
+    if (domScore) {
+      domScore.innerText = `ĐIỂM: ${Math.floor(this.score)}`;
+    }
+    const domHighScore = document.getElementById("hud-highscore");
+    if (domHighScore) {
+      domHighScore.innerText = `KỶ LỤC: ${this.highScore}`;
+    }
+    const menuHighScoreText = document.getElementById("menu-highscore");
+    if (menuHighScoreText) {
+      menuHighScoreText.innerText = `🏆 KỶ LỤC ĐIỂM: ${this.highScore}`;
     }
   }
 
@@ -4339,7 +4495,7 @@ export class GameController extends Container {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 10px;
-          max-height: 280px;
+          max-height: min(450px, 65vh);
           overflow-y: auto;
           padding-right: 4px;
           box-sizing: border-box;
@@ -5162,14 +5318,6 @@ export class GameController extends Container {
     title.className = "game-popup-title";
     title.innerText = "HƯỚNG DẪN CHƠI";
     card.appendChild(title);
-
-    const closeBtn = document.createElement("button");
-    closeBtn.className = "game-popup-close-btn";
-    closeBtn.addEventListener("click", () => {
-      audio.playClick();
-      this.switchState("MAIN_MENU");
-    });
-    card.appendChild(closeBtn);
 
     const leftItems = [
       {
