@@ -2829,13 +2829,14 @@ export class GameController extends Container {
         obs.bobTimer = (obs.bobTimer || 0) + elapsed * 0.12;
         obs.sprite.y = obs.baseY + Math.sin(obs.bobTimer) * 12 * scale;
 
-        // Spin and pulse scale gently
+        // Spin the inner sprite gently
         if (obs.sprite.children.length > 0) {
-          const itemSprite = obs.sprite.children[0];
-          itemSprite.rotation += 0.03 * elapsed;
-          const scalePulse = 1.0 + Math.sin(obs.bobTimer * 2) * 0.08;
-          itemSprite.scale.set(scalePulse);
+          obs.sprite.children[0].rotation += 0.03 * elapsed;
         }
+
+        // Pulse the parent container scale instead of the inner sprite (preserving its width/height)
+        const scalePulse = 1.0 + Math.sin(obs.bobTimer * 2) * 0.08;
+        obs.sprite.scale.set(scalePulse);
       } else if (
         obs.type === 2 &&
         obs.isSlipper &&
