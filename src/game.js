@@ -1376,14 +1376,15 @@ export class GameController extends Container {
     const label = new Text({
       text: labelText.toUpperCase(),
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Nunito",
         fontSize: 20,
         fill: "#360207",
         fontWeight: "900",
         letterSpacing: 1.2,
+        stroke: { color: "#360207", width: 0.5 }, // Subtle matching stroke to sharpen edges
       }),
-      roundPixels: true,
     });
+    label.roundPixels = true; // Set roundPixels explicitly on the instance
     label.anchor.set(0, 0.5);
     row.addChild(label);
 
@@ -1407,6 +1408,7 @@ export class GameController extends Container {
       const fontSize = isMobile ? 16 : 20;
 
       label.style.fontSize = fontSize;
+      label.onViewUpdate(); // Force texture rebuild and boundary calculation immediately!
 
       rowBg
         .clear()
@@ -1502,7 +1504,7 @@ export class GameController extends Container {
     this.settingsTitle = new Text({
       text: "CÀI ĐẶT",
       style: new TextStyle({
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Nunito",
         fontSize: 22,
         fontWeight: "900",
         fill: 0xffffff,
@@ -1570,7 +1572,7 @@ export class GameController extends Container {
     this.settingsVersionText = new Text({
       text: "Phiên bản: 1.0.0",
       style: {
-        fontFamily: "Nunito, sans-serif",
+        fontFamily: "Nunito",
         fontSize: 12,
         fill: "#aaaaaa",
       },
