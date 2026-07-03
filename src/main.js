@@ -2,6 +2,9 @@ import { Application } from "pixi.js";
 import { GameController } from "./game";
 
 (async () => {
+  // Wait for Google Fonts to be loaded before initializing the app or starting the game
+  await document.fonts.ready;
+
   // 1. Create a new Application instance
   const app = new Application();
 
@@ -13,7 +16,9 @@ import { GameController } from "./game";
     resizeTo: container,
     antialias: true,
     autoDensity: true,
-    resolution: window.devicePixelRatio || 1,
+    resolution: Math.max(window.devicePixelRatio || 1, 2),
+    preference: "webgl",
+    roundPixels: true,
   });
 
   // 3. Append the canvas view to the DOM container
@@ -84,6 +89,44 @@ import { GameController } from "./game";
     src: "/assest/image/imagebldp/001_avatar_laclac.png",
   });
 
+  // Obstacle/Item preview assets for instructions UI
+  PixiAssets.add({
+    alias: "prop_lopxe",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
+  });
+  PixiAssets.add({
+    alias: "prop_hangrao",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
+  });
+  PixiAssets.add({
+    alias: "prop_deptoong",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
+  });
+  PixiAssets.add({
+    alias: "prop_redchair",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.png",
+  });
+  PixiAssets.add({
+    alias: "prop_banhchung",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
+  });
+  PixiAssets.add({
+    alias: "prop_banhmi",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.png",
+  });
+  PixiAssets.add({
+    alias: "prop_bluetable",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.png",
+  });
+  PixiAssets.add({
+    alias: "prop_bunhin",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.png",
+  });
+  PixiAssets.add({
+    alias: "prop_reddrink",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.png",
+  });
+
   await PixiAssets.load([
     "home_btn",
     "settings_btn",
@@ -103,6 +146,15 @@ import { GameController } from "./game";
     "quest_btn",
     "user_btn",
     "avatar_laclac",
+    "prop_lopxe",
+    "prop_hangrao",
+    "prop_deptoong",
+    "prop_redchair",
+    "prop_banhchung",
+    "prop_banhmi",
+    "prop_bluetable",
+    "prop_bunhin",
+    "prop_reddrink",
   ]);
 
   // 4. Create the game manager container

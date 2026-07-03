@@ -31,8 +31,8 @@ function gameAlert(message) {
         }
         .game-alert-card {
           background: #fbfaf5;
-          border: 5px solid #5900b3;
-          box-shadow: inset 0 0 0 2.5px #ffea00, 0 10px 25px rgba(0, 0, 0, 0.35);
+          border: 5px solid #f57c00;
+          box-shadow: inset 0 0 0 2.5px #ffea00, 0 6px 0 #bf360c, 0 12px 25px rgba(0, 0, 0, 0.35);
           border-radius: 20px;
           padding: 28px 24px;
           width: 85%; max-width: 340px;
@@ -530,11 +530,14 @@ export class GameController extends Container {
     const label = new Text({
       text: labelText.toUpperCase(),
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: Math.min(20, height * 0.45),
-        fill: "#37474f",
+        fontFamily: "Nunito, sans-serif",
+        fontSize: Math.min(18, height * 0.45),
+        fill: "#ffffff",
+        fontWeight: "900",
+        stroke: { color: "#360207", width: 3.5 },
         align: "center",
       }),
+      roundPixels: true,
     });
     label.anchor.set(0.5);
 
@@ -710,7 +713,7 @@ export class GameController extends Container {
       const txt = new Text({
         text: emoji,
         style: new TextStyle({
-          fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+          fontFamily: "Nunito, sans-serif",
           fontSize: radius * 1.0,
           fill: 0xffffff,
           align: "center",
@@ -760,19 +763,21 @@ export class GameController extends Container {
         "/assest/image/imagebldp/003_avatar_duck.png",
       );
 
-      // Preload obstacles
-      await Assets.load(
+      // Preload obstacles and collectibles (multi-asset expansion)
+      const assetPaths = [
         "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
-      );
-      await Assets.load(
         "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
-      );
-      await Assets.load(
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
-      );
-      await Assets.load(
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.png",
         "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
-      );
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.png",
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.png",
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.png",
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.png",
+      ];
+      for (const path of assetPaths) {
+        await Assets.load(path);
+      }
 
       if (this.destroyed) return;
 
@@ -1058,7 +1063,7 @@ export class GameController extends Container {
     this.menuTitleText = new Text({
       text: "BỘ LẠC PHIÊU LƯU KÝ",
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+        fontFamily: "Nunito, sans-serif",
         fontSize: 42,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -1081,6 +1086,7 @@ export class GameController extends Container {
         wordWrapWidth: 450,
         align: "center",
       }),
+      roundPixels: true,
     });
     this.menuTitleText.anchor.set(0.5);
     this.mainMenuContainer.addChild(this.menuTitleText);
@@ -1088,7 +1094,7 @@ export class GameController extends Container {
     this.menuSubtitleText = new Text({
       text: "",
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+        fontFamily: "Nunito, sans-serif",
         fontSize: 12,
         fill: "#1565c0",
 
@@ -1098,6 +1104,7 @@ export class GameController extends Container {
         wordWrapWidth: 400,
         align: "center",
       }),
+      roundPixels: true,
     });
     this.menuSubtitleText.anchor.set(0.5);
     this.mainMenuContainer.addChild(this.menuSubtitleText);
@@ -1106,7 +1113,7 @@ export class GameController extends Container {
     this.menuHighScoreText = new Text({
       text: `🏆 KỶ LỤC ĐIỂM: ${this.highScore}`,
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+        fontFamily: "Nunito, sans-serif",
         fontSize: 28,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -1126,6 +1133,7 @@ export class GameController extends Container {
         fontWeight: "900",
         letterSpacing: 6,
       }),
+      roundPixels: true,
     });
     this.menuHighScoreText.anchor.set(0.5);
     this.mainMenuContainer.addChild(this.menuHighScoreText);
@@ -1162,7 +1170,7 @@ export class GameController extends Container {
     this.scoreText = new Text({
       text: "ĐIỂM: 0",
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+        fontFamily: "Nunito, sans-serif",
         fontSize: 28,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -1182,6 +1190,7 @@ export class GameController extends Container {
         fontWeight: "900",
         letterSpacing: 6,
       }),
+      roundPixels: true,
     });
     this.scoreText.anchor.set(0, 0.5);
     this.gamePlayContainer.addChild(this.scoreText);
@@ -1189,7 +1198,7 @@ export class GameController extends Container {
     this.highScoreText = new Text({
       text: "KỶ LỤC: 0",
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+        fontFamily: "Nunito, sans-serif",
         fontSize: 18,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -1209,6 +1218,7 @@ export class GameController extends Container {
         fontWeight: "900",
         letterSpacing: 4,
       }),
+      roundPixels: true,
     });
     this.highScoreText.anchor.set(1, 0.5);
     this.gamePlayContainer.addChild(this.highScoreText);
@@ -1231,7 +1241,7 @@ export class GameController extends Container {
     this.leaderboardCard = new Container();
     this.achievementsContainer.addChild(this.leaderboardCard);
 
-    const cardW = 500;
+    const cardW = 460;
     const cardH = 580;
 
     // 1. Card Base Styling (purple 3D border, cream card face)
@@ -1260,10 +1270,10 @@ export class GameController extends Container {
       .fill({ color: 0xffffff });
     this.leaderboardCard.addChild(cardFace);
 
-    // 2. Floating 3D Title Ribbon (Pink/Magenta)
+    // 2. Floating 3D Title Ribbon (Orange/Yellow gradient)
     const ribbonShadow = new Graphics()
-      .roundRect(-150, -cardH / 2 - 21 + 4, 300, 42, 10)
-      .fill({ color: 0x800040 });
+      .roundRect(-120, -cardH / 2 - 21 + 4, 240, 42, 10)
+      .fill({ color: 0x8a4500 });
     this.leaderboardCard.addChild(ribbonShadow);
 
     const ribbon = new Graphics();
@@ -1271,24 +1281,27 @@ export class GameController extends Container {
       start: { x: 0, y: -21 },
       end: { x: 0, y: 21 },
       colorStops: [
-        { offset: 0, color: 0xff66b2 },
-        { offset: 1, color: 0xcc0066 },
+        { offset: 0, color: 0xffe500 },
+        { offset: 1, color: 0xff9900 },
       ],
     });
     ribbon
-      .roundRect(-150, -cardH / 2 - 21, 300, 42, 10)
+      .roundRect(-120, -cardH / 2 - 21, 240, 42, 10)
       .fill({ fill: ribbonGrad })
-      .stroke({ color: 0xffe6f2, width: 2 });
+      .stroke({ color: 0xfff8b3, width: 2 });
     this.leaderboardCard.addChild(ribbon);
 
     const titleText = new Text({
-      text: "BẢNG VÀNG THÀNH TÍCH",
+      text: "BẢNG VÀNG",
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: 18,
+        fontFamily: "Nunito, sans-serif",
+        fontSize: 20,
+        fontWeight: "900",
         fill: 0xffffff,
+        letterSpacing: 2,
         align: "center",
       }),
+      roundPixels: true,
     });
     titleText.anchor.set(0.5);
     titleText.position.set(0, -cardH / 2);
@@ -1296,22 +1309,35 @@ export class GameController extends Container {
 
     // 3. Header Labels
     const headerStyle = new TextStyle({
-      fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+      fontFamily: "Nunito, sans-serif",
       fontSize: 13,
-      fontWeight: "bold",
-      fill: "#5900b3",
+      fontWeight: "900",
+      fill: "#ffffff",
+      stroke: { color: "#5900b3", width: 3, join: "round" },
     });
-    const lblRank = new Text({ text: "HẠNG", style: headerStyle });
+    const lblRank = new Text({
+      text: "HẠNG",
+      style: headerStyle,
+      roundPixels: true,
+    });
     lblRank.anchor.set(0.5);
     lblRank.position.set(-170, -155);
     this.leaderboardCard.addChild(lblRank);
 
-    const lblMember = new Text({ text: "THÀNH VIÊN", style: headerStyle });
+    const lblMember = new Text({
+      text: "THÀNH VIÊN",
+      style: headerStyle,
+      roundPixels: true,
+    });
     lblMember.anchor.set(0, 0.5);
     lblMember.position.set(-90, -155);
     this.leaderboardCard.addChild(lblMember);
 
-    const lblScore = new Text({ text: "KỶ LỤC", style: headerStyle });
+    const lblScore = new Text({
+      text: "KỶ LỤC",
+      style: headerStyle,
+      roundPixels: true,
+    });
     lblScore.anchor.set(1, 0.5);
     lblScore.position.set(160, -155);
     this.leaderboardCard.addChild(lblScore);
@@ -1343,25 +1369,22 @@ export class GameController extends Container {
     row.position.set(0, yPos);
 
     // Row background card panel to group label and toggle visually
-    const rowBg = new Graphics()
-      .roundRect(-135, -28, 270, 56, 10)
-      .fill({ color: 0xefede0 }) // Warm creamy beige
-      .stroke({ color: 0xdfdac0, width: 1.5 });
+    const rowBg = new Graphics();
     row.addChild(rowBg);
 
-    // Left label (enlarged cartoon text)
+    // Left label (enlarged cartoon text matching the style of the confirmation modal in image 2)
     const label = new Text({
       text: labelText.toUpperCase(),
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: 18,
-        fill: "#37474f",
-        fontWeight: "bold",
-        letterSpacing: 0.8,
+        fontFamily: "Nunito, sans-serif",
+        fontSize: 20,
+        fill: "#360207",
+        fontWeight: "900",
+        letterSpacing: 1.2,
       }),
+      roundPixels: true,
     });
     label.anchor.set(0, 0.5);
-    label.position.set(-115, 0);
     row.addChild(label);
 
     const trackTexOn = Assets.get("toggle_on");
@@ -1369,34 +1392,74 @@ export class GameController extends Container {
 
     const track = new Sprite(getState() ? trackTexOff : trackTexOn);
     track.anchor.set(0.5);
-    track.width = 100;
-    track.height = 50;
     track.eventMode = "static";
     track.cursor = "pointer";
-    track.position.set(80, 0);
     row.addChild(track);
 
-    // Draw dotted connector line dynamically between text and switch
-    const labelWidth = label.width;
-    const startX = -115 + labelWidth + 12;
-    const endX = 80 - 50 - 12;
-    if (startX < endX) {
-      const dots = new Graphics();
-      for (let dx = startX; dx <= endX; dx += 6) {
-        dots.circle(dx, 0, 1.5);
+    const dots = new Graphics();
+    row.addChild(dots);
+
+    // Dynamic layout update to adjust dimensions instead of scaling
+    row.updateLayout = (isMobile) => {
+      row.isMobileLayout = isMobile;
+      const rowW = isMobile ? 300 : 410;
+      const rowH = isMobile ? 54 : 64;
+      const fontSize = isMobile ? 16 : 20;
+
+      label.style.fontSize = fontSize;
+
+      rowBg
+        .clear()
+        .roundRect(-rowW / 2, -rowH / 2, rowW, rowH, 15)
+        .fill({ color: 0xffffff })
+        .stroke({ color: 0xddeaff, width: 3 });
+
+      const labelX = isMobile ? -130 : -180;
+      label.position.set(labelX, -1);
+
+      track.width = isMobile ? 64 : 76;
+      track.height = isMobile ? 40 : 48;
+      const trackX = isMobile ? 110 : 145;
+      track.position.set(trackX, 0);
+
+      dots.clear();
+      const startX = labelX + label.width + 10;
+      const endX = trackX - track.width / 2 - 10;
+      if (startX < endX) {
+        dots.beginPath();
+        for (let dx = startX; dx <= endX; dx += 8) {
+          dots.circle(dx, 0, 1.5);
+        }
+        dots.fill({ color: 0xccccdd });
       }
-      dots.fill({ color: 0xc0bba0 });
-      row.addChild(dots);
-    }
+    };
+
+    // Initialize with desktop layout by default
+    row.updateLayout(false);
 
     const handleToggle = () => {
       audio.playCollect(); // Or click sound
       const isMuted = onToggle();
       track.texture = isMuted ? trackTexOff : trackTexOn;
+      // Re-apply correct dimensions
+      if (row.isMobileLayout) {
+        track.width = 64;
+        track.height = 40;
+      } else {
+        track.width = 76;
+        track.height = 48;
+      }
     };
 
     row.updateVisuals = () => {
       track.texture = getState() ? trackTexOff : trackTexOn;
+      if (row.isMobileLayout) {
+        track.width = 64;
+        track.height = 40;
+      } else {
+        track.width = 76;
+        track.height = 48;
+      }
     };
 
     track.on("pointerdown", handleToggle);
@@ -1416,68 +1479,51 @@ export class GameController extends Container {
     this.settingsCard = new Container();
     this.settingsContainer.addChild(this.settingsCard);
 
-    const cardW = 340;
-    const cardH = 300;
-
     // 3D Shadow Base
-    const shadow = new Graphics()
-      .roundRect(-cardW / 2, -cardH / 2 + 6, cardW, cardH, 20)
-      .fill({ color: 0xbf360c });
-    this.settingsCard.addChild(shadow);
+    this.settingsShadow = new Graphics();
+    this.settingsCard.addChild(this.settingsShadow);
 
-    const cardFace = new Graphics()
-      .roundRect(-cardW / 2 + 8, -cardH / 2 + 8, cardW - 16, cardH - 16, 14)
-      .fill({ color: 0xffffff });
-    this.settingsCard.addChild(cardFace);
+    // Main Card Border
+    this.settingsBorder = new Graphics();
+    this.settingsCard.addChild(this.settingsBorder);
 
-    // Title Ribbon
-    const ribbonW = 210;
-    const ribbonH = 42;
-    const ribbonY = -cardH / 2;
-    const ribbonShadow = new Graphics()
-      .roundRect(-ribbonW / 2, ribbonY - ribbonH / 2 + 4, ribbonW, ribbonH, 10)
-      .fill({ color: 0x0d47a1 });
-    this.settingsCard.addChild(ribbonShadow);
+    // Cream Card Face
+    this.settingsFace = new Graphics();
+    this.settingsCard.addChild(this.settingsFace);
 
-    const ribbon = new Graphics();
-    const ribbonGrad = new FillGradient({
-      start: { x: 0, y: -21 },
-      end: { x: 0, y: 21 },
-      colorStops: [
-        { offset: 0, color: 0x64b5f6 },
-        { offset: 1, color: 0x1976d2 },
-      ],
-    });
-    ribbon
-      .roundRect(-ribbonW / 2, ribbonY - ribbonH / 2, ribbonW, ribbonH, 10)
-      .fill({ fill: ribbonGrad })
-      .stroke({ color: 0xe3f2fd, width: 2 });
-    this.settingsCard.addChild(ribbon);
+    // Title Ribbon Shadow
+    this.settingsRibbonShadow = new Graphics();
+    this.settingsCard.addChild(this.settingsRibbonShadow);
 
-    const title = new Text({
-      text: "CÀI ĐẶT GAME",
+    // Title Ribbon Graphic
+    this.settingsRibbon = new Graphics();
+    this.settingsCard.addChild(this.settingsRibbon);
+
+    this.settingsTitle = new Text({
+      text: "CÀI ĐẶT",
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: 18,
+        fontFamily: "Nunito, sans-serif",
+        fontSize: 22,
+        fontWeight: "900",
         fill: 0xffffff,
+        letterSpacing: 2,
         align: "center",
       }),
+      roundPixels: true,
     });
-    title.anchor.set(0.5);
-    title.position.set(0, ribbonY);
-    this.settingsCard.addChild(title);
+    this.settingsTitle.anchor.set(0.5);
+    this.settingsCard.addChild(this.settingsTitle);
 
     // Close Button (X) on top-right
-    const closeBtn = this.createIconOnlyButton("❌", 20, () => {
+    this.settingsCloseBtn = this.createIconOnlyButton("❌", 20, () => {
       this.switchState("MAIN_MENU");
     });
-    closeBtn.position.set(cardW / 2 - 20, -cardH / 2 + 20);
-    this.settingsCard.addChild(closeBtn);
+    this.settingsCard.addChild(this.settingsCloseBtn);
 
     // Music row
     this.mainMusicRow = this.createToggleRow(
       "NHẠC NỀN",
-      -60,
+      -75,
       () => audio.musicMuted,
       () => {
         audio.toggleMusicMute();
@@ -1489,7 +1535,7 @@ export class GameController extends Container {
     // SFX row
     this.mainSfxRow = this.createToggleRow(
       "HIỆU ỨNG",
-      -10,
+      0,
       () => audio.sfxMuted,
       () => {
         audio.toggleSfxMute();
@@ -1499,7 +1545,7 @@ export class GameController extends Container {
     this.settingsCard.addChild(this.mainSfxRow);
 
     // Reset button
-    const resetBtn = this.create3DButton(
+    this.settingsResetBtn = this.create3DButton(
       "🗑️ XÓA LỊCH SỬ",
       180,
       36,
@@ -1519,20 +1565,19 @@ export class GameController extends Container {
         }
       },
     );
-    resetBtn.position.set(0, 55);
-    this.settingsCard.addChild(resetBtn);
+    this.settingsCard.addChild(this.settingsResetBtn);
 
-    const versionText = new Text({
+    this.settingsVersionText = new Text({
       text: "Phiên bản: 1.0.0",
       style: {
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+        fontFamily: "Nunito, sans-serif",
         fontSize: 12,
         fill: "#aaaaaa",
       },
+      roundPixels: true,
     });
-    versionText.anchor.set(0.5);
-    versionText.position.set(0, 110);
-    this.settingsCard.addChild(versionText);
+    this.settingsVersionText.anchor.set(0.5);
+    this.settingsCard.addChild(this.settingsVersionText);
   }
 
   setupPauseUI() {
@@ -1542,7 +1587,7 @@ export class GameController extends Container {
     this.pauseCard = new Container();
     this.pauseContainer.addChild(this.pauseCard);
 
-    const cardW = 340;
+    const cardW = 460;
     const cardH = 300;
 
     // 1. Card Shadow
@@ -1576,36 +1621,37 @@ export class GameController extends Container {
     this.pauseCard.addChild(cardFace);
 
     // 4. Floating 3D Title Ribbon (Cyan-Blue)
-    const ribbonW = 210;
+    const ribbonW = 240;
     const ribbonH = 42;
     const ribbonY = -cardH / 2;
     const ribbon = new Graphics()
       .roundRect(-ribbonW / 2, ribbonY - ribbonH / 2 + 4, ribbonW, ribbonH, 10)
-      .fill({ color: 0x0d47a1 }) // Ribbon shadow
+      .fill({ color: 0x8a4500 }) // Ribbon shadow
       .roundRect(-ribbonW / 2, ribbonY - ribbonH / 2, ribbonW, ribbonH, 10)
       .fill({
         fill: new FillGradient({
           start: { x: 0, y: ribbonY - ribbonH / 2 },
           end: { x: 0, y: ribbonY + ribbonH / 2 },
           colorStops: [
-            { offset: 0, color: 0x64b5f6 },
-            { offset: 1, color: 0x1976d2 },
+            { offset: 0, color: 0xffe500 },
+            { offset: 1, color: 0xff9900 },
           ],
         }),
       })
-      .stroke({ color: 0xe3f2fd, width: 2 });
+      .stroke({ color: 0xfff8b3, width: 2 });
     this.pauseCard.addChild(ribbon);
 
     // Title text inside ribbon
     const titleText = new Text({
-      text: "CÀI ĐẶT GAME",
+      text: "CÀI ĐẶT",
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: 18,
+        fontFamily: "Nunito, sans-serif",
+        fontSize: 22,
+        fontWeight: "900",
         fill: 0xffffff,
-        fontWeight: "bold",
-        letterSpacing: 1.5,
+        letterSpacing: 2,
       }),
+      roundPixels: true,
     });
     titleText.anchor.set(0.5);
     titleText.position.set(0, ribbonY);
@@ -1614,7 +1660,7 @@ export class GameController extends Container {
     // Music row
     this.pauseMusicRow = this.createToggleRow(
       "NHẠC NỀN",
-      -60,
+      -70,
       () => audio.musicMuted,
       () => {
         audio.toggleMusicMute();
@@ -1626,7 +1672,7 @@ export class GameController extends Container {
     // SFX row
     this.pauseSfxRow = this.createToggleRow(
       "HIỆU ỨNG",
-      -10,
+      5,
       () => audio.sfxMuted,
       () => {
         audio.toggleSfxMute();
@@ -1644,7 +1690,7 @@ export class GameController extends Container {
         this.switchState("MAIN_MENU");
       }
     });
-    btnHome.position.set(-65, 60);
+    btnHome.position.set(-65, 80);
     this.pauseCard.addChild(btnHome);
 
     const btnReplay = this.createIconOnlyButton("🔄", 26, () => {
@@ -1653,14 +1699,14 @@ export class GameController extends Container {
       this.gameState = "PLAYING";
       this.switchState("PLAYING");
     });
-    btnReplay.position.set(0, 60);
+    btnReplay.position.set(0, 80);
     this.pauseCard.addChild(btnReplay);
 
     const btnResume = this.createIconOnlyButton("⏯️", 26, () => {
       // Calls switchState while gameState is PAUSED...
       this.switchState("PLAYING");
     });
-    btnResume.position.set(65, 60);
+    btnResume.position.set(65, 80);
     this.pauseCard.addChild(btnResume);
   }
 
@@ -1671,7 +1717,7 @@ export class GameController extends Container {
     this.gameOverCard = new Container();
     this.gameOverContainer.addChild(this.gameOverCard);
 
-    const cardW = 340;
+    const cardW = 460;
     const cardH = 320;
 
     // 3D Shadow Base
@@ -1703,12 +1749,12 @@ export class GameController extends Container {
     this.gameOverCard.addChild(cardFace);
 
     // Title Ribbon
-    const ribbonW = 220;
+    const ribbonW = 240;
     const ribbonH = 42;
     const ribbonY = -cardH / 2;
     const ribbonShadow = new Graphics()
       .roundRect(-ribbonW / 2, ribbonY - ribbonH / 2 + 4, ribbonW, ribbonH, 10)
-      .fill({ color: 0x4a000a });
+      .fill({ color: 0x8a4500 });
     this.gameOverCard.addChild(ribbonShadow);
 
     const ribbon = new Graphics();
@@ -1716,24 +1762,27 @@ export class GameController extends Container {
       start: { x: 0, y: -21 },
       end: { x: 0, y: 21 },
       colorStops: [
-        { offset: 0, color: 0xff4d4d },
-        { offset: 1, color: 0xcc0000 },
+        { offset: 0, color: 0xffe500 },
+        { offset: 1, color: 0xff9900 },
       ],
     });
     ribbon
       .roundRect(-ribbonW / 2, ribbonY - ribbonH / 2, ribbonW, ribbonH, 10)
       .fill({ fill: ribbonGrad })
-      .stroke({ color: 0xffe6e6, width: 2 });
+      .stroke({ color: 0xfff8b3, width: 2 });
     this.gameOverCard.addChild(ribbon);
 
     const title = new Text({
       text: "TRÒ CHƠI KẾT THÚC",
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: 16,
+        fontFamily: "Nunito, sans-serif",
+        fontSize: 20,
+        fontWeight: "900",
         fill: 0xffffff,
+        letterSpacing: 2,
         align: "center",
       }),
+      roundPixels: true,
     });
     title.anchor.set(0.5);
     title.position.set(0, ribbonY);
@@ -1769,7 +1818,7 @@ export class GameController extends Container {
     const bannerText = new Text({
       text: "KỶ LỤC MỚI!",
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+        fontFamily: "Nunito, sans-serif",
         fontSize: 14,
         fill: 0xffffff,
         stroke: { color: 0x8a0000, width: 2, join: "round" },
@@ -1784,6 +1833,7 @@ export class GameController extends Container {
         letterSpacing: 3,
         align: "center",
       }),
+      roundPixels: true,
     });
     bannerText.anchor.set(0.5);
     this.newRecordBanner.addChild(bannerText);
@@ -1792,7 +1842,7 @@ export class GameController extends Container {
     this.gameOverScoreText = new Text({
       text: "ĐIỂM SỐ: 0",
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+        fontFamily: "Nunito, sans-serif",
         fontSize: 28,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -1812,6 +1862,7 @@ export class GameController extends Container {
         fontWeight: "900",
         letterSpacing: 4,
       }),
+      roundPixels: true,
     });
     this.gameOverScoreText.anchor.set(0.5);
     this.gameOverScoreText.position.set(0, 15);
@@ -1821,7 +1872,7 @@ export class GameController extends Container {
     this.gameOverMsgText = new Text({
       text: "KỶ LỤC CŨ: 0",
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+        fontFamily: "Nunito, sans-serif",
         fontSize: 16,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -1841,6 +1892,7 @@ export class GameController extends Container {
         fontWeight: "900",
         letterSpacing: 3,
       }),
+      roundPixels: true,
     });
     this.gameOverMsgText.anchor.set(0.5);
     this.gameOverMsgText.position.set(0, 42);
@@ -2016,7 +2068,7 @@ export class GameController extends Container {
     this.charSelectContainer.addChild(this.charSelectCard);
 
     const cardW = 460;
-    const cardH = 540;
+    const cardH = 440; // Reduced height to compress vertical space
 
     // 3D Shadow Base
     const shadow = new Graphics()
@@ -2043,13 +2095,13 @@ export class GameController extends Container {
     // Cream Card Face
     const cardFace = new Graphics()
       .roundRect(-cardW / 2 + 8, -cardH / 2 + 8, cardW - 16, cardH - 16, 14)
-      .fill({ color: 0xffffff });
+      .fill({ color: 0xfbfaf5 });
     this.charSelectCard.addChild(cardFace);
 
     // Title Ribbon
     const ribbonShadow = new Graphics()
       .roundRect(-120, -cardH / 2 - 21 + 4, 240, 42, 10)
-      .fill({ color: 0x0d47a1 });
+      .fill({ color: 0x8a4500 });
     this.charSelectCard.addChild(ribbonShadow);
 
     const ribbon = new Graphics();
@@ -2057,24 +2109,27 @@ export class GameController extends Container {
       start: { x: 0, y: -21 },
       end: { x: 0, y: 21 },
       colorStops: [
-        { offset: 0, color: 0x64b5f6 },
-        { offset: 1, color: 0x1976d2 },
+        { offset: 0, color: 0xffe500 },
+        { offset: 1, color: 0xff9900 },
       ],
     });
     ribbon
       .roundRect(-120, -cardH / 2 - 21, 240, 42, 10)
       .fill({ fill: ribbonGrad })
-      .stroke({ color: 0xe3f2fd, width: 2 });
+      .stroke({ color: 0xfff8b3, width: 2 });
     this.charSelectCard.addChild(ribbon);
 
     const title = new Text({
       text: "CHỌN NHÂN VẬT",
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: 18,
+        fontFamily: "Nunito, sans-serif",
+        fontSize: 22,
+        fontWeight: "900",
         fill: 0xffffff,
+        letterSpacing: 2,
         align: "center",
       }),
+      roundPixels: true,
     });
     title.anchor.set(0.5);
     title.position.set(0, -cardH / 2);
@@ -2098,20 +2153,22 @@ export class GameController extends Container {
         this.updateCharSelectDisplay();
       }
     });
-    this.charPrevBtn.position.set(-80, 190);
+    this.charPrevBtn.position.set(-80, 150); // Moved up to 150 from 190
     this.charSelectCard.addChild(this.charPrevBtn);
 
     this.charPageText = new Text({
       text: "TRANG 1/4",
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: 14,
-        fontWeight: "bold",
-        fill: "#37474f",
+        fontFamily: "Nunito, sans-serif",
+        fontSize: 18,
+        fontWeight: "900",
+        fill: "#bf360c",
+        letterSpacing: 1.5,
       }),
+      roundPixels: true,
     });
     this.charPageText.anchor.set(0.5);
-    this.charPageText.position.set(0, 190);
+    this.charPageText.position.set(0, 150); // Moved up to 150 from 190
     this.charSelectCard.addChild(this.charPageText);
 
     this.charNextBtn = this.createIconOnlyButton("▶️", 18, () => {
@@ -2120,115 +2177,112 @@ export class GameController extends Container {
         this.updateCharSelectDisplay();
       }
     });
-    this.charNextBtn.position.set(80, 190);
+    this.charNextBtn.position.set(80, 150); // Moved up to 150 from 190
     this.charSelectCard.addChild(this.charNextBtn);
   }
 
   setupInstructionsUI() {
     this.instructionsBackdrop = new Graphics();
+    this.instructionsBackdrop.eventMode = "static";
+    this.instructionsBackdrop.on("pointerdown", (e) => e.stopPropagation());
     this.instructionsContainer.addChild(this.instructionsBackdrop);
 
     this.instructionsCard = new Container();
     this.instructionsContainer.addChild(this.instructionsCard);
 
-    const cardW = 340;
-    const cardH = 300;
+    // Member graphics properties for dynamic redraws in resize()
+    this.instructionsShadow = new Graphics();
+    this.instructionsBorder = new Graphics();
+    this.instructionsFace = new Graphics();
+    this.instructionsRibbonShadow = new Graphics();
+    this.instructionsRibbon = new Graphics();
 
-    // 1. Card Shadow
-    const cardShadow = new Graphics()
-      .roundRect(-cardW / 2 + 6, -cardH / 2 + 12, cardW, cardH, 20)
-      .fill({ color: 0x000000, alpha: 0.25 });
-    this.instructionsCard.addChild(cardShadow);
+    this.instructionsCard.addChild(this.instructionsShadow);
+    this.instructionsCard.addChild(this.instructionsBorder);
+    this.instructionsCard.addChild(this.instructionsFace);
+    this.instructionsCard.addChild(this.instructionsRibbonShadow);
+    this.instructionsCard.addChild(this.instructionsRibbon);
 
-    // 2. Purple 3D Border
-    const borderBg = new Graphics()
-      .roundRect(-cardW / 2, -cardH / 2 + 6, cardW, cardH, 20)
-      .fill({ color: 0xbf360c })
-      .roundRect(-cardW / 2, -cardH / 2, cardW, cardH, 20)
-      .fill({
-        fill: new FillGradient({
-          start: { x: 0, y: -cardH / 2 },
-          end: { x: 0, y: cardH / 2 },
-          colorStops: [
-            { offset: 0, color: 0xffb74d },
-            { offset: 1, color: 0xf57c00 },
-          ],
-        }),
-      })
-      .stroke({ color: 0xffea00, width: 2.5 });
-    this.instructionsCard.addChild(borderBg);
-
-    // 3. Bright Cream Card Face
-    const cardFace = new Graphics()
-      .roundRect(-cardW / 2 + 8, -cardH / 2 + 8, cardW - 16, cardH - 16, 14)
-      .fill({ color: 0xffffff });
-    this.instructionsCard.addChild(cardFace);
-
-    // 4. Floating 3D Title Ribbon (Orange/Yellow gradient)
-    const ribbonW = 210;
-    const ribbonH = 42;
-    const ribbonY = -cardH / 2;
-    const ribbonShadow = new Graphics()
-      .roundRect(-ribbonW / 2, ribbonY - ribbonH / 2 + 4, ribbonW, ribbonH, 10)
-      .fill({ color: 0x8a4500 });
-    this.instructionsCard.addChild(ribbonShadow);
-
-    const ribbon = new Graphics();
-    const ribbonGrad = new FillGradient({
-      start: { x: 0, y: -21 },
-      end: { x: 0, y: 21 },
-      colorStops: [
-        { offset: 0, color: 0xffe500 },
-        { offset: 1, color: 0xff9900 },
-      ],
-    });
-    ribbon
-      .roundRect(-ribbonW / 2, ribbonY - ribbonH / 2, ribbonW, ribbonH, 10)
-      .fill({ fill: ribbonGrad })
-      .stroke({ color: 0xfff8b3, width: 2 });
-    this.instructionsCard.addChild(ribbon);
-
-    const titleText = new Text({
+    this.instructionsTitle = new Text({
       text: "HƯỚNG DẪN CHƠI",
       style: new TextStyle({
-        fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-        fontSize: 16,
+        fontFamily: "Nunito",
+        fontSize: 22,
+        fontWeight: "900",
         fill: 0xffffff,
-        fontWeight: "bold",
+        letterSpacing: 2,
+        align: "center",
       }),
+      roundPixels: true,
     });
-    titleText.anchor.set(0.5);
-    titleText.position.set(0, ribbonY);
-    this.instructionsCard.addChild(titleText);
+    this.instructionsTitle.anchor.set(0.5);
+    this.instructionsCard.addChild(this.instructionsTitle);
 
-    // Instructions Lines
-    const textStyle = new TextStyle({
-      fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
-      fontSize: 13,
-      fontWeight: "bold",
-      fill: "#37474f",
-    });
-
-    const lines = [
-      "🏃‍♂️ LÊN / CHẠM: Nhảy qua đá & gai",
-      "🦅 XUỐNG / VUỐT XUỐNG: Cúi đầu né chim bay",
-      "🥜 THU THẬP: Nhặt hạt Lạc để tăng điểm",
-      "🛡️ GIÁP: Nhặt khiên xanh để chắn va chạm",
+    // Column 1: Tránh Né (Left column)
+    const leftItems = [
+      { label: "Lốp xe (Nhảy né)", sprite: "prop_lopxe" },
+      { label: "Hàng rào (Nhảy né)", sprite: "prop_hangrao" },
+      { label: "Bàn nhựa (Nhảy né)", sprite: "prop_bluetable" },
+      { label: "Bù nhìn (Nhảy né)", sprite: "prop_bunhin" },
+      { label: "Dép tổ ong (Cúi né)", sprite: "prop_deptoong" },
+      { label: "Ghế đỏ bay (Cúi né)", sprite: "prop_redchair" },
     ];
 
-    lines.forEach((line, idx) => {
-      const lineText = new Text({ text: line, style: textStyle });
-      lineText.anchor.set(0.5);
-      lineText.position.set(0, -50 + idx * 30);
-      this.instructionsCard.addChild(lineText);
-    });
+    // Column 2: Vật phẩm & Khiên (Right column)
+    const rightItems = [
+      { label: "Bánh Chưng (+Điểm)", sprite: "prop_banhchung" },
+      { label: "Bánh Mì (+Điểm)", sprite: "prop_banhmi" },
+      { label: "Nước Ngọt (+Điểm)", sprite: "prop_reddrink" },
+      { label: "Khiên Bất Tử (2 giây)", sprite: "shield" },
+    ];
+
+    const createGridRows = (itemsData) => {
+      return itemsData.map((data) => {
+        const row = new Container();
+        this.instructionsCard.addChild(row);
+
+        row.iconBg = new Graphics();
+        row.addChild(row.iconBg);
+
+        if (data.sprite === "shield") {
+          row.sprite = new Graphics();
+          row.addChild(row.sprite);
+        } else {
+          row.sprite = Sprite.from(data.sprite);
+          row.sprite.anchor.set(0.5);
+          row.addChild(row.sprite);
+        }
+
+        row.labelText = new Text({
+          text: data.label,
+          style: new TextStyle({
+            fontFamily: "Nunito",
+            fontWeight: "800",
+            fontSize: 13,
+            fill: 0x3e2723, // Warm dark brown
+          }),
+          roundPixels: true,
+        });
+        row.labelText.anchor.set(0, 0.5);
+        row.addChild(row.labelText);
+
+        return row;
+      });
+    };
+
+    this.leftRows = createGridRows(leftItems);
+    this.rightRows = createGridRows(rightItems);
 
     // Bottom Action button: "ĐÃ HIỂU"
-    const understandBtn = this.create3DButton("ĐÃ HIỂU", 160, 38, () => {
-      this.switchState("MAIN_MENU");
-    });
-    understandBtn.position.set(0, 85);
-    this.instructionsCard.addChild(understandBtn);
+    this.instructionsUnderstandBtn = this.create3DButton(
+      "ĐÃ HIỂU",
+      160,
+      38,
+      () => {
+        this.switchState("MAIN_MENU");
+      },
+    );
+    this.instructionsCard.addChild(this.instructionsUnderstandBtn);
   }
 
   updateCharSelectDisplay() {
@@ -2303,7 +2357,7 @@ export class GameController extends Container {
     const colGap = 90;
     const rowGap = 90;
     const startX = -135;
-    const startY = -110;
+    const startY = -90;
 
     for (let idx = 0; idx < itemsPerPage; idx++) {
       const itemIdx = startIndex + idx;
@@ -2674,7 +2728,11 @@ export class GameController extends Container {
         // Bobbing peanut collectible
         obs.bobTimer = (obs.bobTimer || 0) + elapsed * 0.1;
         obs.sprite.y = obs.baseY + Math.sin(obs.bobTimer) * 8 * scale;
-      } else if (obs.type === 2 && obs.sprite.children.length > 0) {
+      } else if (
+        obs.type === 2 &&
+        obs.isSlipper &&
+        obs.sprite.children.length > 0
+      ) {
         // Spinning flying slipper
         obs.sprite.children[0].rotation -= 0.15 * elapsed;
       }
@@ -2712,7 +2770,7 @@ export class GameController extends Container {
     const scale = Math.min(1.0, sw / 450, sh / 650);
     const groundLevel = sh * 0.7;
 
-    // Obstacle/Item types: 0 (Stone), 1 (Spikes), 2 (Flying Bird), 3 (Peanut)
+    // Obstacle/Item types: 0 (Ground set A), 1 (Ground set B), 2 (Flying), 3 (Collectible)
     let type = Math.floor(Math.random() * 4);
 
     // Flying obstacles only appear after 100 points
@@ -2726,71 +2784,136 @@ export class GameController extends Container {
     let width = 44 * scale;
     let height = 45 * scale;
     let baseY = groundLevel;
+    let isSlipper = false;
 
     if (type === 0) {
-      // Stone -> Car Tire (lopxeoto)
-      const sprite = Sprite.from(
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
-      );
-      sprite.width = 75 * scale;
-      sprite.height = 75 * scale;
+      // Ground Set A: Tires and fences
+      const choices = [
+        {
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
+          w: 75,
+          h: 75,
+          yOffset: 10,
+        },
+        {
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
+          w: 100,
+          h: 75,
+          yOffset: 10,
+        },
+      ];
+      const selected = choices[Math.floor(Math.random() * choices.length)];
+      const sprite = Sprite.from(selected.path);
+      sprite.width = selected.w * scale;
+      sprite.height = selected.h * scale;
       sprite.anchor.set(0.5, 1);
-      sprite.y = 10 * scale; // sink into ground a bit
+      sprite.y = selected.yOffset * scale;
       container.addChild(sprite);
+
+      width = selected.w * scale;
+      height = selected.h * scale;
     } else if (type === 1) {
-      // Spikes -> Wooden Fence
-      const sprite = Sprite.from(
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
-      );
-      sprite.width = 100 * scale;
-      sprite.height = 75 * scale;
+      // Ground Set B: Blue tables and scarecrows
+      const choices = [
+        {
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.png",
+          w: 85,
+          h: 75,
+          yOffset: 10,
+        },
+        {
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.png",
+          w: 60,
+          h: 85,
+          yOffset: 10,
+        },
+      ];
+      const selected = choices[Math.floor(Math.random() * choices.length)];
+      const sprite = Sprite.from(selected.path);
+      sprite.width = selected.w * scale;
+      sprite.height = selected.h * scale;
       sprite.anchor.set(0.5, 1);
-      sprite.y = 10 * scale; // sink into ground a bit
+      sprite.y = selected.yOffset * scale;
       container.addChild(sprite);
+
+      width = selected.w * scale;
+      height = selected.h * scale;
     } else if (type === 2) {
-      // Flying Bird -> Slipper
-      // Randomize height:
-      // High: groundLevel - 130 * scale (must duck, jumping hits it)
-      // Low: groundLevel - 85 * scale (can duck or jump)
+      // Flying Obstacles: Throwing chairs and slippers
+      const choices = [
+        {
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.png",
+          w: 65,
+          h: 65,
+          slipper: true,
+        },
+        {
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
+          w: 65,
+          h: 65,
+          slipper: true,
+        },
+      ];
+      const selected = choices[Math.floor(Math.random() * choices.length)];
+
       const isHighSlipper = Math.random() > 0.5;
       spawnY = groundLevel - (isHighSlipper ? 130 : 85) * scale;
-      width = 50 * scale;
-      height = 40 * scale;
+      width = selected.w * scale;
+      height = selected.h * scale;
 
-      const sprite = Sprite.from(
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
-      );
-      sprite.width = 65 * scale;
-      sprite.height = 65 * scale;
+      const sprite = Sprite.from(selected.path);
+      sprite.width = selected.w * scale;
+      sprite.height = selected.h * scale;
       sprite.anchor.set(0.5, 0.5);
       container.addChild(sprite);
 
-      // SFX for bird spawn
+      // SFX for flying spawn
       audio.playBird();
 
-      // Wing animation is drawn in updateGameplay but we use GSAP or ignore it for sprite
-      gsap.to(sprite, {
-        y: -10 * scale,
-        yoyo: true,
-        repeat: -1,
-        duration: 0.4,
-        ease: "sine.inOut",
-      });
+      if (selected.slipper) {
+        isSlipper = true;
+      } else {
+        // Paper kite bobs gently up/down
+        gsap.to(sprite, {
+          y: -10 * scale,
+          yoyo: true,
+          repeat: -1,
+          duration: 0.4,
+          ease: "sine.inOut",
+        });
+      }
     } else if (type === 3) {
-      // Peanut collectible!
+      // Collectibles: Sticky Rice Cake, Bread, Red Drink bottle
+      const choices = [
+        {
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
+          w: 60,
+          h: 60,
+        },
+        {
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.png",
+          w: 60,
+          h: 60,
+        },
+        {
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.png",
+          w: 45,
+          h: 70,
+        },
+      ];
+      const selected = choices[Math.floor(Math.random() * choices.length)];
+
       spawnY =
         Math.random() > 0.5
           ? groundLevel - 18 * scale
           : groundLevel - 72 * scale;
       baseY = spawnY;
-      width = 36 * scale;
-      height = 20 * scale;
+      width = selected.w * scale;
+      height = selected.h * scale;
 
-      const sprite = Sprite.from(
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
-      );
-      sprite.width = 60 * scale;
-      sprite.height = 60 * scale;
+      const sprite = Sprite.from(selected.path);
+      sprite.width = selected.w * scale;
+      sprite.height = selected.h * scale;
       sprite.anchor.set(0.5, 0.5);
       container.addChild(sprite);
     }
@@ -2807,6 +2930,7 @@ export class GameController extends Container {
       height: height,
       baseY: baseY,
       bobTimer: Math.random() * Math.PI,
+      isSlipper: isSlipper,
     });
   }
 
@@ -2907,7 +3031,7 @@ export class GameController extends Container {
       }
 
       rowBg
-        .roundRect(-225, ry - 18, 450, 36, 6)
+        .roundRect(-205, ry - 18, 410, 36, 6)
         .fill({ color: bgColor })
         .stroke({ color: strokeColor, width: strokeWidth });
       this.leadersContainer.addChild(rowBg);
@@ -2918,10 +3042,11 @@ export class GameController extends Container {
       const rankText = new Text({
         text: rankMedals[i] || `${i + 1}`,
         style: new TextStyle({
-          fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+          fontFamily: "Nunito, sans-serif",
           fontSize: isTop3 ? 22 : 14,
           fill: "#263238",
         }),
+        roundPixels: true,
       });
       rankText.anchor.set(0.5);
       rankText.position.set(-170, ry);
@@ -2959,11 +3084,12 @@ export class GameController extends Container {
       const nameText = new Text({
         text: entry.name,
         style: new TextStyle({
-          fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+          fontFamily: "Nunito, sans-serif",
           fontSize: 13,
           fontWeight: "bold",
           fill: entry.isPlayer ? "#e53935" : "#263238",
         }),
+        roundPixels: true,
       });
       nameText.anchor.set(0, 0.5);
       nameText.position.set(-90, ry);
@@ -2973,11 +3099,12 @@ export class GameController extends Container {
       const scoreText = new Text({
         text: `${entry.score}`,
         style: new TextStyle({
-          fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+          fontFamily: "Nunito, sans-serif",
           fontSize: 13,
           fontWeight: "900",
           fill: "#263238",
         }),
+        roundPixels: true,
       });
       scoreText.anchor.set(1, 0.5);
       scoreText.position.set(160, ry);
@@ -2989,7 +3116,7 @@ export class GameController extends Container {
     this.footerContainer.removeChildren();
 
     this.footerBg
-      .roundRect(-225, 143, 450, 44, 8)
+      .roundRect(-205, 143, 410, 44, 8)
       .fill({ color: 0xfff3cd })
       .stroke({ color: 0xffea00, width: 2 });
 
@@ -3003,10 +3130,11 @@ export class GameController extends Container {
       const rankText = new Text({
         text: isTop3 ? ["🥇", "🥈", "🥉"][playerRank - 1] : `${playerRank}`,
         style: new TextStyle({
-          fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+          fontFamily: "Nunito, sans-serif",
           fontSize: isTop3 ? 22 : 14,
           fill: "#263238",
         }),
+        roundPixels: true,
       });
       rankText.anchor.set(0.5);
       rankText.position.set(-170, ry);
@@ -3043,11 +3171,12 @@ export class GameController extends Container {
       const nameText = new Text({
         text: `${playerEntry.name} (Bạn)`,
         style: new TextStyle({
-          fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+          fontFamily: "Nunito, sans-serif",
           fontSize: 13,
           fontWeight: "bold",
           fill: "#e53935",
         }),
+        roundPixels: true,
       });
       nameText.anchor.set(0, 0.5);
       nameText.position.set(-90, ry);
@@ -3056,11 +3185,12 @@ export class GameController extends Container {
       const scoreText = new Text({
         text: `${playerEntry.score}`,
         style: new TextStyle({
-          fontFamily: '"Outfit", "Nunito", "Arial", sans-serif',
+          fontFamily: "Nunito, sans-serif",
           fontSize: 13,
           fontWeight: "900",
           fill: "#263238",
         }),
+        roundPixels: true,
       });
       scoreText.anchor.set(1, 0.5);
       scoreText.position.set(160, ry);
@@ -3071,6 +3201,7 @@ export class GameController extends Container {
   resize() {
     const sw = this.app.screen.width;
     const sh = this.app.screen.height;
+    const modalScale = Math.min(1.0, (sw - 32) / 460, (sh - 40) / 600);
 
     // Draw bright and happy daylight sky gradient
     const bgGrad = new FillGradient({
@@ -3336,8 +3467,8 @@ export class GameController extends Container {
         .clear()
         .rect(0, 0, sw, sh)
         .fill({ color: 0x000000, alpha: 0.65 });
-      this.gameOverCard.position.set(sw / 2, sh / 2);
-      this.gameOverCard.scale.set(scale);
+      this.gameOverCard.position.set(Math.round(sw / 2), Math.round(sh / 2));
+      this.gameOverCard.scale.set(modalScale);
     }
 
     // ==========================================
@@ -3348,16 +3479,16 @@ export class GameController extends Container {
         .clear()
         .rect(0, 0, sw, sh)
         .fill({ color: 0x000000, alpha: 0.65 });
-      this.pauseCard.position.set(sw / 2, sh / 2);
-      this.pauseCard.scale.set(scale);
+      this.pauseCard.position.set(Math.round(sw / 2), Math.round(sh / 2));
+      this.pauseCard.scale.set(modalScale);
     }
 
     // ==========================================
     // Resize ACHIEVEMENTS
     // ==========================================
     if (this.gameState === "ACHIEVEMENTS") {
-      this.leaderboardCard.position.set(sw / 2, sh / 2);
-      this.leaderboardCard.scale.set(scale);
+      this.leaderboardCard.position.set(Math.round(sw / 2), Math.round(sh / 2));
+      this.leaderboardCard.scale.set(modalScale);
     }
 
     if (this.gameState === "SETTINGS") {
@@ -3365,8 +3496,98 @@ export class GameController extends Container {
         .clear()
         .rect(0, 0, sw, sh)
         .fill({ color: 0x000000, alpha: 0.65 });
-      this.settingsCard.position.set(sw / 2, sh / 2);
-      this.settingsCard.scale.set(scale);
+      this.settingsCard.position.set(Math.round(sw / 2), Math.round(sh / 2));
+      this.settingsCard.scale.set(1); // Keep scale 1!
+
+      // Layout calculations
+      const isMobile = sw < 500 || sh < 600;
+      const cardW = isMobile ? 340 : 460;
+      const cardH = isMobile ? 320 : 300;
+
+      // 1. Redraw Shadow
+      this.settingsShadow
+        .clear()
+        .roundRect(-cardW / 2, -cardH / 2 + 6, cardW, cardH, 20)
+        .fill({ color: 0xbf360c });
+
+      // 2. Redraw Border (Gradient)
+      const borderGrad = new FillGradient({
+        start: { x: 0, y: -cardH / 2 },
+        end: { x: 0, y: cardH / 2 },
+        colorStops: [
+          { offset: 0, color: 0xffb74d },
+          { offset: 1, color: 0xf57c00 },
+        ],
+      });
+      this.settingsBorder
+        .clear()
+        .roundRect(-cardW / 2, -cardH / 2, cardW, cardH, 20)
+        .fill({ fill: borderGrad })
+        .stroke({ color: 0xffea00, width: 2.5 });
+
+      // 3. Redraw Cream Face
+      this.settingsFace
+        .clear()
+        .roundRect(-cardW / 2 + 8, -cardH / 2 + 8, cardW - 16, cardH - 16, 14)
+        .fill({ color: 0xfbfaf5 });
+
+      // 4. Ribbon (Title banner)
+      const ribbonW = isMobile ? 200 : 240;
+      const ribbonH = isMobile ? 38 : 42;
+      const ribbonY = -cardH / 2;
+
+      this.settingsRibbonShadow
+        .clear()
+        .roundRect(
+          -ribbonW / 2,
+          ribbonY - ribbonH / 2 + 4,
+          ribbonW,
+          ribbonH,
+          10,
+        )
+        .fill({ color: 0x8a4500 });
+
+      const ribbonGrad = new FillGradient({
+        start: { x: 0, y: -ribbonH / 2 },
+        end: { x: 0, y: ribbonH / 2 },
+        colorStops: [
+          { offset: 0, color: 0xffe500 },
+          { offset: 1, color: 0xff9900 },
+        ],
+      });
+      this.settingsRibbon
+        .clear()
+        .roundRect(-ribbonW / 2, ribbonY - ribbonH / 2, ribbonW, ribbonH, 10)
+        .fill({ fill: ribbonGrad })
+        .stroke({ color: 0xfff8b3, width: 2 });
+
+      // 5. Title Text Style and position
+      this.settingsTitle.style.fontSize = isMobile ? 18 : 22;
+      this.settingsTitle.position.set(0, ribbonY);
+
+      // 6. Close Button
+      this.settingsCloseBtn.position.set(cardW / 2 - 20, -cardH / 2 + 20);
+
+      // 7. Toggle Rows layout update
+      const musicRowY = isMobile ? -65 : -75;
+      const sfxRowY = isMobile ? 0 : 0;
+      this.mainMusicRow.position.set(0, musicRowY);
+      this.mainSfxRow.position.set(0, sfxRowY);
+
+      if (typeof this.mainMusicRow.updateLayout === "function") {
+        this.mainMusicRow.updateLayout(isMobile);
+      }
+      if (typeof this.mainSfxRow.updateLayout === "function") {
+        this.mainSfxRow.updateLayout(isMobile);
+      }
+
+      // 8. Reset Button
+      const resetBtnY = isMobile ? 70 : 80;
+      this.settingsResetBtn.position.set(0, resetBtnY);
+
+      // 9. Version Text
+      const versionTextY = isMobile ? 120 : 125;
+      this.settingsVersionText.position.set(0, versionTextY);
     }
 
     if (this.gameState === "CHAR_SELECT") {
@@ -3374,8 +3595,8 @@ export class GameController extends Container {
         .clear()
         .rect(0, 0, sw, sh)
         .fill({ color: 0x000000, alpha: 0.65 });
-      this.charSelectCard.position.set(sw / 2, sh / 2);
-      this.charSelectCard.scale.set(scale);
+      this.charSelectCard.position.set(Math.round(sw / 2), Math.round(sh / 2));
+      this.charSelectCard.scale.set(modalScale);
     }
 
     if (this.gameState === "INSTRUCTIONS") {
@@ -3383,8 +3604,152 @@ export class GameController extends Container {
         .clear()
         .rect(0, 0, sw, sh)
         .fill({ color: 0x000000, alpha: 0.65 });
-      this.instructionsCard.position.set(sw / 2, sh / 2);
-      this.instructionsCard.scale.set(scale);
+      this.instructionsCard.position.set(
+        Math.round(sw / 2),
+        Math.round(sh / 2),
+      );
+      this.instructionsCard.scale.set(1); // LOCK SCALE TO 1 for pixel-perfect sharpness!
+
+      const isMobile = sw < 500 || sh < 600;
+      const cardW = isMobile ? Math.min(460, sw - 24) : 540;
+      const cardH = isMobile ? 420 : 400;
+
+      // 1. Redraw Shadow
+      this.instructionsShadow
+        .clear()
+        .roundRect(-cardW / 2 + 6, -cardH / 2 + 12, cardW, cardH, 20)
+        .fill({ color: 0x000000, alpha: 0.25 });
+
+      // 2. Redraw Orange 3D Border
+      this.instructionsBorder
+        .clear()
+        .roundRect(-cardW / 2, -cardH / 2 + 6, cardW, cardH, 20)
+        .fill({ color: 0xbf360c })
+        .roundRect(-cardW / 2, -cardH / 2, cardW, cardH, 20)
+        .fill({
+          fill: new FillGradient({
+            start: { x: 0, y: -cardH / 2 },
+            end: { x: 0, y: cardH / 2 },
+            colorStops: [
+              { offset: 0, color: 0xffb74d },
+              { offset: 1, color: 0xf57c00 },
+            ],
+          }),
+        })
+        .stroke({ color: 0xffea00, width: 2.5 });
+
+      // 3. Redraw Cream Face
+      this.instructionsFace
+        .clear()
+        .roundRect(-cardW / 2 + 8, -cardH / 2 + 8, cardW - 16, cardH - 16, 14)
+        .fill({ color: 0xfbfaf5 });
+
+      // 4. Redraw Title Ribbon
+      const ribbonW = isMobile ? 200 : 240;
+      const ribbonH = isMobile ? 38 : 42;
+      const ribbonY = -cardH / 2;
+
+      this.instructionsRibbonShadow
+        .clear()
+        .roundRect(
+          -ribbonW / 2,
+          ribbonY - ribbonH / 2 + 4,
+          ribbonW,
+          ribbonH,
+          10,
+        )
+        .fill({ color: 0x8a4500 });
+
+      this.instructionsRibbon
+        .clear()
+        .roundRect(-ribbonW / 2, ribbonY - ribbonH / 2, ribbonW, ribbonH, 10)
+        .fill({
+          fill: new FillGradient({
+            start: { x: 0, y: -ribbonH / 2 },
+            end: { x: 0, y: ribbonH / 2 },
+            colorStops: [
+              { offset: 0, color: 0xffe500 },
+              { offset: 1, color: 0xff9900 },
+            ],
+          }),
+        })
+        .stroke({ color: 0xfff8b3, width: 2 });
+
+      // 5. Title text position and font size
+      this.instructionsTitle.style.fontSize = isMobile ? 18 : 22;
+      this.instructionsTitle.position.set(0, ribbonY);
+
+      // 6. Layout grid columns and rows dynamically
+      const startY = -cardH / 2 + (isMobile ? 55 : 68);
+      const rowHeight = isMobile ? 42 : 46;
+
+      const iconW = isMobile ? 32 : 38;
+      const iconH = isMobile ? 26 : 30;
+      const spriteSize = isMobile ? 18 : 22;
+      const gap = isMobile ? 8 : 12;
+
+      const col1StartX = -cardW / 2 + (isMobile ? 18 : 28);
+      const col2StartX = isMobile ? 10 : 25;
+
+      const layoutRow = (row, i, colStartX) => {
+        // Redraw icon background
+        row.iconBg
+          .clear()
+          .roundRect(0, -iconH / 2, iconW, iconH, 6)
+          .fill({ color: 0xefebe9 })
+          .stroke({ color: 0xd7ccc8, width: 1.2 });
+
+        // Resize & position sprite
+        if (row.sprite instanceof Sprite) {
+          const sp = row.sprite;
+          if (sp.texture && sp.texture.width > 0) {
+            const ratio = sp.texture.width / sp.texture.height;
+            if (ratio > 1) {
+              sp.width = spriteSize;
+              sp.height = spriteSize / ratio;
+            } else {
+              sp.height = spriteSize;
+              sp.width = spriteSize * ratio;
+            }
+          } else {
+            sp.width = spriteSize;
+            sp.height = spriteSize;
+          }
+          sp.position.set(iconW / 2, 0);
+        } else if (row.sprite instanceof Graphics) {
+          // Drawing shield vector icon
+          row.sprite
+            .clear()
+            .ellipse(0, 0, isMobile ? 8 : 10, isMobile ? 10 : 13)
+            .fill({ color: 0x29b6f6 })
+            .stroke({ color: 0xffffff, width: 1.5 });
+          row.sprite.position.set(iconW / 2, 0);
+        }
+
+        // Align label text next to the icon
+        row.labelText.style.fontSize = isMobile ? 10.5 : 12.5;
+        row.labelText.position.set(iconW + gap, 0);
+
+        // Position the row container
+        row.position.set(
+          colStartX,
+          Math.round(startY + i * rowHeight + rowHeight / 2),
+        );
+      };
+
+      // Layout Left Column (CHƯỚNG NGẠI VẬT)
+      this.leftRows.forEach((row, i) => {
+        layoutRow(row, i, col1StartX);
+      });
+
+      // Layout Right Column (VẬT PHẨM & KHIÊN)
+      this.rightRows.forEach((row, i) => {
+        layoutRow(row, i, col2StartX);
+      });
+
+      // 7. Position bottom "ĐÃ HIỂU" button
+      const buttonY = isMobile ? cardH / 2 - 40 : cardH / 2 - 50;
+      this.instructionsUnderstandBtn.position.set(0, buttonY);
     }
   }
 
