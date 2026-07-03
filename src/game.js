@@ -2464,18 +2464,48 @@ export class GameController extends Container {
       newState === "PLAYING" ||
       newState === "PAUSED" ||
       newState === "GAME_OVER";
-    this.gameOverContainer.visible = newState === "GAME_OVER";
-    this.achievementsContainer.visible = newState === "ACHIEVEMENTS";
-    this.settingsContainer.visible = false; // Always false, bypassed for HTML settings popup
-    this.pauseContainer.visible = newState === "PAUSED";
-    this.charSelectContainer.visible = newState === "CHAR_SELECT";
-    this.instructionsContainer.visible = newState === "INSTRUCTIONS";
+    this.gameOverContainer.visible = false;
+    this.achievementsContainer.visible = false;
+    this.settingsContainer.visible = false;
+    this.pauseContainer.visible = false;
+    this.charSelectContainer.visible = false;
+    this.instructionsContainer.visible = false;
 
-    // Toggle HTML Settings Overlay
+    // Toggle HTML Overlays
     if (newState === "SETTINGS") {
       this.showHTMLSettings();
     } else {
       this.hideHTMLSettings();
+    }
+
+    if (newState === "PAUSED") {
+      this.showHTMLPaused();
+    } else {
+      this.hideHTMLPaused();
+    }
+
+    if (newState === "GAME_OVER") {
+      this.showHTMLGameOver();
+    } else {
+      this.hideHTMLGameOver();
+    }
+
+    if (newState === "ACHIEVEMENTS") {
+      this.showHTMLAchievements();
+    } else {
+      this.hideHTMLAchievements();
+    }
+
+    if (newState === "CHAR_SELECT") {
+      this.showHTMLCharSelect();
+    } else {
+      this.hideHTMLCharSelect();
+    }
+
+    if (newState === "INSTRUCTIONS") {
+      this.showHTMLInstructions();
+    } else {
+      this.hideHTMLInstructions();
     }
 
     // Hide or show the user profile widget depending on state to prevent overlapping during gameplay
@@ -2980,6 +3010,7 @@ export class GameController extends Container {
       this.highScore = finalScore;
       isNewRecord = true;
     }
+    this.isNewRecordThisRun = isNewRecord;
 
     // Append to top 10 history
     const date = new Date();
@@ -3864,12 +3895,12 @@ export class GameController extends Container {
     }
   }
 
-  showHTMLSettings() {
-    if (!document.getElementById("game-settings-styles")) {
+  injectHTMLPopupStyles() {
+    if (!document.getElementById("game-popup-styles")) {
       const style = document.createElement("style");
-      style.id = "game-settings-styles";
+      style.id = "game-popup-styles";
       style.textContent = `
-        .game-settings-overlay {
+        .game-popup-overlay {
           position: fixed;
           top: 0; left: 0;
           width: 100dvw; height: 100dvh;
@@ -3882,7 +3913,7 @@ export class GameController extends Container {
           transition: opacity 0.25s ease;
           box-sizing: border-box;
         }
-        .game-settings-card {
+        .game-popup-card {
           background: #fbfaf5;
           border: 5px solid #f57c00;
           box-shadow: inset 0 0 0 2.5px #ffea00, 0 6px 0 #bf360c, 0 12px 25px rgba(0, 0, 0, 0.35);
@@ -3897,7 +3928,10 @@ export class GameController extends Container {
           box-sizing: border-box;
           opacity: 0;
         }
-        .game-settings-title {
+        .game-popup-card.wide {
+          max-width: 460px;
+        }
+        .game-popup-title {
           position: absolute;
           top: -25px;
           left: 50%;
@@ -3916,7 +3950,7 @@ export class GameController extends Container {
           white-space: nowrap;
           text-transform: uppercase;
         }
-        .game-settings-close-btn {
+        .game-popup-close-btn {
           position: absolute;
           top: -16px;
           right: -16px;
@@ -3929,10 +3963,10 @@ export class GameController extends Container {
           transition: transform 0.15s ease;
           z-index: 100100;
         }
-        .game-settings-close-btn:hover {
+        .game-popup-close-btn:hover {
           transform: scale(1.1);
         }
-        .game-settings-close-btn:active {
+        .game-popup-close-btn:active {
           transform: scale(0.9);
         }
         .game-settings-row-container {
@@ -4018,43 +4052,383 @@ export class GameController extends Container {
           margin-top: 14px;
           font-weight: 600;
         }
+
+        /* Paused popup */
+        .game-paused-action-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 20px;
+          margin-top: 24px;
+        }
+        .game-paused-btn {
+          width: 52px;
+          height: 52px;
+          border: none;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-color: transparent;
+          cursor: pointer;
+          transition: transform 0.15s ease, filter 0.15s ease;
+        }
+        .game-paused-btn:hover {
+          transform: scale(1.1);
+        }
+        .game-paused-btn:active {
+          transform: scale(0.9);
+        }
+
+        /* Game Over popup */
+        .game-over-emblem {
+          width: 68px;
+          height: 68px;
+          background: #ffea00;
+          border: 3.5px solid #8a4500;
+          border-radius: 50%;
+          box-shadow: 0 5px 0 #8a4500, inset 0 0 0 2px #fff8b3;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 34px;
+          color: #8a4500;
+          margin: 10px auto;
+          line-height: 1;
+          position: relative;
+          top: -5px;
+        }
+        .game-over-record-banner {
+          background: #cc0000;
+          border: 1.5px solid #ffea00;
+          border-radius: 6px;
+          color: #ffffff;
+          font-family: 'Be Vietnam Pro', sans-serif;
+          font-size: 14px;
+          font-weight: 900;
+          letter-spacing: 2px;
+          padding: 4px 16px;
+          display: inline-block;
+          margin-bottom: 12px;
+          box-shadow: 0 3px 0 #8a0000;
+          text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+        }
+        .game-over-score {
+          font-family: 'Be Vietnam Pro', sans-serif;
+          font-size: 28px;
+          font-weight: 900;
+          color: #360207;
+          margin: 8px 0;
+          letter-spacing: 2px;
+          text-shadow: 0 1px 0 #ffffff;
+        }
+        .game-over-msg {
+          font-family: 'Be Vietnam Pro', sans-serif;
+          font-size: 15px;
+          font-weight: 700;
+          color: #bf360c;
+          margin-bottom: 20px;
+        }
+        .game-over-actions {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 16px;
+          margin-top: 10px;
+        }
+        .game-over-btn {
+          width: 52px;
+          height: 52px;
+          border: none;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-color: transparent;
+          cursor: pointer;
+          transition: transform 0.15s ease, filter 0.15s ease;
+        }
+        .game-over-btn:hover {
+          transform: scale(1.1);
+        }
+        .game-over-btn:active {
+          transform: scale(0.9);
+        }
+
+        /* Achievements popup */
+        .game-achievements-list {
+          margin-top: 18px;
+          max-height: 250px;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          padding-right: 4px;
+          box-sizing: border-box;
+        }
+        .game-achievements-list::-webkit-scrollbar {
+          width: 6px;
+        }
+        .game-achievements-list::-webkit-scrollbar-track {
+          background: #f1ebd8;
+          border-radius: 4px;
+        }
+        .game-achievements-list::-webkit-scrollbar-thumb {
+          background: #c5beaa;
+          border-radius: 4px;
+        }
+        .game-achievements-row {
+          background: #ffffff;
+          border: 1.5px solid #dcd6bf;
+          border-radius: 10px;
+          padding: 8px 14px;
+          display: flex;
+          align-items: center;
+          box-sizing: border-box;
+          height: 48px;
+          justify-content: space-between;
+        }
+        .game-achievements-row.rank-0 {
+          background: #fff8e1;
+          border: 2px solid #ffa500;
+        }
+        .game-achievements-row.rank-1 {
+          background: #f5f5f5;
+          border: 2px solid #a0aab5;
+        }
+        .game-achievements-row.rank-2 {
+          background: #fff3e0;
+          border: 2px solid #cf7936;
+        }
+        .game-achievements-rank {
+          font-size: 18px;
+          font-weight: 700;
+          width: 32px;
+          text-align: center;
+          color: #263238;
+        }
+        .game-achievements-avatar-container {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          border: 1.5px solid #d4af37;
+          background: #ffffff;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          margin-right: 10px;
+        }
+        .game-achievements-avatar {
+          width: 28px;
+          height: 28px;
+          object-fit: cover;
+          border-radius: 50%;
+        }
+        .game-achievements-info {
+          display: flex;
+          align-items: center;
+          flex-grow: 1;
+        }
+        .game-achievements-name {
+          font-family: 'Be Vietnam Pro', sans-serif;
+          font-size: 14px;
+          font-weight: 700;
+          color: #263238;
+        }
+        .game-achievements-name.player {
+          color: #e53935;
+        }
+        .game-achievements-score {
+          font-family: 'Be Vietnam Pro', sans-serif;
+          font-size: 15px;
+          font-weight: 800;
+          color: #263238;
+          text-align: right;
+        }
+        .game-achievements-footer {
+          margin-top: 14px;
+          background: #fff3cd;
+          border: 2px solid #ffea00;
+          border-radius: 12px;
+          padding: 8px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 52px;
+          box-sizing: border-box;
+        }
+
+        /* Character selection popup */
+        .game-charselect-grid {
+          margin-top: 20px;
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+          justify-items: center;
+        }
+        .game-charselect-item {
+          width: 68px;
+          height: 68px;
+          border-radius: 50%;
+          background: #ffffff;
+          border: 1.5px solid #dfdac0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          overflow: hidden;
+          position: relative;
+          box-sizing: border-box;
+          transition: transform 0.1s ease;
+        }
+        .game-charselect-item:hover {
+          transform: scale(1.05);
+        }
+        .game-charselect-item.selected {
+          border: 3px solid #ffea00;
+          background: #fff3cd;
+          width: 72px;
+          height: 72px;
+        }
+        .game-charselect-avatar {
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+        .game-charselect-paging {
+          margin-top: 16px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 16px;
+        }
+        .game-charselect-page-btn {
+          width: 38px;
+          height: 38px;
+          border: none;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-color: transparent;
+          cursor: pointer;
+          transition: transform 0.1s ease;
+        }
+        .game-charselect-page-btn:hover:not(:disabled) {
+          transform: scale(1.1);
+        }
+        .game-charselect-page-btn:active:not(:disabled) {
+          transform: scale(0.9);
+        }
+        .game-charselect-page-btn:disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
+        }
+        .game-charselect-page-text {
+          font-family: 'Be Vietnam Pro', sans-serif;
+          font-size: 16px;
+          font-weight: 800;
+          color: #bf360c;
+          letter-spacing: 1.5px;
+          min-width: 100px;
+          text-align: center;
+        }
+
+        /* Instructions popup */
+        .game-instructions-grid {
+          margin-top: 22px;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+          max-height: 280px;
+          overflow-y: auto;
+          padding-right: 4px;
+          box-sizing: border-box;
+        }
+        .game-instructions-grid::-webkit-scrollbar {
+          width: 6px;
+        }
+        .game-instructions-grid::-webkit-scrollbar-track {
+          background: #f1ebd8;
+          border-radius: 4px;
+        }
+        .game-instructions-grid::-webkit-scrollbar-thumb {
+          background: #c5beaa;
+          border-radius: 4px;
+        }
+        .game-instructions-row {
+          background: #ffffff;
+          border: 2px solid #ddeaff;
+          border-radius: 12px;
+          padding: 8px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          box-sizing: border-box;
+          height: 52px;
+        }
+        .game-instructions-icon-container {
+          width: 36px;
+          height: 36px;
+          border: 1.5px solid #dcd6bf;
+          border-radius: 8px;
+          background: #fbfaf5;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+        .game-instructions-icon {
+          max-width: 30px;
+          max-height: 30px;
+          object-fit: contain;
+        }
+        .game-instructions-text {
+          font-family: 'Be Vietnam Pro', sans-serif;
+          font-size: 12px;
+          font-weight: 700;
+          color: #4b1616;
+          text-align: left;
+          line-height: 1.2;
+        }
       `;
       document.head.appendChild(style);
     }
+  }
 
-    const existing = document.getElementById("game-settings-overlay-id");
-    if (existing) existing.remove();
+  showHTMLSettings() {
+    this.injectHTMLPopupStyles();
+
+    if (document.getElementById("game-settings-overlay-id")) return;
 
     const overlay = document.createElement("div");
     overlay.id = "game-settings-overlay-id";
-    overlay.className = "game-settings-overlay";
+    overlay.className = "game-popup-overlay";
 
     const card = document.createElement("div");
-    card.className = "game-settings-card";
+    card.className = "game-popup-card";
 
-    // Close Button
+    // Title
+    const title = document.createElement("div");
+    title.className = "game-popup-title";
+    title.innerText = "CÀI ĐẶT";
+    card.appendChild(title);
+
+    // Close button
     const closeBtn = document.createElement("button");
-    closeBtn.className = "game-settings-close-btn";
+    closeBtn.className = "game-popup-close-btn";
     closeBtn.addEventListener("click", () => {
       audio.playClick();
       this.switchState("MAIN_MENU");
     });
     card.appendChild(closeBtn);
 
-    // Title
-    const title = document.createElement("div");
-    title.className = "game-settings-title";
-    title.innerText = "CÀI ĐẶT";
-    card.appendChild(title);
-
-    // Row Container
     const rowContainer = document.createElement("div");
     rowContainer.className = "game-settings-row-container";
 
-    // Music Row
+    // Music row
     const musicRow = document.createElement("div");
     musicRow.className = "game-settings-row";
-
     const musicLabel = document.createElement("span");
     musicLabel.className = "game-settings-label";
     musicLabel.innerText = "🎵 Nhạc nền";
@@ -4071,10 +4445,9 @@ export class GameController extends Container {
     musicRow.appendChild(musicToggle);
     rowContainer.appendChild(musicRow);
 
-    // SFX Row
+    // SFX row
     const sfxRow = document.createElement("div");
     sfxRow.className = "game-settings-row";
-
     const sfxLabel = document.createElement("span");
     sfxLabel.className = "game-settings-label";
     sfxLabel.innerText = "🔊 Hiệu ứng";
@@ -4084,8 +4457,8 @@ export class GameController extends Container {
     sfxToggle.className = "game-settings-toggle-btn";
     sfxToggle.style.backgroundImage = `url(${audio.sfxMuted ? "/assest/iconbtn/toggle_off.png" : "/assest/iconbtn/toggle_on.png"})`;
     sfxToggle.addEventListener("click", () => {
-      audio.toggleSfxMute();
       audio.playClick();
+      audio.toggleSfxMute();
       sfxToggle.style.backgroundImage = `url(${audio.sfxMuted ? "/assest/iconbtn/toggle_off.png" : "/assest/iconbtn/toggle_on.png"})`;
     });
     sfxRow.appendChild(sfxToggle);
@@ -4125,7 +4498,6 @@ export class GameController extends Container {
     const appContainer = document.getElementById("app") || document.body;
     appContainer.appendChild(overlay);
 
-    // Trigger animations
     requestAnimationFrame(() => {
       overlay.style.opacity = "1";
       card.style.opacity = "1";
@@ -4136,7 +4508,768 @@ export class GameController extends Container {
   hideHTMLSettings() {
     const overlay = document.getElementById("game-settings-overlay-id");
     if (overlay) {
-      const card = overlay.querySelector(".game-settings-card");
+      const card = overlay.querySelector(".game-popup-card");
+      overlay.style.opacity = "0";
+      if (card) {
+        card.style.opacity = "0";
+        card.style.transform = "scale(0.85)";
+      }
+      setTimeout(() => {
+        overlay.remove();
+      }, 250);
+    }
+  }
+
+  showHTMLPaused() {
+    this.injectHTMLPopupStyles();
+    if (document.getElementById("game-paused-overlay-id")) return;
+
+    const overlay = document.createElement("div");
+    overlay.id = "game-paused-overlay-id";
+    overlay.className = "game-popup-overlay";
+
+    const card = document.createElement("div");
+    card.className = "game-popup-card";
+
+    const title = document.createElement("div");
+    title.className = "game-popup-title";
+    title.innerText = "CÀI ĐẶT";
+    card.appendChild(title);
+
+    // Close button (resumes play)
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "game-popup-close-btn";
+    closeBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.switchState("PLAYING");
+    });
+    card.appendChild(closeBtn);
+
+    const rowContainer = document.createElement("div");
+    rowContainer.className = "game-settings-row-container";
+
+    // Music row
+    const musicRow = document.createElement("div");
+    musicRow.className = "game-settings-row";
+    const musicLabel = document.createElement("span");
+    musicLabel.className = "game-settings-label";
+    musicLabel.innerText = "🎵 Nhạc nền";
+    musicRow.appendChild(musicLabel);
+
+    const musicToggle = document.createElement("button");
+    musicToggle.className = "game-settings-toggle-btn";
+    musicToggle.style.backgroundImage = `url(${audio.musicMuted ? "/assest/iconbtn/toggle_off.png" : "/assest/iconbtn/toggle_on.png"})`;
+    musicToggle.addEventListener("click", () => {
+      audio.playClick();
+      audio.toggleMusicMute();
+      musicToggle.style.backgroundImage = `url(${audio.musicMuted ? "/assest/iconbtn/toggle_off.png" : "/assest/iconbtn/toggle_on.png"})`;
+    });
+    musicRow.appendChild(musicToggle);
+    rowContainer.appendChild(musicRow);
+
+    // SFX row
+    const sfxRow = document.createElement("div");
+    sfxRow.className = "game-settings-row";
+    const sfxLabel = document.createElement("span");
+    sfxLabel.className = "game-settings-label";
+    sfxLabel.innerText = "🔊 Hiệu ứng";
+    sfxRow.appendChild(sfxLabel);
+
+    const sfxToggle = document.createElement("button");
+    sfxToggle.className = "game-settings-toggle-btn";
+    sfxToggle.style.backgroundImage = `url(${audio.sfxMuted ? "/assest/iconbtn/toggle_off.png" : "/assest/iconbtn/toggle_on.png"})`;
+    sfxToggle.addEventListener("click", () => {
+      audio.playClick();
+      audio.toggleSfxMute();
+      sfxToggle.style.backgroundImage = `url(${audio.sfxMuted ? "/assest/iconbtn/toggle_off.png" : "/assest/iconbtn/toggle_on.png"})`;
+    });
+    sfxRow.appendChild(sfxToggle);
+    rowContainer.appendChild(sfxRow);
+
+    card.appendChild(rowContainer);
+
+    // Action buttons container: Home, Replay, Resume
+    const actionContainer = document.createElement("div");
+    actionContainer.className = "game-paused-action-container";
+
+    // Home
+    const homeBtn = document.createElement("button");
+    homeBtn.className = "game-paused-btn";
+    homeBtn.style.backgroundImage = "url(/assest/iconbtn/Home_btn.png)";
+    homeBtn.addEventListener("click", async () => {
+      audio.playClick();
+      const confirmQuit = await gameConfirm(
+        "Bạn có muốn thoát về màn hình chính?",
+      );
+      if (confirmQuit) {
+        this.switchState("MAIN_MENU");
+      }
+    });
+    actionContainer.appendChild(homeBtn);
+
+    // Replay
+    const replayBtn = document.createElement("button");
+    replayBtn.className = "game-paused-btn";
+    replayBtn.style.backgroundImage = "url(/assest/iconbtn/replay_btn.png)";
+    replayBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.gameState = "PLAYING";
+      this.switchState("PLAYING");
+    });
+    actionContainer.appendChild(replayBtn);
+
+    // Resume
+    const resumeBtn = document.createElement("button");
+    resumeBtn.className = "game-paused-btn";
+    resumeBtn.style.backgroundImage = "url(/assest/iconbtn/continue_btn.png)";
+    resumeBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.switchState("PLAYING");
+    });
+    actionContainer.appendChild(resumeBtn);
+
+    card.appendChild(actionContainer);
+
+    overlay.appendChild(card);
+    const appContainer = document.getElementById("app") || document.body;
+    appContainer.appendChild(overlay);
+
+    requestAnimationFrame(() => {
+      overlay.style.opacity = "1";
+      card.style.opacity = "1";
+      card.style.transform = "scale(1)";
+    });
+  }
+
+  hideHTMLPaused() {
+    const overlay = document.getElementById("game-paused-overlay-id");
+    if (overlay) {
+      const card = overlay.querySelector(".game-popup-card");
+      overlay.style.opacity = "0";
+      if (card) {
+        card.style.opacity = "0";
+        card.style.transform = "scale(0.85)";
+      }
+      setTimeout(() => {
+        overlay.remove();
+      }, 250);
+    }
+  }
+
+  showHTMLGameOver() {
+    this.injectHTMLPopupStyles();
+    if (document.getElementById("game-gameover-overlay-id")) return;
+
+    const overlay = document.createElement("div");
+    overlay.id = "game-gameover-overlay-id";
+    overlay.className = "game-popup-overlay";
+
+    const card = document.createElement("div");
+    card.className = "game-popup-card";
+
+    const title = document.createElement("div");
+    title.className = "game-popup-title";
+    title.innerText = "KẾT THÚC";
+    card.appendChild(title);
+
+    // 1. Golden Emblem with Star
+    const emblem = document.createElement("div");
+    emblem.className = "game-over-emblem";
+    emblem.innerText = "⭐";
+    card.appendChild(emblem);
+
+    // 2. New Record Banner
+    if (this.isNewRecordThisRun) {
+      const recordBanner = document.createElement("div");
+      recordBanner.className = "game-over-record-banner";
+      recordBanner.innerText = "KỶ LỤC MỚI!";
+      card.appendChild(recordBanner);
+    }
+
+    // 3. Score
+    const finalScore = Math.floor(this.score);
+    const scoreVal = document.createElement("div");
+    scoreVal.className = "game-over-score";
+    scoreVal.innerText = `ĐIỂM SỐ: ${finalScore}`;
+    card.appendChild(scoreVal);
+
+    // 4. Message
+    const msgVal = document.createElement("div");
+    msgVal.className = "game-over-msg";
+    msgVal.innerText = this.isNewRecordThisRun
+      ? "👑 KỶ LỤC MỚI CỦA BỘ LẠC! 👑"
+      : "Bạn đã va phải chướng ngại vật!";
+    card.appendChild(msgVal);
+
+    // 5. Actions: Revive, Try Again, Home, Double Score
+    const actionContainer = document.createElement("div");
+    actionContainer.className = "game-over-actions";
+
+    // Revive
+    if (!this.hasRevivedThisRun) {
+      const reviveBtn = document.createElement("button");
+      reviveBtn.className = "game-over-btn";
+      reviveBtn.style.backgroundImage = "url(/assest/iconbtn/revive_btn.png)";
+      reviveBtn.addEventListener("click", async () => {
+        audio.playClick();
+        const success = await AdManager.showRewardedVideo();
+        if (success) {
+          this.hasRevivedThisRun = true;
+          this.hideHTMLGameOver();
+          this.resumeAfterRevive();
+        }
+      });
+      actionContainer.appendChild(reviveBtn);
+    }
+
+    // Double Score
+    if (!this.hasDoubledThisRun) {
+      const doubleBtn = document.createElement("button");
+      doubleBtn.className = "game-over-btn";
+      doubleBtn.style.backgroundImage = "url(/assest/iconbtn/x2_btn.png)";
+      doubleBtn.addEventListener("click", async () => {
+        audio.playClick();
+        const success = await AdManager.showRewardedVideo();
+        if (success) {
+          this.hasDoubledThisRun = true;
+          const oldScore = Math.floor(this.score);
+          this.score = this.score * 2;
+          const newScore = Math.floor(this.score);
+
+          const stats = getStats();
+          if (newScore > stats.highScore) {
+            stats.highScore = newScore;
+            this.highScore = newScore;
+            this.isNewRecordThisRun = true;
+          }
+          if (stats.history.length > 0) {
+            stats.history[0].score = newScore;
+            stats.history.sort((a, b) => b.score - a.score);
+          }
+          saveStats(stats);
+
+          // Update text overlays
+          scoreVal.innerText = `ĐIỂM SỐ: ${newScore} (X2!)`;
+          msgVal.innerText = "KỶ LỤC MỚI! HẠNG #1";
+          doubleBtn.remove();
+          this.updateUserUI();
+
+          await gameAlert(
+            `🎉 Điểm số đã được nhân đôi từ ${oldScore} lên ${newScore}!`,
+          );
+        }
+      });
+      actionContainer.appendChild(doubleBtn);
+    }
+
+    // Replay
+    const replayBtn = document.createElement("button");
+    replayBtn.className = "game-over-btn";
+    replayBtn.style.backgroundImage = "url(/assest/iconbtn/replay_btn.png)";
+    replayBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.switchState("PLAYING");
+    });
+    actionContainer.appendChild(replayBtn);
+
+    // Home
+    const homeBtn = document.createElement("button");
+    homeBtn.className = "game-over-btn";
+    homeBtn.style.backgroundImage = "url(/assest/iconbtn/Home_btn.png)";
+    homeBtn.addEventListener("click", async () => {
+      audio.playClick();
+      const confirmQuit = await gameConfirm(
+        "Bạn có muốn thoát về màn hình chính?",
+      );
+      if (confirmQuit) {
+        this.switchState("MAIN_MENU");
+      }
+    });
+    actionContainer.appendChild(homeBtn);
+
+    card.appendChild(actionContainer);
+
+    overlay.appendChild(card);
+    const appContainer = document.getElementById("app") || document.body;
+    appContainer.appendChild(overlay);
+
+    requestAnimationFrame(() => {
+      overlay.style.opacity = "1";
+      card.style.opacity = "1";
+      card.style.transform = "scale(1)";
+    });
+  }
+
+  hideHTMLGameOver() {
+    const overlay = document.getElementById("game-gameover-overlay-id");
+    if (overlay) {
+      const card = overlay.querySelector(".game-popup-card");
+      overlay.style.opacity = "0";
+      if (card) {
+        card.style.opacity = "0";
+        card.style.transform = "scale(0.85)";
+      }
+      setTimeout(() => {
+        overlay.remove();
+      }, 250);
+    }
+  }
+
+  showHTMLAchievements() {
+    this.injectHTMLPopupStyles();
+    if (document.getElementById("game-achievements-overlay-id")) return;
+
+    const overlay = document.createElement("div");
+    overlay.id = "game-achievements-overlay-id";
+    overlay.className = "game-popup-overlay";
+
+    const card = document.createElement("div");
+    card.className = "game-popup-card wide";
+
+    const title = document.createElement("div");
+    title.className = "game-popup-title";
+    title.innerText = "BẢNG VÀNG";
+    card.appendChild(title);
+
+    // Close button
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "game-popup-close-btn";
+    closeBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.switchState("MAIN_MENU");
+    });
+    card.appendChild(closeBtn);
+
+    // Score entries
+    const listContainer = document.createElement("div");
+    listContainer.className = "game-achievements-list";
+
+    const data = getLeaderboardData();
+    for (let i = 0; i < 6; i++) {
+      const entry = data[i];
+      if (!entry) break;
+
+      const row = document.createElement("div");
+      row.className = `game-achievements-row rank-${i}`;
+
+      const rankMedals = ["🥇", "🥈", "🥉"];
+      const rankText = document.createElement("span");
+      rankText.className = "game-achievements-rank";
+      rankText.innerText = rankMedals[i] || `${i + 1}`;
+      row.appendChild(rankText);
+
+      const info = document.createElement("div");
+      info.className = "game-achievements-info";
+
+      const avatarContainer = document.createElement("div");
+      avatarContainer.className = "game-achievements-avatar-container";
+      const avatarImg = document.createElement("img");
+      avatarImg.className = "game-achievements-avatar";
+      avatarImg.src = entry.avatar;
+      avatarContainer.appendChild(avatarImg);
+      info.appendChild(avatarContainer);
+
+      const nameText = document.createElement("span");
+      nameText.className = `game-achievements-name${entry.isPlayer ? " player" : ""}`;
+      nameText.innerText = entry.name;
+      info.appendChild(nameText);
+
+      row.appendChild(info);
+
+      const scoreText = document.createElement("span");
+      scoreText.className = "game-achievements-score";
+      scoreText.innerText = entry.score;
+      row.appendChild(scoreText);
+
+      listContainer.appendChild(row);
+    }
+    card.appendChild(listContainer);
+
+    // Pinned Footer (Personal Best)
+    const playerEntry = data.find((e) => e.isPlayer);
+    const playerRank = data.findIndex((e) => e.isPlayer) + 1;
+
+    if (playerEntry) {
+      const footer = document.createElement("div");
+      footer.className = "game-achievements-footer";
+
+      const rankMedals = ["🥇", "🥈", "🥉"];
+      const rankText = document.createElement("span");
+      rankText.className = "game-achievements-rank";
+      rankText.innerText = rankMedals[playerRank - 1] || `${playerRank}`;
+      footer.appendChild(rankText);
+
+      const info = document.createElement("div");
+      info.className = "game-achievements-info";
+
+      const avatarContainer = document.createElement("div");
+      avatarContainer.className = "game-achievements-avatar-container";
+      const avatarImg = document.createElement("img");
+      avatarImg.className = "game-achievements-avatar";
+      avatarImg.src = playerEntry.avatar;
+      avatarContainer.appendChild(avatarImg);
+      info.appendChild(avatarContainer);
+
+      const nameText = document.createElement("span");
+      nameText.className = "game-achievements-name player";
+      nameText.innerText = `${playerEntry.name} (Bạn)`;
+      info.appendChild(nameText);
+
+      footer.appendChild(info);
+
+      const scoreText = document.createElement("span");
+      scoreText.className = "game-achievements-score";
+      scoreText.innerText = playerEntry.score;
+      footer.appendChild(scoreText);
+
+      card.appendChild(footer);
+    }
+
+    overlay.appendChild(card);
+    const appContainer = document.getElementById("app") || document.body;
+    appContainer.appendChild(overlay);
+
+    requestAnimationFrame(() => {
+      overlay.style.opacity = "1";
+      card.style.opacity = "1";
+      card.style.transform = "scale(1)";
+    });
+  }
+
+  hideHTMLAchievements() {
+    const overlay = document.getElementById("game-achievements-overlay-id");
+    if (overlay) {
+      const card = overlay.querySelector(".game-popup-card");
+      overlay.style.opacity = "0";
+      if (card) {
+        card.style.opacity = "0";
+        card.style.transform = "scale(0.85)";
+      }
+      setTimeout(() => {
+        overlay.remove();
+      }, 250);
+    }
+  }
+
+  showHTMLCharSelect() {
+    this.injectHTMLPopupStyles();
+
+    let overlay = document.getElementById("game-charselect-overlay-id");
+    let card;
+    if (overlay) {
+      card = overlay.querySelector(".game-popup-card");
+      const grid = card.querySelector(".game-charselect-grid");
+      if (grid) grid.remove();
+      const paging = card.querySelector(".game-charselect-paging");
+      if (paging) paging.remove();
+    } else {
+      overlay = document.createElement("div");
+      overlay.id = "game-charselect-overlay-id";
+      overlay.className = "game-popup-overlay";
+
+      card = document.createElement("div");
+      card.className = "game-popup-card";
+
+      const title = document.createElement("div");
+      title.className = "game-popup-title";
+      title.innerText = "CHỌN NHÂN VẬT";
+      card.appendChild(title);
+
+      const closeBtn = document.createElement("button");
+      closeBtn.className = "game-popup-close-btn";
+      closeBtn.addEventListener("click", () => {
+        audio.playClick();
+        this.switchState("MAIN_MENU");
+      });
+      card.appendChild(closeBtn);
+
+      overlay.appendChild(card);
+      const appContainer = document.getElementById("app") || document.body;
+      appContainer.appendChild(overlay);
+    }
+
+    const itemsPerPage = 12;
+    const startIndex = this.charSelectPage * itemsPerPage;
+    const currentAvatar =
+      window.selectedAvatarUrl ||
+      "/assest/image/imagebldp/001_avatar_laclac.png";
+
+    const avatarNames = [
+      "laclac",
+      "cat_lick1",
+      "duck",
+      "turtle",
+      "long",
+      "horse",
+      "tiguawhite",
+      "husky",
+      "doremonk",
+      "echxanh1",
+      "nudaeng",
+      "hubcat",
+      "unicorn",
+      "zongbadou",
+      "dauLan",
+      "banhtung",
+      "tiguayel",
+      "megachard",
+      "gigaboy",
+      "cloudball",
+      "culama",
+      "poolpanda",
+      "trollvn",
+      "heothy",
+      "zolype",
+      "crick",
+      "penguine",
+      "timao",
+      "caocal",
+      "cowboy",
+      "ninjadog",
+      "petrocat",
+      "richmonkey",
+      "hazagi",
+      "dogoin",
+      "watermelon",
+      "timone",
+      "ronaldo",
+      "hustmouse",
+      "hitbear",
+      "echxanh2",
+      "zolype2",
+      "cat_lick2",
+      "poolpanda2",
+    ];
+
+    const avatarList = [];
+    for (let i = 0; i < 44; i++) {
+      const idxStr = String(i + 1).padStart(3, "0");
+      avatarList.push({
+        url: `/assest/image/imagebldp/${idxStr}_avatar_${avatarNames[i]}.png`,
+        name: avatarNames[i].toUpperCase(),
+      });
+    }
+
+    const grid = document.createElement("div");
+    grid.className = "game-charselect-grid";
+
+    for (let idx = 0; idx < itemsPerPage; idx++) {
+      const itemIdx = startIndex + idx;
+      if (itemIdx >= avatarList.length) break;
+
+      const item = avatarList[itemIdx];
+      const isSelected = item.url === currentAvatar;
+
+      const gridItem = document.createElement("div");
+      gridItem.className = `game-charselect-item${isSelected ? " selected" : ""}`;
+
+      const img = document.createElement("img");
+      img.className = "game-charselect-avatar";
+      img.src = item.url;
+      gridItem.appendChild(img);
+
+      gridItem.addEventListener("click", () => {
+        window.selectedAvatarUrl = item.url;
+        window.localStorage.setItem("selected_avatar_url", item.url);
+
+        Assets.load(item.url).then((tex) => {
+          this.updateSkeletalRigTexture(tex, item.url);
+          this.playerColors = this.getAvatarColors(item.url);
+        });
+
+        this.updateUserUI();
+        audio.playClick();
+        this.showHTMLCharSelect();
+      });
+
+      grid.appendChild(gridItem);
+    }
+    card.appendChild(grid);
+
+    const paging = document.createElement("div");
+    paging.className = "game-charselect-paging";
+
+    const prevBtn = document.createElement("button");
+    prevBtn.className = "game-charselect-page-btn";
+    prevBtn.style.backgroundImage = "url(/assest/iconbtn/back_btn.png)";
+    prevBtn.disabled = this.charSelectPage === 0;
+    prevBtn.addEventListener("click", () => {
+      audio.playClick();
+      if (this.charSelectPage > 0) {
+        this.charSelectPage--;
+        this.showHTMLCharSelect();
+      }
+    });
+    paging.appendChild(prevBtn);
+
+    const pageText = document.createElement("span");
+    pageText.className = "game-charselect-page-text";
+    pageText.innerText = `TRANG ${this.charSelectPage + 1}/4`;
+    paging.appendChild(pageText);
+
+    const nextBtn = document.createElement("button");
+    nextBtn.className = "game-charselect-page-btn";
+    nextBtn.style.backgroundImage = "url(/assest/iconbtn/back_btn.png)";
+    nextBtn.style.transform = "scaleX(-1)";
+    nextBtn.disabled = this.charSelectPage === 3;
+    nextBtn.addEventListener("click", () => {
+      audio.playClick();
+      if (this.charSelectPage < 3) {
+        this.charSelectPage++;
+        this.showHTMLCharSelect();
+      }
+    });
+    paging.appendChild(nextBtn);
+
+    card.appendChild(paging);
+
+    if (overlay.style.opacity !== "1") {
+      requestAnimationFrame(() => {
+        overlay.style.opacity = "1";
+        card.style.opacity = "1";
+        card.style.transform = "scale(1)";
+      });
+    }
+  }
+
+  hideHTMLCharSelect() {
+    const overlay = document.getElementById("game-charselect-overlay-id");
+    if (overlay) {
+      const card = overlay.querySelector(".game-popup-card");
+      overlay.style.opacity = "0";
+      if (card) {
+        card.style.opacity = "0";
+        card.style.transform = "scale(0.85)";
+      }
+      setTimeout(() => {
+        overlay.remove();
+      }, 250);
+    }
+  }
+
+  showHTMLInstructions() {
+    this.injectHTMLPopupStyles();
+    if (document.getElementById("game-instructions-overlay-id")) return;
+
+    const overlay = document.createElement("div");
+    overlay.id = "game-instructions-overlay-id";
+    overlay.className = "game-popup-overlay";
+
+    const card = document.createElement("div");
+    card.className = "game-popup-card wide";
+
+    const title = document.createElement("div");
+    title.className = "game-popup-title";
+    title.innerText = "HƯỚNG DẪN CHƠI";
+    card.appendChild(title);
+
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "game-popup-close-btn";
+    closeBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.switchState("MAIN_MENU");
+    });
+    card.appendChild(closeBtn);
+
+    const leftItems = [
+      {
+        label: "Lốp xe (Nhảy né)",
+        img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
+      },
+      {
+        label: "Hàng rào (Nhảy né)",
+        img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
+      },
+      {
+        label: "Bàn nhựa (Nhảy né)",
+        img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.png",
+      },
+      {
+        label: "Bù nhìn (Nhảy né)",
+        img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.png",
+      },
+      {
+        label: "Dép tổ ong (Cúi né)",
+        img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
+      },
+      {
+        label: "Ghế đỏ bay (Cúi né)",
+        img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.png",
+      },
+    ];
+
+    const rightItems = [
+      {
+        label: "Bánh Chưng (+Điểm)",
+        img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
+      },
+      {
+        label: "Bánh Mì (+Điểm)",
+        img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.png",
+      },
+      {
+        label: "Nước Ngọt (+Điểm)",
+        img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.png",
+      },
+      { label: "Khiên Bất Tử (2 giây)", isShield: true },
+    ];
+
+    const grid = document.createElement("div");
+    grid.className = "game-instructions-grid";
+
+    const allItems = [...leftItems, ...rightItems];
+    allItems.forEach((item) => {
+      const row = document.createElement("div");
+      row.className = "game-instructions-row";
+
+      const iconContainer = document.createElement("div");
+      iconContainer.className = "game-instructions-icon-container";
+
+      if (item.isShield) {
+        iconContainer.innerHTML = `<span style="font-size: 22px; color: #29b6f6; line-height: 1;">🛡️</span>`;
+      } else {
+        const img = document.createElement("img");
+        img.className = "game-instructions-icon";
+        img.src = item.img;
+        iconContainer.appendChild(img);
+      }
+      row.appendChild(iconContainer);
+
+      const label = document.createElement("span");
+      label.className = "game-instructions-text";
+      label.innerText = item.label;
+      row.appendChild(label);
+
+      grid.appendChild(row);
+    });
+
+    card.appendChild(grid);
+
+    const understandBtn = document.createElement("button");
+    understandBtn.className = "game-settings-reset-btn";
+    understandBtn.style.marginTop = "20px";
+    understandBtn.innerText = "ĐÃ HIỂU";
+    understandBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.switchState("MAIN_MENU");
+    });
+    card.appendChild(understandBtn);
+
+    overlay.appendChild(card);
+    const appContainer = document.getElementById("app") || document.body;
+    appContainer.appendChild(overlay);
+
+    requestAnimationFrame(() => {
+      overlay.style.opacity = "1";
+      card.style.opacity = "1";
+      card.style.transform = "scale(1)";
+    });
+  }
+
+  hideHTMLInstructions() {
+    const overlay = document.getElementById("game-instructions-overlay-id");
+    if (overlay) {
+      const card = overlay.querySelector(".game-popup-card");
       overlay.style.opacity = "0";
       if (card) {
         card.style.opacity = "0";
