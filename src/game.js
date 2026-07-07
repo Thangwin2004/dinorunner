@@ -2568,7 +2568,7 @@ export class GameController extends Container {
         },
         () => {
           this.switchState("GAME_OVER");
-        }
+        },
       );
     } else {
       this.hideHTMLReviveOffer();
@@ -4860,13 +4860,14 @@ export class GameController extends Container {
 
   showHTMLReviveOffer(onRevive, onSkip) {
     this.injectHTMLPopupStyles();
-    
+
     const existing = document.getElementById("game-revive-overlay-id");
     if (existing) existing.remove();
 
     const overlay = document.createElement("div");
     overlay.id = "game-revive-overlay-id";
-    overlay.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999;";
+    overlay.style.cssText =
+      "position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999;";
 
     const card = document.createElement("div");
     card.className = "game-popup-card";
@@ -4877,13 +4878,22 @@ export class GameController extends Container {
 
     const heartIcon = document.createElement("div");
     heartIcon.innerText = "💖";
-    heartIcon.style.cssText = "font-size:110px;line-height:1;margin-bottom:20px;margin-top:10px;text-shadow:0 10px 20px rgba(0,0,0,0.2), 0 0 30px rgba(255,100,150,0.6);";
-    heartIcon.animate([
-      { transform: "scale(1)" }, { transform: "scale(1.2)" }, { transform: "scale(1)" }, { transform: "scale(1.2)" }, { transform: "scale(1)" }
-    ], { duration: 1200, iterations: Infinity, easing: "ease-in-out" });
+    heartIcon.style.cssText =
+      "font-size:110px;line-height:1;margin-bottom:20px;margin-top:10px;text-shadow:0 10px 20px rgba(0,0,0,0.2), 0 0 30px rgba(255,100,150,0.6);";
+    heartIcon.animate(
+      [
+        { transform: "scale(1)" },
+        { transform: "scale(1.2)" },
+        { transform: "scale(1)" },
+        { transform: "scale(1.2)" },
+        { transform: "scale(1)" },
+      ],
+      { duration: 1200, iterations: Infinity, easing: "ease-in-out" },
+    );
 
     const yesBtn = document.createElement("button");
-    yesBtn.style.cssText = "margin: 0 auto; background:linear-gradient(to bottom, #ffa726, #f57c00);border:none;border-radius:12px;padding:10px 60px;color:white;font-size:26px;font-weight:900;font-family:'Nunito', 'Segoe UI', Arial, sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 #e65100, 0 8px 10px rgba(0,0,0,0.3);transition:transform 0.1s, box-shadow 0.1s;text-transform:uppercase;";
+    yesBtn.style.cssText =
+      "margin: 0 auto; background:linear-gradient(to bottom, #ffa726, #f57c00);border:none;border-radius:12px;padding:10px 60px;color:white;font-size:26px;font-weight:900;font-family:'Nunito', 'Segoe UI', Arial, sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 #e65100, 0 8px 10px rgba(0,0,0,0.3);transition:transform 0.1s, box-shadow 0.1s;text-transform:uppercase;";
 
     const tvIcon = document.createElement("img");
     tvIcon.src = "/assest/iconbtn/images.png";
@@ -4898,7 +4908,8 @@ export class GameController extends Container {
 
     const skipText = document.createElement("div");
     skipText.innerText = "Không, cảm ơn";
-    skipText.style.cssText = "margin-top:15px;font-family:sans-serif;font-size:16px;color:#888;text-decoration:underline;cursor:pointer;font-weight:bold;";
+    skipText.style.cssText =
+      "margin-top:15px;font-family:sans-serif;font-size:16px;color:#888;text-decoration:underline;cursor:pointer;font-weight:bold;";
 
     card.appendChild(title);
     card.appendChild(heartIcon);
