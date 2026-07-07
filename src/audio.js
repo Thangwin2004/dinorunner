@@ -1,3 +1,5 @@
+const SFX_POOL_MAX = 4; // Max concurrent instances per SFX
+
 class AudioManager {
   constructor() {
     this.ctx = null;
@@ -5,6 +7,8 @@ class AudioManager {
     this.sfxGain = null;
 
     this.bgm = null;
+
+    // SFX pools: each is { src, volume, gainNode, elements: Audio[] }
     this.sfxHit = null;
     this.sfxBird = null;
     this.sfxJump = null;
@@ -46,34 +50,29 @@ class AudioManager {
         this.bgmGain,
       );
 
-      // SFX
-      this.sfxHit = this._createAudio(
+      // SFX pools (each creates 1 initial element)
+      this.sfxHit = this._createSfxPool(
         "/assest/music/CharHit.mp3",
-        false,
         0.8,
         this.sfxGain,
       );
-      this.sfxBird = this._createAudio(
+      this.sfxBird = this._createSfxPool(
         "/assest/music/Throw.mp3",
-        false,
         0.7,
         this.sfxGain,
       );
-      this.sfxJump = this._createAudio(
+      this.sfxJump = this._createSfxPool(
         "/assest/music/Jump.mp3",
-        false,
         0.7,
         this.sfxGain,
       );
-      this.sfxSlide = this._createAudio(
+      this.sfxSlide = this._createSfxPool(
         "/assest/music/SurfMud1.mp3",
-        false,
         0.7,
         this.sfxGain,
       );
-      this.sfxCoin = this._createAudio(
+      this.sfxCoin = this._createSfxPool(
         "/assest/music/Button1.mp3",
-        false,
         0.8,
         this.sfxGain,
       );
@@ -97,6 +96,7 @@ class AudioManager {
     }
   }
 
+  /** Create a single Audio element (for BGM / game-over, NOT pooled) */
   _createAudio(src, loop, volume, gainNode) {
     const audio = new Audio(src);
     audio.loop = loop;
@@ -116,6 +116,37 @@ class AudioManager {
       audio.volume = volume;
     }
     return audio;
+  }
+
+  /** Create an SFX pool descriptor with 1 initial element */
+  _createSfxPool(src, volume, gainNode) {
+    const pool = {
+      src,
+      volume,
+      gainNode,
+      elements: [],
+    };
+    // Pre-create one element
+    pool.elements.push(this._createAudio(src, false, volume, gainNode));
+    return pool;
+  }
+
+  /** Get an idle Audio element from a pool, or create a new one if under limit */
+  _getIdleFromPool(pool) {
+    // Find an element that has finished playing
+    for (const el of pool.elements) {
+      if (el.paused || el.ended) {
+        return el;
+      }
+    }
+    // All busy – create a new one if under limit
+    if (pool.elements.length < SFX_POOL_MAX) {
+      const el = this._createAudio(pool.src, false, pool.volume, pool.gainNode);
+      pool.elements.push(el);
+      return el;
+    }
+    // Pool full, reuse the oldest (first) element
+    return pool.elements[0];
   }
 
   syncMuteState() {
@@ -158,14 +189,16 @@ class AudioManager {
     return this.musicMuted && this.sfxMuted;
   }
 
-  _playSfx(audioElement) {
+  /** Play SFX from a pool – picks an idle element, avoids crackling */
+  _playSfx(pool) {
     if (!this.initialized) this.init();
-    if (this.sfxMuted || !audioElement) return;
+    if (this.sfxMuted || !pool) return;
     if (this.ctx && this.ctx.state === "suspended") {
       this.ctx.resume();
     }
-    audioElement.currentTime = 0;
-    audioElement.play().catch((e) => console.log(e));
+    const el = this._getIdleFromPool(pool);
+    el.currentTime = 0;
+    el.play().catch((e) => console.log(e));
   }
 
   playJump() {
@@ -191,9 +224,8 @@ class AudioManager {
   playMilestone() {
     if (!this.initialized) this.init();
     if (!this.sfxMilestone) {
-      this.sfxMilestone = this._createAudio(
+      this.sfxMilestone = this._createSfxPool(
         "/assest/music/LevelUp.mp3",
-        false,
         0.6,
         this.sfxGain,
       );
@@ -204,9 +236,8 @@ class AudioManager {
   playClick() {
     if (!this.initialized) this.init();
     if (!this.sfxClick) {
-      this.sfxClick = this._createAudio(
+      this.sfxClick = this._createSfxPool(
         "/assest/music/Button3.mp3",
-        false,
         0.5,
         this.sfxGain,
       );
@@ -248,9 +279,8 @@ class AudioManager {
   playCollect() {
     if (!this.initialized) this.init();
     if (!this.sfxCollect) {
-      this.sfxCollect = this._createAudio(
+      this.sfxCollect = this._createSfxPool(
         "/assest/music/LabelCollect.mp3",
-        false,
         0.5,
         this.sfxGain,
       );

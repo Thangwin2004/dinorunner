@@ -181,14 +181,8 @@ export const AdManager = {
   showRewardedVideo: async () => {
     console.log("[AdManager] Requesting Rewarded Video...");
     audio.playClick();
-    await gameAlert(
-      "📺 Đang tải quảng cáo... Vui lòng xem hết để nhận phần thưởng!",
-    );
     return new Promise((resolve) => {
-      setTimeout(async () => {
-        await gameAlert(
-          "🎉 Cảm ơn bạn đã xem quảng cáo! Phần thưởng đã được mở khóa.",
-        );
+      setTimeout(() => {
         resolve(true);
       }, 1500);
     });
@@ -196,7 +190,6 @@ export const AdManager = {
   showInterstitial: async () => {
     console.log("[AdManager] Showing Interstitial Ad...");
     audio.playClick();
-    await gameAlert("📺 Đang hiển thị quảng cáo giữa màn hình...");
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(true);
@@ -1562,7 +1555,6 @@ export class GameController extends Container {
           });
           this.highScore = 0;
           this.updateAchievementsDisplay();
-          await gameAlert("Đã xóa toàn bộ dữ liệu thành công!");
           this.switchState("MAIN_MENU");
         }
       },
@@ -1684,13 +1676,8 @@ export class GameController extends Container {
     this.pauseCard.addChild(this.pauseSfxRow);
 
     // Bottom buttons row: Home, Replay, Resume
-    const btnHome = this.createIconOnlyButton("🏠", 26, async () => {
-      const confirmQuit = await gameConfirm(
-        "Bạn có muốn thoát về màn hình chính?",
-      );
-      if (confirmQuit) {
-        this.switchState("MAIN_MENU");
-      }
+    const btnHome = this.createIconOnlyButton("🏠", 26, () => {
+      this.switchState("MAIN_MENU");
     });
     btnHome.position.set(-65, 80);
     this.pauseCard.addChild(btnHome);
@@ -1903,7 +1890,6 @@ export class GameController extends Container {
     // Bottom row: Revive, Try Again, Home, Double Score
     this.reviveBtn = this.createIconOnlyButton("📺", 26, async () => {
       if (this.hasRevivedThisRun) {
-        await gameAlert("Bạn chỉ có thể hồi sinh 1 lần mỗi lượt chơi!");
         return;
       }
       const success = await AdManager.showRewardedVideo();
@@ -1918,13 +1904,11 @@ export class GameController extends Container {
     // Double Score (x2)
     this.doubleBtn = this.createIconOnlyButton("x2", 26, async () => {
       if (this.hasDoubledThisRun) {
-        await gameAlert("Bạn đã nhận nhân đôi điểm số cho lượt này rồi!");
         return;
       }
       const success = await AdManager.showRewardedVideo();
       if (success) {
         this.hasDoubledThisRun = true;
-        const oldScore = Math.floor(this.score);
         this.score = this.score * 2;
         const newScore = Math.floor(this.score);
 
@@ -1943,9 +1927,6 @@ export class GameController extends Container {
         this.highScoreText.text = `KỶ LỤC: ${this.highScore}`;
         this.gameOverMsgText.text = "KỶ LỤC MỚI! HẠNG #1";
         this.doubleBtn.visible = false;
-        await gameAlert(
-          `🎉 Điểm số đã được nhân đôi từ ${oldScore} lên ${newScore}!`,
-        );
       }
     });
     this.doubleBtn.position.set(-32, 95);
@@ -1957,19 +1938,15 @@ export class GameController extends Container {
     this.restartBtn.position.set(32, 95);
     this.gameOverCard.addChild(this.restartBtn);
 
-    this.gameOverMenuBtn = this.createIconOnlyButton("🏠", 26, async () => {
-      const confirmQuit = await gameConfirm(
-        "Bạn có muốn thoát về màn hình chính?",
-      );
-      if (confirmQuit) {
-        this.switchState("MAIN_MENU");
-      }
+    this.gameOverMenuBtn = this.createIconOnlyButton("🏠", 26, () => {
+      this.switchState("MAIN_MENU");
     });
     this.gameOverMenuBtn.position.set(95, 95);
     this.gameOverCard.addChild(this.gameOverMenuBtn);
   }
 
   resumeAfterRevive() {
+    audio.stopGameOver();
     this.isJumping = false;
     this.isDucking = false;
     this.playerVy = 0;
@@ -2105,59 +2082,23 @@ export class GameController extends Container {
     this.charSelectCard = new Container();
     this.charSelectContainer.addChild(this.charSelectCard);
 
-    const cardW = 460;
-    const cardH = 440; // Reduced height to compress vertical space
+    // Card background graphics (redrawn dynamically in _layoutCharSelectCard)
+    this.charCardShadow = new Graphics();
+    this.charSelectCard.addChild(this.charCardShadow);
 
-    // 3D Shadow Base
-    const shadow = new Graphics()
-      .roundRect(-cardW / 2, -cardH / 2 + 6, cardW, cardH, 20)
-      .fill({ color: 0xbf360c });
-    this.charSelectCard.addChild(shadow);
+    this.charCardBorder = new Graphics();
+    this.charSelectCard.addChild(this.charCardBorder);
 
-    // Main Card Border
-    const cardBorder = new Graphics();
-    const borderGrad = new FillGradient({
-      start: { x: 0, y: -cardH / 2 },
-      end: { x: 0, y: cardH / 2 },
-      colorStops: [
-        { offset: 0, color: 0xffb74d },
-        { offset: 1, color: 0xf57c00 },
-      ],
-    });
-    cardBorder
-      .roundRect(-cardW / 2, -cardH / 2, cardW, cardH, 20)
-      .fill({ fill: borderGrad })
-      .stroke({ color: 0xffea00, width: 2.5 });
-    this.charSelectCard.addChild(cardBorder);
+    this.charCardFace = new Graphics();
+    this.charSelectCard.addChild(this.charCardFace);
 
-    // Cream Card Face
-    const cardFace = new Graphics()
-      .roundRect(-cardW / 2 + 8, -cardH / 2 + 8, cardW - 16, cardH - 16, 14)
-      .fill({ color: 0xfbfaf5 });
-    this.charSelectCard.addChild(cardFace);
+    this.charRibbonShadow = new Graphics();
+    this.charSelectCard.addChild(this.charRibbonShadow);
 
-    // Title Ribbon
-    const ribbonShadow = new Graphics()
-      .roundRect(-120, -cardH / 2 - 21 + 4, 240, 42, 10)
-      .fill({ color: 0x8a4500 });
-    this.charSelectCard.addChild(ribbonShadow);
+    this.charRibbon = new Graphics();
+    this.charSelectCard.addChild(this.charRibbon);
 
-    const ribbon = new Graphics();
-    const ribbonGrad = new FillGradient({
-      start: { x: 0, y: -21 },
-      end: { x: 0, y: 21 },
-      colorStops: [
-        { offset: 0, color: 0xffe500 },
-        { offset: 1, color: 0xff9900 },
-      ],
-    });
-    ribbon
-      .roundRect(-120, -cardH / 2 - 21, 240, 42, 10)
-      .fill({ fill: ribbonGrad })
-      .stroke({ color: 0xfff8b3, width: 2 });
-    this.charSelectCard.addChild(ribbon);
-
-    const title = new Text({
+    this.charTitle = new Text({
       text: "CHỌN NHÂN VẬT",
       style: new TextStyle({
         fontFamily: "Baloo 2",
@@ -2169,16 +2110,14 @@ export class GameController extends Container {
       }),
       roundPixels: true,
     });
-    title.anchor.set(0.5);
-    title.position.set(0, -cardH / 2);
-    this.charSelectCard.addChild(title);
+    this.charTitle.anchor.set(0.5);
+    this.charSelectCard.addChild(this.charTitle);
 
     // Top-right close button
-    const closeBtn = this.createIconOnlyButton("❌", 20, () => {
+    this.charCloseBtn = this.createIconOnlyButton("❌", 20, () => {
       this.switchState("MAIN_MENU");
     });
-    closeBtn.position.set(cardW / 2 - 20, -cardH / 2 + 20);
-    this.charSelectCard.addChild(closeBtn);
+    this.charSelectCard.addChild(this.charCloseBtn);
 
     // Grid Container
     this.charGridContainer = new Container();
@@ -2191,7 +2130,6 @@ export class GameController extends Container {
         this.updateCharSelectDisplay();
       }
     });
-    this.charPrevBtn.position.set(-80, 150); // Moved up to 150 from 190
     this.charSelectCard.addChild(this.charPrevBtn);
 
     this.charPageText = new Text({
@@ -2206,7 +2144,6 @@ export class GameController extends Container {
       roundPixels: true,
     });
     this.charPageText.anchor.set(0.5);
-    this.charPageText.position.set(0, 150); // Moved up to 150 from 190
     this.charSelectCard.addChild(this.charPageText);
 
     this.charNextBtn = this.createIconOnlyButton("▶️", 18, () => {
@@ -2215,8 +2152,82 @@ export class GameController extends Container {
         this.updateCharSelectDisplay();
       }
     });
-    this.charNextBtn.position.set(80, 150); // Moved up to 150 from 190
     this.charSelectCard.addChild(this.charNextBtn);
+
+    // Store current layout state (updated by _layoutCharSelectCard)
+    this._charCardW = 460;
+    this._charCardH = 440;
+    this._charCols = 4;
+  }
+
+  /** Redraw character select card graphics for current screen dimensions */
+  _layoutCharSelectCard(sw, sh) {
+    const isMobile = sw < 500 || sh < 650;
+    const cols = isMobile ? 3 : 4;
+    const cardW = isMobile ? 380 : 460;
+    const cardH = isMobile ? 500 : 440;
+
+    this._charCardW = cardW;
+    this._charCardH = cardH;
+    this._charCols = cols;
+
+    // Redraw shadow
+    this.charCardShadow
+      .clear()
+      .roundRect(-cardW / 2, -cardH / 2 + 6, cardW, cardH, 20)
+      .fill({ color: 0xbf360c });
+
+    // Redraw border with gradient
+    const borderGrad = new FillGradient({
+      start: { x: 0, y: -cardH / 2 },
+      end: { x: 0, y: cardH / 2 },
+      colorStops: [
+        { offset: 0, color: 0xffb74d },
+        { offset: 1, color: 0xf57c00 },
+      ],
+    });
+    this.charCardBorder
+      .clear()
+      .roundRect(-cardW / 2, -cardH / 2, cardW, cardH, 20)
+      .fill({ fill: borderGrad })
+      .stroke({ color: 0xffea00, width: 2.5 });
+
+    // Redraw cream face
+    this.charCardFace
+      .clear()
+      .roundRect(-cardW / 2 + 8, -cardH / 2 + 8, cardW - 16, cardH - 16, 14)
+      .fill({ color: 0xfbfaf5 });
+
+    // Redraw ribbon shadow
+    this.charRibbonShadow
+      .clear()
+      .roundRect(-120, -cardH / 2 - 21 + 4, 240, 42, 10)
+      .fill({ color: 0x8a4500 });
+
+    // Redraw ribbon with gradient
+    const ribbonGrad = new FillGradient({
+      start: { x: 0, y: -21 },
+      end: { x: 0, y: 21 },
+      colorStops: [
+        { offset: 0, color: 0xffe500 },
+        { offset: 1, color: 0xff9900 },
+      ],
+    });
+    this.charRibbon
+      .clear()
+      .roundRect(-120, -cardH / 2 - 21, 240, 42, 10)
+      .fill({ fill: ribbonGrad })
+      .stroke({ color: 0xfff8b3, width: 2 });
+
+    // Reposition title and close button
+    this.charTitle.position.set(0, -cardH / 2);
+    this.charCloseBtn.position.set(cardW / 2 - 20, -cardH / 2 + 20);
+
+    // Reposition pagination at bottom of card
+    const paginationY = cardH / 2 - 40;
+    this.charPrevBtn.position.set(-80, paginationY);
+    this.charPageText.position.set(0, paginationY);
+    this.charNextBtn.position.set(80, paginationY);
   }
 
   setupInstructionsUI() {
@@ -2391,11 +2402,13 @@ export class GameController extends Container {
 
     this.charPageText.text = `TRANG ${this.charSelectPage + 1}/4`;
 
-    const cols = 4;
-    const colGap = 90;
-    const rowGap = 90;
-    const startX = -135;
-    const startY = -90;
+    const cols = this._charCols || 4;
+    const isMobile3Col = cols === 3;
+    const colGap = isMobile3Col ? 100 : 90;
+    const rowGap = isMobile3Col ? 80 : 90;
+    const gridW = (cols - 1) * colGap;
+    const startX = -gridW / 2;
+    const startY = isMobile3Col ? -120 : -90;
 
     for (let idx = 0; idx < itemsPerPage; idx++) {
       const itemIdx = startIndex + idx;
@@ -2541,6 +2554,26 @@ export class GameController extends Container {
       this.hideHTMLGameOver();
     }
 
+    if (newState === "REVIVE_OFFER") {
+      this.showHTMLReviveOffer(
+        async () => {
+          const success = await AdManager.showRewardedVideo();
+          if (success) {
+            this.hasRevivedThisRun = true;
+            this.hideHTMLReviveOffer();
+            this.resumeAfterRevive();
+          } else {
+            this.switchState("GAME_OVER");
+          }
+        },
+        () => {
+          this.switchState("GAME_OVER");
+        }
+      );
+    } else {
+      this.hideHTMLReviveOffer();
+    }
+
     if (newState === "ACHIEVEMENTS") {
       this.showHTMLAchievements();
     } else {
@@ -2603,8 +2636,6 @@ export class GameController extends Container {
     } else if (newState === "PAUSED") {
       if (this.pauseMusicRow) this.pauseMusicRow.updateVisuals();
       if (this.pauseSfxRow) this.pauseSfxRow.updateVisuals();
-    } else if (newState === "CHAR_SELECT") {
-      this.updateCharSelectDisplay();
     }
 
     this.resize();
@@ -3101,7 +3132,11 @@ export class GameController extends Container {
       this.gameOverMsgText.style.fill = 0xffecb3;
     }
 
-    this.switchState("GAME_OVER");
+    if (!this.hasRevivedThisRun) {
+      this.switchState("REVIVE_OFFER");
+    } else {
+      this.switchState("GAME_OVER");
+    }
   }
 
   updateAchievementsDisplay() {
@@ -3706,7 +3741,23 @@ export class GameController extends Container {
         .rect(0, 0, sw, sh)
         .fill({ color: 0x000000, alpha: 0.65 });
       this.charSelectCard.position.set(Math.round(sw / 2), Math.round(sh / 2));
-      this.charSelectCard.scale.set(modalScale);
+
+      // Adaptive layout: redraw card and grid for current screen size
+      const prevCols = this._charCols;
+      this._layoutCharSelectCard(sw, sh);
+      const charScale = Math.min(
+        1.0,
+        (sw - 32) / this._charCardW,
+        (sh - 40) / this._charCardH,
+      );
+      this.charSelectCard.scale.set(charScale);
+      // Rebuild grid if column layout changed or first open
+      if (
+        prevCols !== this._charCols ||
+        this.charGridContainer.children.length === 0
+      ) {
+        this.updateCharSelectDisplay();
+      }
     }
 
     if (this.gameState === "INSTRUCTIONS") {
@@ -4639,7 +4690,6 @@ export class GameController extends Container {
         });
         this.highScore = 0;
         this.updateAchievementsDisplay();
-        await gameAlert("Đã xóa toàn bộ dữ liệu thành công!");
         this.switchState("MAIN_MENU");
       }
     });
@@ -4753,14 +4803,9 @@ export class GameController extends Container {
     const homeBtn = document.createElement("button");
     homeBtn.className = "game-paused-btn";
     homeBtn.style.backgroundImage = "url(/assest/iconbtn/Home_btn.png)";
-    homeBtn.addEventListener("click", async () => {
+    homeBtn.addEventListener("click", () => {
       audio.playClick();
-      const confirmQuit = await gameConfirm(
-        "Bạn có muốn thoát về màn hình chính?",
-      );
-      if (confirmQuit) {
-        this.switchState("MAIN_MENU");
-      }
+      this.switchState("MAIN_MENU");
     });
     actionContainer.appendChild(homeBtn);
 
@@ -4813,6 +4858,90 @@ export class GameController extends Container {
     }
   }
 
+  showHTMLReviveOffer(onRevive, onSkip) {
+    this.injectHTMLPopupStyles();
+    
+    const existing = document.getElementById("game-revive-overlay-id");
+    if (existing) existing.remove();
+
+    const overlay = document.createElement("div");
+    overlay.id = "game-revive-overlay-id";
+    overlay.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999;";
+
+    const card = document.createElement("div");
+    card.className = "game-popup-card";
+
+    const title = document.createElement("div");
+    title.className = "game-popup-title";
+    title.innerText = "HỒI SINH";
+
+    const heartIcon = document.createElement("div");
+    heartIcon.innerText = "💖";
+    heartIcon.style.cssText = "font-size:110px;line-height:1;margin-bottom:20px;margin-top:10px;text-shadow:0 10px 20px rgba(0,0,0,0.2), 0 0 30px rgba(255,100,150,0.6);";
+    heartIcon.animate([
+      { transform: "scale(1)" }, { transform: "scale(1.2)" }, { transform: "scale(1)" }, { transform: "scale(1.2)" }, { transform: "scale(1)" }
+    ], { duration: 1200, iterations: Infinity, easing: "ease-in-out" });
+
+    const yesBtn = document.createElement("button");
+    yesBtn.style.cssText = "margin: 0 auto; background:linear-gradient(to bottom, #ffa726, #f57c00);border:none;border-radius:12px;padding:10px 60px;color:white;font-size:26px;font-weight:900;font-family:'Nunito', 'Segoe UI', Arial, sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 #e65100, 0 8px 10px rgba(0,0,0,0.3);transition:transform 0.1s, box-shadow 0.1s;text-transform:uppercase;";
+
+    const tvIcon = document.createElement("img");
+    tvIcon.src = "/assest/iconbtn/images.png";
+    tvIcon.style.cssText = "height:30px;width:auto;margin-right:15px;";
+
+    const yesText = document.createElement("span");
+    yesText.innerText = "CÓ";
+    yesText.style.textShadow = "0 2px 4px rgba(0,0,0,0.3)";
+
+    yesBtn.appendChild(tvIcon);
+    yesBtn.appendChild(yesText);
+
+    const skipText = document.createElement("div");
+    skipText.innerText = "Không, cảm ơn";
+    skipText.style.cssText = "margin-top:15px;font-family:sans-serif;font-size:16px;color:#888;text-decoration:underline;cursor:pointer;font-weight:bold;";
+
+    card.appendChild(title);
+    card.appendChild(heartIcon);
+    card.appendChild(yesBtn);
+    card.appendChild(skipText);
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+
+    const cleanup = () => {
+      overlay.style.opacity = "0";
+      card.style.transform = "scale(0.85)";
+      setTimeout(() => overlay.remove(), 250);
+    };
+
+    let isHandlingClick = false;
+    yesBtn.addEventListener("click", () => {
+      if (isHandlingClick) return;
+      isHandlingClick = true;
+      cleanup();
+      onRevive();
+    });
+
+    skipText.addEventListener("click", () => {
+      if (isHandlingClick) return;
+      isHandlingClick = true;
+      cleanup();
+      onSkip();
+    });
+
+    requestAnimationFrame(() => {
+      overlay.style.opacity = "1";
+      card.style.opacity = "1";
+      card.style.transform = "scale(1)";
+    });
+  }
+
+  hideHTMLReviveOffer() {
+    const overlay = document.getElementById("game-revive-overlay-id");
+    if (overlay) {
+      overlay.remove();
+    }
+  }
+
   showHTMLGameOver() {
     this.injectHTMLPopupStyles();
     if (document.getElementById("game-gameover-overlay-id")) return;
@@ -4862,23 +4991,6 @@ export class GameController extends Container {
     const actionContainer = document.createElement("div");
     actionContainer.className = "game-over-actions";
 
-    // Revive
-    if (!this.hasRevivedThisRun) {
-      const reviveBtn = document.createElement("button");
-      reviveBtn.className = "game-over-btn";
-      reviveBtn.style.backgroundImage = "url(/assest/iconbtn/revive_btn.png)";
-      reviveBtn.addEventListener("click", async () => {
-        audio.playClick();
-        const success = await AdManager.showRewardedVideo();
-        if (success) {
-          this.hasRevivedThisRun = true;
-          this.hideHTMLGameOver();
-          this.resumeAfterRevive();
-        }
-      });
-      actionContainer.appendChild(reviveBtn);
-    }
-
     // Double Score
     if (!this.hasDoubledThisRun) {
       const doubleBtn = document.createElement("button");
@@ -4889,7 +5001,6 @@ export class GameController extends Container {
         const success = await AdManager.showRewardedVideo();
         if (success) {
           this.hasDoubledThisRun = true;
-          const oldScore = Math.floor(this.score);
           this.score = this.score * 2;
           const newScore = Math.floor(this.score);
 
@@ -4910,10 +5021,6 @@ export class GameController extends Container {
           msgVal.innerText = "KỶ LỤC MỚI! HẠNG #1";
           doubleBtn.remove();
           this.updateUserUI();
-
-          await gameAlert(
-            `🎉 Điểm số đã được nhân đôi từ ${oldScore} lên ${newScore}!`,
-          );
         }
       });
       actionContainer.appendChild(doubleBtn);
@@ -4933,14 +5040,9 @@ export class GameController extends Container {
     const homeBtn = document.createElement("button");
     homeBtn.className = "game-over-btn";
     homeBtn.style.backgroundImage = "url(/assest/iconbtn/Home_btn.png)";
-    homeBtn.addEventListener("click", async () => {
+    homeBtn.addEventListener("click", () => {
       audio.playClick();
-      const confirmQuit = await gameConfirm(
-        "Bạn có muốn thoát về màn hình chính?",
-      );
-      if (confirmQuit) {
-        this.switchState("MAIN_MENU");
-      }
+      this.switchState("MAIN_MENU");
     });
     actionContainer.appendChild(homeBtn);
 
