@@ -206,7 +206,9 @@ class AudioManager {
     if (this.sfxGameOverNode) {
       try {
         this.sfxGameOverNode.stop();
-      } catch (e) {}
+      } catch (err) {
+        console.warn("Failed to stop sfxGameOverNode:", err);
+      }
       this.sfxGameOverNode = null;
     }
   }
