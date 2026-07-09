@@ -1,5 +1,3 @@
-const SFX_POOL_MAX = 4; // Max concurrent instances per SFX
-
 class AudioManager {
   constructor() {
     this.ctx = null;
@@ -7,17 +5,19 @@ class AudioManager {
     this.sfxGain = null;
 
     this.bgm = null;
-
-    // SFX pools: each is { src, volume, gainNode, elements: Audio[] }
-    this.sfxHit = null;
-    this.sfxBird = null;
-    this.sfxJump = null;
-    this.sfxSlide = null;
-    this.sfxCoin = null;
-    this.sfxMilestone = null;
-    this.sfxClick = null;
     this.sfxGameOver = null;
-    this.sfxCollect = null;
+
+    this.sfxBuffers = {};
+    this.sfxVolumes = {
+      hit: 0.8,
+      bird: 0.7,
+      jump: 0.7,
+      slide: 0.7,
+      coin: 0.8,
+      milestone: 0.6,
+      click: 0.5,
+      collect: 0.5,
+    };
 
     this.musicMuted = false;
     this.sfxMuted = false;
@@ -40,6 +40,16 @@ class AudioManager {
         // Mute states
         this.bgmGain.gain.value = this.musicMuted ? 0 : 1;
         this.sfxGain.gain.value = this.sfxMuted ? 0 : 1;
+
+        // Load SFX Buffers
+        this._loadSfxBuffer("hit", "/assest/music/CharHit.mp3");
+        this._loadSfxBuffer("bird", "/assest/music/Throw.mp3");
+        this._loadSfxBuffer("jump", "/assest/music/Jump.mp3");
+        this._loadSfxBuffer("slide", "/assest/music/SurfMud1.mp3");
+        this._loadSfxBuffer("coin", "/assest/music/Button1.mp3");
+        this._loadSfxBuffer("milestone", "/assest/music/LevelUp.mp3");
+        this._loadSfxBuffer("click", "/assest/music/Button3.mp3");
+        this._loadSfxBuffer("collect", "/assest/music/LabelCollect.mp3");
       }
 
       // Giảm nhạc nền, sử dụng GainNode
@@ -48,33 +58,6 @@ class AudioManager {
         true,
         0.05,
         this.bgmGain,
-      );
-
-      // SFX pools (each creates 1 initial element)
-      this.sfxHit = this._createSfxPool(
-        "/assest/music/CharHit.mp3",
-        0.8,
-        this.sfxGain,
-      );
-      this.sfxBird = this._createSfxPool(
-        "/assest/music/Throw.mp3",
-        0.7,
-        this.sfxGain,
-      );
-      this.sfxJump = this._createSfxPool(
-        "/assest/music/Jump.mp3",
-        0.7,
-        this.sfxGain,
-      );
-      this.sfxSlide = this._createSfxPool(
-        "/assest/music/SurfMud1.mp3",
-        0.7,
-        this.sfxGain,
-      );
-      this.sfxCoin = this._createSfxPool(
-        "/assest/music/Button1.mp3",
-        0.8,
-        this.sfxGain,
       );
 
       if (!this.musicMuted && this.bgm && this.ctx) {
@@ -96,7 +79,18 @@ class AudioManager {
     }
   }
 
-  /** Create a single Audio element (for BGM / game-over, NOT pooled) */
+  async _loadSfxBuffer(key, src) {
+    try {
+      const response = await fetch(src);
+      const arrayBuffer = await response.arrayBuffer();
+      const decodedData = await this.ctx.decodeAudioData(arrayBuffer);
+      this.sfxBuffers[key] = decodedData;
+    } catch (e) {
+      console.log(`Failed to load SFX ${key}:`, e);
+    }
+  }
+
+  /** Create a single Audio element (for BGM / game-over) */
   _createAudio(src, loop, volume, gainNode) {
     const audio = new Audio(src);
     audio.loop = loop;
@@ -116,37 +110,6 @@ class AudioManager {
       audio.volume = volume;
     }
     return audio;
-  }
-
-  /** Create an SFX pool descriptor with 1 initial element */
-  _createSfxPool(src, volume, gainNode) {
-    const pool = {
-      src,
-      volume,
-      gainNode,
-      elements: [],
-    };
-    // Pre-create one element
-    pool.elements.push(this._createAudio(src, false, volume, gainNode));
-    return pool;
-  }
-
-  /** Get an idle Audio element from a pool, or create a new one if under limit */
-  _getIdleFromPool(pool) {
-    // Find an element that has finished playing
-    for (const el of pool.elements) {
-      if (el.paused || el.ended) {
-        return el;
-      }
-    }
-    // All busy – create a new one if under limit
-    if (pool.elements.length < SFX_POOL_MAX) {
-      const el = this._createAudio(pool.src, false, pool.volume, pool.gainNode);
-      pool.elements.push(el);
-      return el;
-    }
-    // Pool full, reuse the oldest (first) element
-    return pool.elements[0];
   }
 
   syncMuteState() {
@@ -189,60 +152,56 @@ class AudioManager {
     return this.musicMuted && this.sfxMuted;
   }
 
-  /** Play SFX from a pool – picks an idle element, avoids crackling */
-  _playSfx(pool) {
+  /** Play SFX using AudioBufferSourceNode (no limits, perfect for mobile) */
+  _playSfx(key) {
     if (!this.initialized) this.init();
-    if (this.sfxMuted || !pool) return;
-    if (this.ctx && this.ctx.state === "suspended") {
+    if (this.sfxMuted || !this.ctx || !this.sfxBuffers[key]) return;
+    if (this.ctx.state === "suspended") {
       this.ctx.resume();
     }
-    const el = this._getIdleFromPool(pool);
-    el.currentTime = 0;
-    el.play().catch((e) => console.log(e));
+
+    const source = this.ctx.createBufferSource();
+    source.buffer = this.sfxBuffers[key];
+
+    const localGain = this.ctx.createGain();
+    localGain.gain.value = this.sfxVolumes[key] || 0.5;
+
+    source.connect(localGain);
+    localGain.connect(this.sfxGain);
+
+    source.start(0);
   }
 
   playJump() {
-    this._playSfx(this.sfxJump);
+    this._playSfx("jump");
   }
 
   playSlide() {
-    this._playSfx(this.sfxSlide);
+    this._playSfx("slide");
   }
 
   playCollision() {
-    this._playSfx(this.sfxHit);
+    this._playSfx("hit");
   }
 
   playBird() {
-    this._playSfx(this.sfxBird);
+    this._playSfx("bird");
   }
 
   playCoin() {
-    this._playSfx(this.sfxCoin);
+    this._playSfx("coin");
   }
 
   playMilestone() {
-    if (!this.initialized) this.init();
-    if (!this.sfxMilestone) {
-      this.sfxMilestone = this._createSfxPool(
-        "/assest/music/LevelUp.mp3",
-        0.6,
-        this.sfxGain,
-      );
-    }
-    this._playSfx(this.sfxMilestone);
+    this._playSfx("milestone");
   }
 
   playClick() {
-    if (!this.initialized) this.init();
-    if (!this.sfxClick) {
-      this.sfxClick = this._createSfxPool(
-        "/assest/music/Button3.mp3",
-        0.5,
-        this.sfxGain,
-      );
-    }
-    this._playSfx(this.sfxClick);
+    this._playSfx("click");
+  }
+
+  playCollect() {
+    this._playSfx("collect");
   }
 
   playGameOver() {
@@ -274,18 +233,6 @@ class AudioManager {
       this.sfxGameOver.pause();
       this.sfxGameOver.currentTime = 0;
     }
-  }
-
-  playCollect() {
-    if (!this.initialized) this.init();
-    if (!this.sfxCollect) {
-      this.sfxCollect = this._createSfxPool(
-        "/assest/music/LabelCollect.mp3",
-        0.5,
-        this.sfxGain,
-      );
-    }
-    this._playSfx(this.sfxCollect);
   }
 }
 
