@@ -66,6 +66,22 @@ class AudioManager {
       this.ctx.resume().then(() => {
         this.bgm.play().catch((e) => console.log("BGM play deferred:", e));
       });
+
+      // Global mobile audio unlocker
+      const unlockAudio = () => {
+        if (this.ctx && this.ctx.state === "suspended") {
+          this.ctx.resume();
+        }
+        if (this.bgm && this.bgm.paused && !this.musicMuted) {
+          this.bgm.play().catch(() => {});
+        }
+        document.removeEventListener("pointerdown", unlockAudio);
+        document.removeEventListener("touchstart", unlockAudio);
+        document.removeEventListener("click", unlockAudio);
+      };
+      document.addEventListener("pointerdown", unlockAudio, { once: true });
+      document.addEventListener("touchstart", unlockAudio, { once: true });
+      document.addEventListener("click", unlockAudio, { once: true });
     } catch (e) {
       console.warn("Audio initialization deferred/failed:", e);
     }
