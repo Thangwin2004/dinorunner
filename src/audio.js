@@ -77,7 +77,7 @@ class AudioManager {
 
   async _loadSfxBuffer(key, src) {
     try {
-      const response = await fetch(src);
+      const response = await window.fetch(src);
       const arrayBuffer = await response.arrayBuffer();
       const decodedData = await this.ctx.decodeAudioData(arrayBuffer);
       this.sfxBuffers[key] = decodedData;
