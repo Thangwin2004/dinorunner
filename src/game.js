@@ -1978,11 +1978,18 @@ export class GameController extends Container {
     const scale = Math.min(1.0, sw / 450, sh / 650);
     const groundLevel = sh * 0.7;
 
-    const dust = new Graphics();
-    // Soft golden-brown dust particle
-    dust
-      .circle(0, 0, 3 + Math.random() * 4)
-      .fill({ color: 0xd4af37, alpha: 0.45 });
+    this.dustPool = this.dustPool || [];
+    let dust;
+    if (this.dustPool.length > 0) {
+      dust = this.dustPool.pop();
+      dust.alpha = 1;
+    } else {
+      dust = new Graphics();
+      dust
+        .circle(0, 0, 3 + Math.random() * 4)
+        .fill({ color: 0xd4af37, alpha: 0.45 });
+    }
+
     dust.x = this.playerSprite.x - 10 * scale;
     dust.y = groundLevel + 12 * scale;
     this.gamePlayContainer.addChild(dust);
@@ -1996,7 +2003,7 @@ export class GameController extends Container {
       onComplete: () => {
         if (this.gamePlayContainer.destroyed) return;
         this.gamePlayContainer.removeChild(dust);
-        dust.destroy();
+        this.dustPool.push(dust);
       },
     });
   }
@@ -2037,6 +2044,7 @@ export class GameController extends Container {
     this.spawnSparkleParticles(obs.sprite.x, obs.sprite.y);
     this.spawnFloatingText("+10", obs.sprite.x, obs.sprite.y);
     this.gamePlayContainer.removeChild(obs.sprite);
+    obs.sprite.destroy({ children: true });
     this.obstacles.splice(index, 1);
   }
 
@@ -2704,10 +2712,13 @@ export class GameController extends Container {
     // Score increments
     this.score += 0.15 * elapsed;
     const currentIntScore = Math.floor(this.score);
-    this.scoreText.text = `ĐIỂM: ${currentIntScore}`;
-    const domScore = document.getElementById("hud-score");
-    if (domScore) {
-      domScore.innerText = `ĐIỂM: ${currentIntScore}`;
+    if (currentIntScore !== this.lastIntScore) {
+      this.lastIntScore = currentIntScore;
+      this.scoreText.text = `ĐIỂM: ${currentIntScore}`;
+      const domScore = document.getElementById("hud-score");
+      if (domScore) {
+        domScore.innerText = `ĐIỂM: ${currentIntScore}`;
+      }
     }
 
     // Play milestone sound every 100 points
@@ -2828,15 +2839,12 @@ export class GameController extends Container {
       }
 
       // Update shield overlay (centered around middle of body at y = -35)
+      // Update shield overlay (centered around middle of body at y = -35)
       if (this.shieldTime > 0) {
         this.shieldTime -= elapsed;
         this.playerShieldGraphics.visible = true;
-        this.playerShieldGraphics.clear();
-        const pulseRadius = 40 + Math.sin(this.gameTime * 15) * 5;
-        this.playerShieldGraphics
-          .circle(0, -28, pulseRadius)
-          .fill({ color: 0x64b5f6, alpha: 0.15 })
-          .stroke({ width: 2, color: 0x00ffff, alpha: 0.6 });
+        const pulseScale = 1.0 + Math.sin(this.gameTime * 15) * 0.125;
+        this.playerShieldGraphics.scale.set(pulseScale);
       } else {
         this.playerShieldGraphics.visible = false;
       }
@@ -2887,6 +2895,7 @@ export class GameController extends Container {
             // Invulnerable: break obstacle!
             this.spawnSparkleParticles(obs.sprite.x, obs.sprite.y);
             this.gamePlayContainer.removeChild(obs.sprite);
+            obs.sprite.destroy({ children: true });
             this.obstacles.splice(i, 1);
             continue;
           } else {
@@ -2899,6 +2908,7 @@ export class GameController extends Container {
       // Remove out of screen obstacles
       if (obs.sprite.x + obs.width < 0) {
         this.gamePlayContainer.removeChild(obs.sprite);
+        obs.sprite.destroy({ children: true });
         this.obstacles.splice(i, 1);
       }
     }
