@@ -50,7 +50,6 @@ class AudioManager {
         this._loadSfxBuffer("milestone", "/assest/music/LevelUp.mp3");
         this._loadSfxBuffer("click", "/assest/music/Button3.mp3");
         this._loadSfxBuffer("collect", "/assest/music/LabelCollect.mp3");
-        this._loadSfxBuffer("gameover", "/assest/music/EndGame.wav");
       }
 
       // Giảm nhạc nền (Không dùng MediaElementSource để tránh lỗi lặp nhạc iOS Safari)
@@ -194,23 +193,11 @@ class AudioManager {
 
   playGameOver() {
     if (!this.initialized) this.init();
-    if (this.bgm) this.bgm.pause(); // Tạm dừng nhạc nền khi có nhạc Game Over
-
-    // Nhạc Game Over
-    if (this.musicMuted && this.sfxMuted) return;
-
-    this.sfxGameOverNode = this._playSfx("gameover");
+    if (this.bgm) this.bgm.pause(); // Tạm dừng nhạc nền khi Game Over
   }
 
   stopGameOver() {
-    if (this.sfxGameOverNode) {
-      try {
-        this.sfxGameOverNode.stop();
-      } catch (err) {
-        console.warn("Failed to stop sfxGameOverNode:", err);
-      }
-      this.sfxGameOverNode = null;
-    }
+    // Không làm gì nữa vì đã gỡ bỏ nhạc gameover
   }
 }
 
