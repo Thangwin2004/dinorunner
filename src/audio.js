@@ -52,23 +52,20 @@ class AudioManager {
         this._loadSfxBuffer("collect", "/assest/music/LabelCollect.mp3");
       }
 
-      // Giảm nhạc nền (Không dùng MediaElementSource để tránh lỗi lặp nhạc iOS Safari)
-      this.bgm = this._createAudio("/assest/music/music.mp3", true, 0.05);
+      // Cấu hình BGM qua Web Audio API để đồng bộ âm lượng trên iOS
+      this.bgm = new Audio("/assest/music/music.mp3");
+      this.bgm.loop = true;
 
-      if (!this.musicMuted && this.bgm && this.ctx) {
-        // Must resume context on interaction
-        this.ctx.resume().then(() => {
-          this.bgm
-            .play()
-            .catch((e) =>
-              console.log("BGM play deferred until interaction:", e),
-            );
-        });
-      } else if (!this.musicMuted && this.bgm) {
-        this.bgm
-          .play()
-          .catch((e) => console.log("BGM play deferred until interaction:", e));
-      }
+      const source = this.ctx.createMediaElementSource(this.bgm);
+      const localGain = this.ctx.createGain();
+      localGain.gain.value = 0.05; // Giảm âm lượng nhạc nền xuống 5%
+      source.connect(localGain);
+      localGain.connect(this.bgmGain);
+
+      // Play once and never pause it to prevent iOS Safari bug
+      this.ctx.resume().then(() => {
+        this.bgm.play().catch((e) => console.log("BGM play deferred:", e));
+      });
     } catch (e) {
       console.warn("Audio initialization deferred/failed:", e);
     }
@@ -85,28 +82,14 @@ class AudioManager {
     }
   }
 
-  /** Create a single Audio element (for BGM / game-over) */
-  _createAudio(src, loop, volume) {
-    const audio = new Audio(src);
-    audio.loop = loop;
-    audio.volume = volume;
-    return audio;
-  }
+  // Đã gỡ bỏ _createAudio vì không còn dùng tới
 
   syncMuteState() {
     if (this.ctx) {
       this.sfxGain.gain.value = this.sfxMuted ? 0 : 1;
-    }
-
-    if (this.bgm) {
-      this.bgm.muted = this.musicMuted;
-      if (!this.musicMuted) {
-        if (this.ctx && this.ctx.state === "suspended") {
-          this.ctx.resume();
-        }
-        this.bgm.play().catch((e) => console.log(e));
-      } else {
-        this.bgm.pause();
+      this.bgmGain.gain.value = this.musicMuted ? 0 : 1;
+      if (!this.musicMuted && this.ctx.state === "suspended") {
+        this.ctx.resume();
       }
     }
   }
@@ -193,11 +176,15 @@ class AudioManager {
 
   playGameOver() {
     if (!this.initialized) this.init();
-    if (this.bgm) this.bgm.pause(); // Tạm dừng nhạc nền khi Game Over
+    if (this.ctx) {
+      this.bgmGain.gain.value = 0; // Tắt tiếng nhạc nền thay vì pause
+    }
   }
 
   stopGameOver() {
-    // Không làm gì nữa vì đã gỡ bỏ nhạc gameover
+    if (this.ctx && !this.musicMuted) {
+      this.bgmGain.gain.value = 1; // Khôi phục tiếng nhạc nền
+    }
   }
 }
 
