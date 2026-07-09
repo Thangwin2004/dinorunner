@@ -50,15 +50,11 @@ class AudioManager {
         this._loadSfxBuffer("milestone", "/assest/music/LevelUp.mp3");
         this._loadSfxBuffer("click", "/assest/music/Button3.mp3");
         this._loadSfxBuffer("collect", "/assest/music/LabelCollect.mp3");
+        this._loadSfxBuffer("gameover", "/assest/music/EndGame.wav");
       }
 
-      // Giảm nhạc nền, sử dụng GainNode
-      this.bgm = this._createAudio(
-        "/assest/music/music.mp3",
-        true,
-        0.05,
-        this.bgmGain,
-      );
+      // Giảm nhạc nền (Không dùng MediaElementSource để tránh lỗi lặp nhạc iOS Safari)
+      this.bgm = this._createAudio("/assest/music/music.mp3", true, 0.05);
 
       if (!this.musicMuted && this.bgm && this.ctx) {
         // Must resume context on interaction
@@ -91,37 +87,28 @@ class AudioManager {
   }
 
   /** Create a single Audio element (for BGM / game-over) */
-  _createAudio(src, loop, volume, gainNode) {
+  _createAudio(src, loop, volume) {
     const audio = new Audio(src);
     audio.loop = loop;
-
-    if (this.ctx && gainNode) {
-      // Connect to Web Audio API
-      const source = this.ctx.createMediaElementSource(audio);
-
-      // Individual gain for this specific sound
-      const localGain = this.ctx.createGain();
-      localGain.gain.value = volume;
-
-      source.connect(localGain);
-      localGain.connect(gainNode);
-    } else {
-      // Fallback
-      audio.volume = volume;
-    }
+    audio.volume = volume;
     return audio;
   }
 
   syncMuteState() {
     if (this.ctx) {
-      this.bgmGain.gain.value = this.musicMuted ? 0 : 1;
+      this.sfxGain.gain.value = this.sfxMuted ? 0 : 1;
     }
 
-    if (this.bgm && !this.musicMuted) {
-      if (this.ctx && this.ctx.state === "suspended") {
-        this.ctx.resume();
+    if (this.bgm) {
+      this.bgm.muted = this.musicMuted;
+      if (!this.musicMuted) {
+        if (this.ctx && this.ctx.state === "suspended") {
+          this.ctx.resume();
+        }
+        this.bgm.play().catch((e) => console.log(e));
+      } else {
+        this.bgm.pause();
       }
-      this.bgm.play().catch((e) => console.log(e));
     }
   }
 
@@ -155,7 +142,7 @@ class AudioManager {
   /** Play SFX using AudioBufferSourceNode (no limits, perfect for mobile) */
   _playSfx(key) {
     if (!this.initialized) this.init();
-    if (this.sfxMuted || !this.ctx || !this.sfxBuffers[key]) return;
+    if (this.sfxMuted || !this.ctx || !this.sfxBuffers[key]) return null;
     if (this.ctx.state === "suspended") {
       this.ctx.resume();
     }
@@ -170,6 +157,7 @@ class AudioManager {
     localGain.connect(this.sfxGain);
 
     source.start(0);
+    return source;
   }
 
   playJump() {
@@ -208,30 +196,18 @@ class AudioManager {
     if (!this.initialized) this.init();
     if (this.bgm) this.bgm.pause(); // Tạm dừng nhạc nền khi có nhạc Game Over
 
-    // Nhạc Game Over thuộc về nhạc nền, không phải SFX
-    if (this.musicMuted) return;
+    // Nhạc Game Over
+    if (this.musicMuted && this.sfxMuted) return;
 
-    if (this.ctx && this.ctx.state === "suspended") {
-      this.ctx.resume();
-    }
-
-    if (!this.sfxGameOver) {
-      // Connect to bgmGain because it's technically music
-      this.sfxGameOver = this._createAudio(
-        "/assest/music/EndGame.wav",
-        false,
-        0.5,
-        this.bgmGain,
-      );
-    }
-    this.sfxGameOver.currentTime = 0;
-    this.sfxGameOver.play().catch((e) => console.log(e));
+    this.sfxGameOverNode = this._playSfx("gameover");
   }
 
   stopGameOver() {
-    if (this.sfxGameOver) {
-      this.sfxGameOver.pause();
-      this.sfxGameOver.currentTime = 0;
+    if (this.sfxGameOverNode) {
+      try {
+        this.sfxGameOverNode.stop();
+      } catch (e) {}
+      this.sfxGameOverNode = null;
     }
   }
 }
