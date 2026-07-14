@@ -30,9 +30,9 @@ function gameAlert(message) {
           transition: opacity 0.25s ease;
         }
         .game-alert-card {
-          background: #fbfaf5;
-          border: 5px solid #f57c00;
-          box-shadow: inset 0 0 0 2.5px #ffea00, 0 6px 0 #bf360c, 0 12px 25px rgba(0, 0, 0, 0.35);
+          background: #FFF8E1;
+          border: 5px solid #F9A825;
+          box-shadow: inset 0 0 0 2.5px #FFF59D, 0 6px 0 #F57F17, 0 12px 25px rgba(0, 0, 0, 0.35);
           border-radius: 20px;
           padding: 28px 24px;
           width: 85%; max-width: 340px;
@@ -42,7 +42,7 @@ function gameAlert(message) {
           font-family: 'Be Vietnam Pro', sans-serif;
         }
         .game-alert-text {
-          color: #360207;
+          color: #4E342E;
           font-size: 17px;
           line-height: 1.6;
           margin: 0 0 24px 0;
@@ -528,7 +528,7 @@ export class GameController extends Container {
         fontSize: Math.min(18, height * 0.45),
         fill: "#ffffff",
         fontWeight: "900",
-        stroke: { color: "#360207", width: 3.5 },
+        stroke: { color: "#4E342E", width: 3.5 },
         align: "center",
       }),
       roundPixels: true,
@@ -1090,7 +1090,7 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: "Baloo 2",
         fontSize: 12,
-        fill: "#1565c0",
+        fill: "#F9A825",
 
         fontWeight: "bold",
         letterSpacing: 1.5,
@@ -1307,7 +1307,7 @@ export class GameController extends Container {
       fontSize: 13,
       fontWeight: "900",
       fill: "#ffffff",
-      stroke: { color: "#5900b3", width: 3, join: "round" },
+      stroke: { color: "#F9A825", width: 3, join: "round" },
     });
     const lblRank = new Text({
       text: "HẠNG",
@@ -1372,7 +1372,7 @@ export class GameController extends Container {
       style: new TextStyle({
         fontFamily: "Baloo 2",
         fontSize: 22,
-        fill: "#4b1616",
+        fill: "#4E342E",
         fontWeight: "700",
         stroke: { color: "#ffffff", width: 0.6 }, // Thin white outline to make diacritics pop
       }),
@@ -2146,7 +2146,7 @@ export class GameController extends Container {
         fontFamily: "Baloo 2",
         fontSize: 18,
         fontWeight: "900",
-        fill: "#bf360c",
+        fill: "#F57F17",
         letterSpacing: 1.5,
       }),
       roundPixels: true,
@@ -3199,7 +3199,7 @@ export class GameController extends Container {
         style: new TextStyle({
           fontFamily: "Baloo 2",
           fontSize: isTop3 ? 22 : 14,
-          fill: "#263238",
+          fill: "#4E342E",
         }),
         roundPixels: true,
       });
@@ -3242,7 +3242,7 @@ export class GameController extends Container {
           fontFamily: "Baloo 2",
           fontSize: 13,
           fontWeight: "bold",
-          fill: entry.isPlayer ? "#e53935" : "#263238",
+          fill: entry.isPlayer ? "#FBC02D" : "#4E342E",
         }),
         roundPixels: true,
       });
@@ -3257,7 +3257,7 @@ export class GameController extends Container {
           fontFamily: "Baloo 2",
           fontSize: 13,
           fontWeight: "900",
-          fill: "#263238",
+          fill: "#4E342E",
         }),
         roundPixels: true,
       });
@@ -3287,7 +3287,7 @@ export class GameController extends Container {
         style: new TextStyle({
           fontFamily: "Baloo 2",
           fontSize: isTop3 ? 22 : 14,
-          fill: "#263238",
+          fill: "#4E342E",
         }),
         roundPixels: true,
       });
@@ -3329,7 +3329,7 @@ export class GameController extends Container {
           fontFamily: "Baloo 2",
           fontSize: 13,
           fontWeight: "bold",
-          fill: "#e53935",
+          fill: "#FBC02D",
         }),
         roundPixels: true,
       });
@@ -3343,7 +3343,7 @@ export class GameController extends Container {
           fontFamily: "Baloo 2",
           fontSize: 13,
           fontWeight: "900",
-          fill: "#263238",
+          fill: "#4E342E",
         }),
         roundPixels: true,
       });
@@ -4132,9 +4132,9 @@ export class GameController extends Container {
           box-sizing: border-box;
         }
         .game-popup-card {
-          background: #fbfaf5;
-          border: 5px solid #f57c00;
-          box-shadow: inset 0 0 0 2.5px #ffea00, 0 6px 0 #bf360c, 0 12px 25px rgba(0, 0, 0, 0.35);
+          background: #FFF8E1;
+          border: 5px solid #F9A825;
+          box-shadow: inset 0 0 0 2.5px #FFF59D, 0 6px 0 #F57F17, 0 12px 25px rgba(0, 0, 0, 0.35);
           border-radius: 20px;
           padding: 36px 24px 20px 24px;
           width: 90%; max-width: 420px;
@@ -4154,10 +4154,10 @@ export class GameController extends Container {
           top: -25px;
           left: 50%;
           transform: translateX(-50%);
-          background: linear-gradient(180deg, #ff9800 0%, #f57c00 100%);
-          border: 2.5px solid #fff8b3;
+          background: linear-gradient(180deg, #FBC02D 0%, #F9A825 100%);
+          border: 2.5px solid #FFF9C4;
           border-radius: 12px;
-          box-shadow: 0 4px 0 #bf360c;
+          box-shadow: 0 4px 0 #F57F17;
           color: #ffffff;
           font-family: 'Be Vietnam Pro', sans-serif;
           font-size: 22px;
@@ -4185,7 +4185,7 @@ export class GameController extends Container {
           transform: scale(1.1);
         }
         .game-popup-close-btn:active {
-          transform: scale(0.9);
+          transform: scale(0.92);
         }
         .game-settings-row-container {
           margin-top: 18px;
@@ -4209,7 +4209,7 @@ export class GameController extends Container {
           font-family: 'Be Vietnam Pro', sans-serif;
           font-size: 20px;
           font-weight: 700;
-          color: #360207;
+          color: #4E342E;
           display: flex;
           align-items: center;
           gap: 8px;
@@ -4232,9 +4232,9 @@ export class GameController extends Container {
           transform: scale(0.95);
         }
         .game-settings-reset-btn {
-          background: linear-gradient(180deg, #ff6b6b 0%, #e53935 100%);
+          background: linear-gradient(180deg, #FBC02D 0%, #FBC02D 100%);
           border: none;
-          box-shadow: 0 4px 0 #bf360c;
+          box-shadow: 0 4px 0 #F57F17;
           border-radius: 12px;
           color: #ffffff;
           font-family: 'Be Vietnam Pro', sans-serif;
@@ -4261,12 +4261,12 @@ export class GameController extends Container {
         }
         .game-settings-reset-btn:active {
           transform: translateY(2px);
-          box-shadow: 0 2px 0 #bf360c;
+          box-shadow: 0 2px 0 #F57F17;
         }
         .game-settings-version {
           font-family: 'Be Vietnam Pro', sans-serif;
           font-size: 12px;
-          color: #a58f8f;
+          color: #BCAAA4;
           margin-top: 14px;
           font-weight: 600;
         }
@@ -4294,30 +4294,30 @@ export class GameController extends Container {
           transform: scale(1.1);
         }
         .game-paused-btn:active {
-          transform: scale(0.9);
+          transform: scale(0.92);
         }
 
         /* Game Over popup */
         .game-over-emblem {
           width: 68px;
           height: 68px;
-          background: #ffea00;
-          border: 3.5px solid #8a4500;
+          background: #FFF59D;
+          border: 3.5px solid #F9A825;
           border-radius: 50%;
-          box-shadow: 0 5px 0 #8a4500, inset 0 0 0 2px #fff8b3;
+          box-shadow: 0 5px 0 #F9A825, inset 0 0 0 2px #FFF9C4;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           font-size: 34px;
-          color: #8a4500;
+          color: #F9A825;
           margin: 10px auto;
           line-height: 1;
           position: relative;
           top: -5px;
         }
         .game-over-record-banner {
-          background: #cc0000;
-          border: 1.5px solid #ffea00;
+          background: #FBC02D;
+          border: 1.5px solid #FFF59D;
           border-radius: 6px;
           color: #ffffff;
           font-family: 'Be Vietnam Pro', sans-serif;
@@ -4327,14 +4327,14 @@ export class GameController extends Container {
           padding: 4px 16px;
           display: inline-block;
           margin-bottom: 12px;
-          box-shadow: 0 3px 0 #8a0000;
+          box-shadow: 0 3px 0 #F9A825;
           text-shadow: 0 1px 1px rgba(0,0,0,0.5);
         }
         .game-over-score {
           font-family: 'Be Vietnam Pro', sans-serif;
           font-size: 28px;
           font-weight: 900;
-          color: #360207;
+          color: #4E342E;
           margin: 8px 0;
           letter-spacing: 2px;
           text-shadow: 0 1px 0 #ffffff;
@@ -4343,7 +4343,7 @@ export class GameController extends Container {
           font-family: 'Be Vietnam Pro', sans-serif;
           font-size: 15px;
           font-weight: 700;
-          color: #bf360c;
+          color: #F57F17;
           margin-bottom: 20px;
         }
         .game-over-actions {
@@ -4368,7 +4368,7 @@ export class GameController extends Container {
           transform: scale(1.1);
         }
         .game-over-btn:active {
-          transform: scale(0.9);
+          transform: scale(0.92);
         }
 
         /* Achievements popup */
@@ -4395,7 +4395,7 @@ export class GameController extends Container {
         }
         .game-achievements-row {
           background: #ffffff;
-          border: 1.5px solid #dcd6bf;
+          border: 1.5px solid #FFE082;
           border-radius: 10px;
           padding: 8px 14px;
           display: flex;
@@ -4421,7 +4421,7 @@ export class GameController extends Container {
           font-weight: 700;
           width: 32px;
           text-align: center;
-          color: #263238;
+          color: #4E342E;
         }
         .game-achievements-avatar-container {
           width: 32px;
@@ -4450,22 +4450,22 @@ export class GameController extends Container {
           font-family: 'Be Vietnam Pro', sans-serif;
           font-size: 14px;
           font-weight: 700;
-          color: #263238;
+          color: #4E342E;
         }
         .game-achievements-name.player {
-          color: #e53935;
+          color: #FBC02D;
         }
         .game-achievements-score {
           font-family: 'Be Vietnam Pro', sans-serif;
           font-size: 15px;
           font-weight: 800;
-          color: #263238;
+          color: #4E342E;
           text-align: right;
         }
         .game-achievements-footer {
           margin-top: 14px;
           background: #fff3cd;
-          border: 2px solid #ffea00;
+          border: 2px solid #FFF59D;
           border-radius: 12px;
           padding: 8px 14px;
           display: flex;
@@ -4502,7 +4502,7 @@ export class GameController extends Container {
           transform: scale(1.05);
         }
         .game-charselect-item.selected {
-          border: 3px solid #ffea00;
+          border: 3px solid #FFF59D;
           background: #fff3cd;
           width: 72px;
           height: 72px;
@@ -4535,7 +4535,7 @@ export class GameController extends Container {
           transform: scale(1.1);
         }
         .game-charselect-page-btn:active:not(:disabled) {
-          transform: scale(0.9);
+          transform: scale(0.92);
         }
         .game-charselect-page-btn:disabled {
           opacity: 0.3;
@@ -4545,7 +4545,7 @@ export class GameController extends Container {
           font-family: 'Be Vietnam Pro', sans-serif;
           font-size: 16px;
           font-weight: 800;
-          color: #bf360c;
+          color: #F57F17;
           letter-spacing: 1.5px;
           min-width: 100px;
           text-align: center;
@@ -4587,9 +4587,9 @@ export class GameController extends Container {
         .game-instructions-icon-container {
           width: 36px;
           height: 36px;
-          border: 1.5px solid #dcd6bf;
+          border: 1.5px solid #FFE082;
           border-radius: 8px;
-          background: #fbfaf5;
+          background: #FFF8E1;
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -4605,7 +4605,7 @@ export class GameController extends Container {
           font-family: 'Be Vietnam Pro', sans-serif;
           font-size: 12px;
           font-weight: 700;
-          color: #4b1616;
+          color: #4E342E;
           text-align: left;
           line-height: 1.2;
         }
@@ -4903,7 +4903,7 @@ export class GameController extends Container {
 
     const yesBtn = document.createElement("button");
     yesBtn.style.cssText =
-      "margin: 0 auto; background:linear-gradient(to bottom, #ffa726, #f57c00);border:none;border-radius:12px;padding:10px 60px;color:white;font-size:26px;font-weight:900;font-family:'Nunito', 'Segoe UI', Arial, sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 #e65100, 0 8px 10px rgba(0,0,0,0.3);transition:transform 0.1s, box-shadow 0.1s;text-transform:uppercase;";
+      "margin: 0 auto; background:linear-gradient(to bottom, #ffa726, #F9A825);border:none;border-radius:12px;padding:10px 60px;color:white;font-size:26px;font-weight:900;font-family:'Nunito', 'Segoe UI', Arial, sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 #e65100, 0 8px 10px rgba(0,0,0,0.3);transition:transform 0.1s, box-shadow 0.1s;text-transform:uppercase;";
 
     const tvIcon = document.createElement("img");
     tvIcon.src = "/assest/iconbtn/images.png";
