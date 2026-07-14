@@ -89,7 +89,7 @@ Text.defaultAutoResolution = false;
   PixiAssets.add({ alias: "user_btn", src: "/assest/iconbtn/user_btn.png" });
   PixiAssets.add({
     alias: "avatar_laclac",
-    src: "/assest/image/imagebldp/001_avatar_laclac.png",
+    src: "/assest/image/imagenobackgrd/001_avatar_laclac.png",
   });
 
   // Obstacle/Item preview assets for instructions UI

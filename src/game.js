@@ -236,38 +236,38 @@ function getLeaderboardData() {
     {
       name: "Lạc Lạc",
       score: 580,
-      avatar: "/assest/image/imagebldp/001_avatar_laclac.png",
+      avatar: "/assest/image/imagenobackgrd/001_avatar_laclac.png",
       isPlayer: false,
     },
     {
       name: "Đậu Phộng",
       score: 450,
-      avatar: "/assest/image/imagebldp/015_avatar_dauLan.png",
+      avatar: "/assest/image/imagenobackgrd/015_avatar_dauLan.png",
       isPlayer: false,
     },
     {
       name: "Ếch Xanh",
       score: 320,
-      avatar: "/assest/image/imagebldp/010_avatar_echxanh1.png",
+      avatar: "/assest/image/imagenobackgrd/010_avatar_echxanh1.png",
       isPlayer: false,
     },
     {
       name: "Vịt Lùn",
       score: 210,
-      avatar: "/assest/image/imagebldp/003_avatar_duck.png",
+      avatar: "/assest/image/imagenobackgrd/003_avatar_duck.png",
       isPlayer: false,
     },
     {
       name: "Mèo Ú",
       score: 150,
-      avatar: "/assest/image/imagebldp/012_avatar_hubcat.png",
+      avatar: "/assest/image/imagenobackgrd/012_avatar_hubcat.png",
       isPlayer: false,
     },
   ];
 
   const playerName = "Bạn";
   const playerAvatar =
-    window.selectedAvatarUrl || "/assest/image/imagebldp/001_avatar_laclac.png";
+    window.selectedAvatarUrl || "/assest/image/imagenobackgrd/001_avatar_laclac.png";
 
   entries.push({
     name: playerName,
@@ -745,16 +745,16 @@ export class GameController extends Container {
   async loadAssets() {
     try {
       this.laclacTexture = await Assets.load(
-        "/assest/image/imagebldp/001_avatar_laclac.png",
+        "/assest/image/imagenobackgrd/001_avatar_laclac.png",
       );
       this.daulanTexture = await Assets.load(
-        "/assest/image/imagebldp/015_avatar_dauLan.png",
+        "/assest/image/imagenobackgrd/015_avatar_dauLan.png",
       );
       this.echxanhTexture = await Assets.load(
-        "/assest/image/imagebldp/010_avatar_echxanh1.png",
+        "/assest/image/imagenobackgrd/010_avatar_echxanh1.png",
       );
       this.duckTexture = await Assets.load(
-        "/assest/image/imagebldp/003_avatar_duck.png",
+        "/assest/image/imagenobackgrd/003_avatar_duck.png",
       );
 
       // Preload obstacles and collectibles (multi-asset expansion)
@@ -780,7 +780,7 @@ export class GameController extends Container {
 
       const savedAvatar =
         window.localStorage.getItem("selected_avatar_url") ||
-        "/assest/image/imagebldp/001_avatar_laclac.png";
+        "/assest/image/imagenobackgrd/001_avatar_laclac.png";
       window.selectedAvatarUrl = savedAvatar;
       this.playerColors = this.getAvatarColors(savedAvatar);
       const activeTex = await Assets.load(savedAvatar);
@@ -2349,7 +2349,7 @@ export class GameController extends Container {
     const startIndex = this.charSelectPage * itemsPerPage;
     const currentAvatar =
       window.selectedAvatarUrl ||
-      "/assest/image/imagebldp/001_avatar_laclac.png";
+      "/assest/image/imagenobackgrd/001_avatar_laclac.png";
 
     // Pad avatar file list
     const avatarList = [];
@@ -2403,7 +2403,7 @@ export class GameController extends Container {
     for (let i = 0; i < 44; i++) {
       const idxStr = String(i + 1).padStart(3, "0");
       avatarList.push({
-        url: `/assest/image/imagebldp/${idxStr}_avatar_${avatarNames[i]}.png`,
+        url: `/assest/image/imagenobackgrd/${idxStr}_avatar_${avatarNames[i]}.png`,
         name: avatarNames[i].toUpperCase(),
       });
     }
@@ -3548,7 +3548,7 @@ export class GameController extends Container {
       // Make sure the mascot sprite texture is updated with the current avatar on load/change
       const activeAvatar =
         window.localStorage.getItem("selected_avatar_url") ||
-        "/assest/image/imagebldp/001_avatar_laclac.png";
+        "/assest/image/imagenobackgrd/001_avatar_laclac.png";
       Assets.load(activeAvatar)
         .then((tex) => {
           if (!this.menuMascotSprite.destroyed) {
@@ -5275,7 +5275,7 @@ export class GameController extends Container {
     const startIndex = this.charSelectPage * itemsPerPage;
     const currentAvatar =
       window.selectedAvatarUrl ||
-      "/assest/image/imagebldp/001_avatar_laclac.png";
+      "/assest/image/imagenobackgrd/001_avatar_laclac.png";
 
     const avatarNames = [
       "laclac",
@@ -5328,7 +5328,7 @@ export class GameController extends Container {
     for (let i = 0; i < 44; i++) {
       const idxStr = String(i + 1).padStart(3, "0");
       avatarList.push({
-        url: `/assest/image/imagebldp/${idxStr}_avatar_${avatarNames[i]}.png`,
+        url: `/assest/image/imagenobackgrd/${idxStr}_avatar_${avatarNames[i]}.png`,
         name: avatarNames[i].toUpperCase(),
       });
     }
