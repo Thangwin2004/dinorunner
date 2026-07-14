@@ -1566,7 +1566,7 @@ export class GameController extends Container {
       style: {
         fontFamily: "Baloo 2",
         fontSize: 12,
-        fill: "#aaaaaa",
+        fill: "#FFECB3",
       },
       roundPixels: true,
     });
@@ -4196,7 +4196,7 @@ export class GameController extends Container {
         }
         .game-settings-row {
           background: #ffffff;
-          border: 3.5px solid #ddeaff;
+          border: 3.5px solid #FFF9C4;
           border-radius: 15px;
           padding: 10px 18px;
           display: flex;
@@ -4266,7 +4266,7 @@ export class GameController extends Container {
         .game-settings-version {
           font-family: 'Be Vietnam Pro', sans-serif;
           font-size: 12px;
-          color: #BCAAA4;
+          color: #4E342E;
           margin-top: 14px;
           font-weight: 600;
         }
@@ -4386,16 +4386,16 @@ export class GameController extends Container {
           width: 6px;
         }
         .game-achievements-list::-webkit-scrollbar-track {
-          background: #f1ebd8;
+          background: #FFF8E1;
           border-radius: 4px;
         }
         .game-achievements-list::-webkit-scrollbar-thumb {
-          background: #c5beaa;
+          background: #FFECB3;
           border-radius: 4px;
         }
         .game-achievements-row {
           background: #ffffff;
-          border: 1.5px solid #FFE082;
+          border: 1.5px solid #FFECB3;
           border-radius: 10px;
           padding: 8px 14px;
           display: flex;
@@ -4427,8 +4427,11 @@ export class GameController extends Container {
           width: 32px;
           height: 32px;
           border-radius: 50%;
-          border: 1.5px solid #d4af37;
-          background: #ffffff;
+          box-shadow: 0 5px 0 #F9A825, inset 0 0 0 2px #FFF9C4;
+          font-family: 'Outfit', sans-serif;
+          font-size: 14px;
+          font-weight: 700;
+          color: #F9A825;
           display: inline-flex;
           align-items: center;
           justify-content: center;
