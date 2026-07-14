@@ -267,7 +267,8 @@ function getLeaderboardData() {
 
   const playerName = "Bạn";
   const playerAvatar =
-    window.selectedAvatarUrl || "/assest/image/imagenobackgrd/001_avatar_laclac.png";
+    window.selectedAvatarUrl ||
+    "/assest/image/imagenobackgrd/001_avatar_laclac.png";
 
   entries.push({
     name: playerName,
