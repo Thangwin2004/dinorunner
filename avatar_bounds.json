@@ -1,0 +1,398 @@
+{
+  "laclac": {
+    "minY": 20,
+    "maxY": 238,
+    "minX": 82,
+    "maxX": 173,
+    "boundWidth": 91,
+    "boundHeight": 218,
+    "height": 256
+  },
+  "lick1": {
+    "minY": 239,
+    "maxY": 1161,
+    "minX": 395,
+    "maxX": 870,
+    "boundWidth": 475,
+    "boundHeight": 922,
+    "height": 1254
+  },
+  "duck": {
+    "minY": 221,
+    "maxY": 1144,
+    "minX": 342,
+    "maxX": 891,
+    "boundWidth": 549,
+    "boundHeight": 923,
+    "height": 1254
+  },
+  "turtle": {
+    "minY": 274,
+    "maxY": 1109,
+    "minX": 277,
+    "maxX": 846,
+    "boundWidth": 569,
+    "boundHeight": 835,
+    "height": 1254
+  },
+  "long": {
+    "minY": 179,
+    "maxY": 1142,
+    "minX": 371,
+    "maxX": 942,
+    "boundWidth": 571,
+    "boundHeight": 963,
+    "height": 1254
+  },
+  "horse": {
+    "minY": 81,
+    "maxY": 1190,
+    "minX": 357,
+    "maxX": 869,
+    "boundWidth": 512,
+    "boundHeight": 1109,
+    "height": 1254
+  },
+  "tiguawhite": {
+    "minY": 150,
+    "maxY": 812,
+    "minX": 288,
+    "maxX": 670,
+    "boundWidth": 382,
+    "boundHeight": 662,
+    "height": 973
+  },
+  "husky": {
+    "minY": 157,
+    "maxY": 1139,
+    "minX": 385,
+    "maxX": 835,
+    "boundWidth": 450,
+    "boundHeight": 982,
+    "height": 1254
+  },
+  "doremonk": {
+    "minY": 90,
+    "maxY": 764,
+    "minX": 223,
+    "maxX": 603,
+    "boundWidth": 380,
+    "boundHeight": 674,
+    "height": 816
+  },
+  "echxanh1": {
+    "minY": 81,
+    "maxY": 719,
+    "minX": 211,
+    "maxX": 546,
+    "boundWidth": 335,
+    "boundHeight": 638,
+    "height": 774
+  },
+  "nudaeng": {
+    "minY": 168,
+    "maxY": 1195,
+    "minX": 328,
+    "maxX": 955,
+    "boundWidth": 627,
+    "boundHeight": 1027,
+    "height": 1254
+  },
+  "hubcat": {
+    "minY": 144,
+    "maxY": 1134,
+    "minX": 368,
+    "maxX": 855,
+    "boundWidth": 487,
+    "boundHeight": 990,
+    "height": 1254
+  },
+  "unicorn": {
+    "minY": 147,
+    "maxY": 1171,
+    "minX": 336,
+    "maxX": 886,
+    "boundWidth": 550,
+    "boundHeight": 1024,
+    "height": 1254
+  },
+  "zongbadou": {
+    "minY": 190,
+    "maxY": 1193,
+    "minX": 384,
+    "maxX": 885,
+    "boundWidth": 501,
+    "boundHeight": 1003,
+    "height": 1254
+  },
+  "dauLan": {
+    "minY": 210,
+    "maxY": 1155,
+    "minX": 323,
+    "maxX": 883,
+    "boundWidth": 560,
+    "boundHeight": 945,
+    "height": 1254
+  },
+  "banhtung": {
+    "minY": 313,
+    "maxY": 1168,
+    "minX": 306,
+    "maxX": 1014,
+    "boundWidth": 708,
+    "boundHeight": 855,
+    "height": 1254
+  },
+  "tiguayel": {
+    "minY": 90,
+    "maxY": 701,
+    "minX": 218,
+    "maxX": 551,
+    "boundWidth": 333,
+    "boundHeight": 611,
+    "height": 768
+  },
+  "megachard": {
+    "minY": 78,
+    "maxY": 764,
+    "minX": 236,
+    "maxX": 589,
+    "boundWidth": 353,
+    "boundHeight": 686,
+    "height": 849
+  },
+  "gigaboy": {
+    "minY": 133,
+    "maxY": 723,
+    "minX": 148,
+    "maxX": 642,
+    "boundWidth": 494,
+    "boundHeight": 590,
+    "height": 888
+  },
+  "cloudball": {
+    "minY": 68,
+    "maxY": 736,
+    "minX": 259,
+    "maxX": 557,
+    "boundWidth": 298,
+    "boundHeight": 668,
+    "height": 834
+  },
+  "culama": {
+    "minY": 136,
+    "maxY": 701,
+    "minX": 220,
+    "maxX": 620,
+    "boundWidth": 400,
+    "boundHeight": 565,
+    "height": 810
+  },
+  "poolpanda": {
+    "minY": 47,
+    "maxY": 599,
+    "minX": 149,
+    "maxX": 494,
+    "boundWidth": 345,
+    "boundHeight": 552,
+    "height": 641
+  },
+  "trollvn": {
+    "minY": 110,
+    "maxY": 701,
+    "minX": 172,
+    "maxX": 516,
+    "boundWidth": 344,
+    "boundHeight": 591,
+    "height": 733
+  },
+  "heothy": {
+    "minY": 116,
+    "maxY": 608,
+    "minX": 165,
+    "maxX": 496,
+    "boundWidth": 331,
+    "boundHeight": 492,
+    "height": 661
+  },
+  "zolype": {
+    "minY": 37,
+    "maxY": 633,
+    "minX": 156,
+    "maxX": 485,
+    "boundWidth": 329,
+    "boundHeight": 596,
+    "height": 688
+  },
+  "crick": {
+    "minY": 105,
+    "maxY": 611,
+    "minX": 191,
+    "maxX": 472,
+    "boundWidth": 281,
+    "boundHeight": 506,
+    "height": 702
+  },
+  "penguine": {
+    "minY": 102,
+    "maxY": 578,
+    "minX": 146,
+    "maxX": 461,
+    "boundWidth": 315,
+    "boundHeight": 476,
+    "height": 627
+  },
+  "timao": {
+    "minY": 176,
+    "maxY": 1161,
+    "minX": 357,
+    "maxX": 980,
+    "boundWidth": 623,
+    "boundHeight": 985,
+    "height": 1254
+  },
+  "caocal": {
+    "minY": 68,
+    "maxY": 639,
+    "minX": 154,
+    "maxX": 527,
+    "boundWidth": 373,
+    "boundHeight": 571,
+    "height": 698
+  },
+  "cowboy": {
+    "minY": 77,
+    "maxY": 837,
+    "minX": 227,
+    "maxX": 694,
+    "boundWidth": 467,
+    "boundHeight": 760,
+    "height": 932
+  },
+  "ninjadog": {
+    "minY": 70,
+    "maxY": 660,
+    "minX": 194,
+    "maxX": 553,
+    "boundWidth": 359,
+    "boundHeight": 590,
+    "height": 716
+  },
+  "petrocat": {
+    "minY": 45,
+    "maxY": 785,
+    "minX": 207,
+    "maxX": 615,
+    "boundWidth": 408,
+    "boundHeight": 740,
+    "height": 849
+  },
+  "richmonkey": {
+    "minY": 66,
+    "maxY": 551,
+    "minX": 149,
+    "maxX": 403,
+    "boundWidth": 254,
+    "boundHeight": 485,
+    "height": 561
+  },
+  "hazagi": {
+    "minY": 70,
+    "maxY": 786,
+    "minX": 271,
+    "maxX": 634,
+    "boundWidth": 363,
+    "boundHeight": 716,
+    "height": 868
+  },
+  "dogoin": {
+    "minY": 236,
+    "maxY": 855,
+    "minX": 47,
+    "maxX": 879,
+    "boundWidth": 832,
+    "boundHeight": 619,
+    "height": 909
+  },
+  "watermelon": {
+    "minY": 300,
+    "maxY": 1117,
+    "minX": 295,
+    "maxX": 817,
+    "boundWidth": 522,
+    "boundHeight": 817,
+    "height": 1254
+  },
+  "timone": {
+    "minY": 130,
+    "maxY": 881,
+    "minX": 274,
+    "maxX": 717,
+    "boundWidth": 443,
+    "boundHeight": 751,
+    "height": 952
+  },
+  "ronaldo": {
+    "minY": 127,
+    "maxY": 1184,
+    "minX": 299,
+    "maxX": 997,
+    "boundWidth": 698,
+    "boundHeight": 1057,
+    "height": 1254
+  },
+  "hustmouse": {
+    "minY": 40,
+    "maxY": 936,
+    "minX": 216,
+    "maxX": 704,
+    "boundWidth": 488,
+    "boundHeight": 896,
+    "height": 955
+  },
+  "hitbear": {
+    "minY": 97,
+    "maxY": 733,
+    "minX": 168,
+    "maxX": 599,
+    "boundWidth": 431,
+    "boundHeight": 636,
+    "height": 786
+  },
+  "echxanh2": {
+    "minY": 129,
+    "maxY": 674,
+    "minX": 228,
+    "maxX": 540,
+    "boundWidth": 312,
+    "boundHeight": 545,
+    "height": 775
+  },
+  "zolype2": {
+    "minY": 344,
+    "maxY": 1019,
+    "minX": 427,
+    "maxX": 820,
+    "boundWidth": 393,
+    "boundHeight": 675,
+    "height": 1254
+  },
+  "lick2": {
+    "minY": 78,
+    "maxY": 744,
+    "minX": 223,
+    "maxX": 578,
+    "boundWidth": 355,
+    "boundHeight": 666,
+    "height": 808
+  },
+  "poolpanda2": {
+    "minY": 189,
+    "maxY": 1144,
+    "minX": 324,
+    "maxX": 950,
+    "boundWidth": 626,
+    "boundHeight": 955,
+    "height": 1254
+  }
+}
