@@ -2648,6 +2648,21 @@ export class GameController extends Container {
     const startY = -120;
     const rowHeight = 44;
 
+    if (data.length === 0) {
+      const emptyText = new Text({
+        text: "Chưa có thành tích.\nHãy chơi để thiết lập kỷ lục đầu tiên.",
+        style: new TextStyle({
+          fontFamily: "Baloo 2",
+          fontSize: 16,
+          fill: "#5D4037",
+          align: "center",
+        }),
+      });
+      emptyText.anchor.set(0.5);
+      emptyText.position.set(0, -42);
+      this.leadersContainer.addChild(emptyText);
+    }
+
     // Draw top 6 entries
     for (let i = 0; i < 6; i++) {
       const entry = data[i];

@@ -820,6 +820,14 @@ export function showHTMLAchievements(game) {
   listContainer.className = "game-achievements-list";
 
   const data = getLeaderboardData();
+  if (data.length === 0) {
+    const emptyText = document.createElement("div");
+    emptyText.style.cssText =
+      "padding:24px;text-align:center;font-weight:700;color:#5D4037;";
+    emptyText.innerText =
+      "Chưa có thành tích. Hãy chơi để thiết lập kỷ lục đầu tiên.";
+    listContainer.appendChild(emptyText);
+  }
   for (let i = 0; i < 6; i++) {
     const entry = data[i];
     if (!entry) break;
