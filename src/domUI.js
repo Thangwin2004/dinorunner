@@ -278,35 +278,103 @@ export function injectHTMLPopupStyles() {
     }
 
     .game-instructions-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-      margin-top: 15px; max-height: 280px; overflow-y: auto;
-      padding-right: 4px; box-sizing: border-box; text-align: left;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      margin-top: 15px;
+      box-sizing: border-box; text-align: left;
     }
-    @media (max-width: 420px) {
-      .game-instructions-grid { grid-template-columns: 1fr; }
-    }
-    .game-instructions-grid::-webkit-scrollbar { width: 6px; }
-    .game-instructions-grid::-webkit-scrollbar-track { background: #FFF8E1; }
-    .game-instructions-grid::-webkit-scrollbar-thumb { background: #FFD54F; border-radius: 3px; }
 
     .game-instructions-row {
       display: flex; align-items: center; gap: 10px;
-      padding: 6px 10px; border-radius: 10px; background: #FFF;
-      border: 2px solid #DDEAFF;
+      padding: 10px 12px; border-radius: 14px; background: #FFF;
+      border: 2.5px solid #FFE0B2;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      transition: transform 0.15s ease;
     }
-    .game-instructions-icon-container {
-      width: 32px; height: 32px; border-radius: 6px;
-      background: #FFF9C4; display: flex; justify-content: center; align-items: center;
-      flex-shrink: 0;
+    .game-instructions-row:active {
+      transform: scale(0.97);
     }
-    .game-instructions-icon {
-      max-width: 24px; max-height: 24px; object-fit: contain;
+    .game-instructions-emoji {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; justify-content: center; align-items: center;
+      flex-shrink: 0; font-size: 20px; line-height: 1;
+    }
+    .game-instructions-emoji.danger {
+      background: linear-gradient(135deg, #FFCDD2, #EF9A9A);
+      border: 2px solid #E57373;
+    }
+    .game-instructions-emoji.collect {
+      background: linear-gradient(135deg, #C8E6C9, #A5D6A7);
+      border: 2px solid #66BB6A;
+    }
+    .game-instructions-emoji.shield {
+      background: linear-gradient(135deg, #BBDEFB, #90CAF9);
+      border: 2px solid #42A5F5;
     }
     .game-instructions-text {
-      font-size: 12px; font-weight: bold; color: #4E342E;
+      font-size: 12px; font-weight: 800; color: #4E342E;
+      line-height: 1.3;
+    }
+    .game-instructions-tag {
+      display: inline-block; font-size: 9px; font-weight: 900;
+      padding: 2px 6px; border-radius: 6px; margin-top: 2px;
+      letter-spacing: 0.5px;
+    }
+    .game-instructions-tag.jump {
+      background: #FFF3E0; color: #E65100;
+    }
+    .game-instructions-tag.duck {
+      background: #E8F5E9; color: #2E7D32;
+    }
+    .game-instructions-tag.bonus {
+      background: #F3E5F5; color: #7B1FA2;
+    }
+    .game-instructions-tag.power {
+      background: #E3F2FD; color: #1565C0;
     }
   `;
   document.head.appendChild(style);
+}
+
+function createToggleRow(label, isEnabled, onToggle) {
+  const row = document.createElement("div");
+  row.style.cssText = `width:100%; height:64px; border-radius:12px; background:#fbfaf5; border:3px solid #fff; display:flex; justify-content:space-between; align-items:center; padding:0 16px; box-sizing:border-box; margin-bottom: 12px;`;
+
+  const text = document.createElement("span");
+  text.style.cssText = `font-family:'Fredoka', 'Baloo 2', 'Be Vietnam Pro', sans-serif; font-size:17px; font-weight:bold; color:#47363B; letter-spacing:0.8px; white-space:nowrap;`;
+  text.innerText = label;
+
+  const toggle = document.createElement("div");
+  const isMuted = !isEnabled;
+  toggle.style.cssText = `width:86px; height:42px; border-radius:21px; background:${isMuted ? "#E8E3D8" : "#81C784"}; border:3px solid #fff; box-shadow: inset 0 3px 6px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.1); cursor:pointer; position:relative; transition: background 0.25s, transform 0.1s; flex-shrink:0; display:flex; align-items:center;`;
+
+  const statusText = document.createElement("span");
+  statusText.innerText = isMuted ? "OFF" : "ON";
+  statusText.style.cssText = `color:#fff; font-family:'Impact', 'Arial Black', sans-serif; font-size:16px; position:absolute; width:100%; text-align:center; padding-right:${isMuted ? "0" : "28px"}; padding-left:${isMuted ? "28px" : "0"}; box-sizing:border-box; transition: padding 0.25s; text-shadow: 0 2px 3px rgba(0,0,0,0.4); pointer-events:none;`;
+
+  const knob = document.createElement("div");
+  knob.style.cssText = `width:32px; height:32px; border-radius:50%; background:#fff; position:absolute; top:2px; left:${isMuted ? "3px" : "45px"}; transition: left 0.25s cubic-bezier(0.3, 1.2, 0.5, 1); box-shadow: 0 3px 6px rgba(0,0,0,0.4); pointer-events:none;`;
+
+  toggle.appendChild(statusText);
+  toggle.appendChild(knob);
+
+  toggle.onclick = () => {
+    audio.playClick();
+    const newState = onToggle(); // Returns state after toggle
+    const nowMuted = !newState;
+    toggle.style.background = nowMuted ? "#E8E3D8" : "#81C784";
+    knob.style.left = nowMuted ? "3px" : "45px";
+    statusText.innerText = nowMuted ? "OFF" : "ON";
+    statusText.style.paddingRight = nowMuted ? "0" : "28px";
+    statusText.style.paddingLeft = nowMuted ? "28px" : "0";
+  };
+
+  toggle.onmousedown = () => (toggle.style.transform = "scale(0.92)");
+  toggle.onmouseup = () => (toggle.style.transform = "scale(1)");
+  toggle.onmouseleave = () => (toggle.style.transform = "scale(1)");
+
+  row.appendChild(text);
+  row.appendChild(toggle);
+  return row;
 }
 
 export function showHTMLSettings(game) {
@@ -339,66 +407,21 @@ export function showHTMLSettings(game) {
   const rowContainer = document.createElement("div");
   rowContainer.className = "game-settings-row-container";
 
-  const createToggleRow = (label, isEnabled, onToggle) => {
-    const row = document.createElement("div");
-    row.style.cssText = `width:100%; height:70px; border-radius:12px; background:#fbfaf5; border:3px solid #fff; display:flex; justify-content:space-between; align-items:center; padding:0 20px; box-sizing:border-box; margin-bottom: 15px;`;
-
-    const text = document.createElement("span");
-    text.style.cssText = `font-family:'Fredoka', 'Baloo 2', 'Be Vietnam Pro', sans-serif; font-size:18px; font-weight:bold; color:#47363B; letter-spacing:0.8px; white-space:nowrap;`;
-    text.innerText = label;
-
-    const toggle = document.createElement("div");
-    const isMuted = !isEnabled;
-    toggle.style.cssText = `width:96px; height:46px; border-radius:23px; background:${isMuted ? "#E8E3D8" : "#81C784"}; border:3px solid #fff; box-shadow: inset 0 3px 6px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.1); cursor:pointer; position:relative; transition: background 0.25s, transform 0.1s; flex-shrink:0; display:flex; align-items:center;`;
-
-    const statusText = document.createElement("span");
-    statusText.innerText = isMuted ? "OFF" : "ON";
-    statusText.style.cssText = `color:#fff; font-family:'Impact', 'Arial Black', sans-serif; font-size:18px; position:absolute; width:100%; text-align:center; padding-right:${isMuted ? "0" : "32px"}; padding-left:${isMuted ? "32px" : "0"}; box-sizing:border-box; transition: padding 0.25s; text-shadow: 0 2px 3px rgba(0,0,0,0.4); pointer-events:none;`;
-
-    const knob = document.createElement("div");
-    knob.style.cssText = `width:36px; height:36px; border-radius:50%; background:#fff; position:absolute; top:2px; left:${isMuted ? "3px" : "51px"}; transition: left 0.25s cubic-bezier(0.3, 1.2, 0.5, 1); box-shadow: 0 3px 6px rgba(0,0,0,0.4); pointer-events:none;`;
-
-    toggle.appendChild(statusText);
-    toggle.appendChild(knob);
-
-    toggle.onclick = () => {
-      const newState = onToggle(); // Returns state after toggle
-      const nowMuted = !newState;
-      toggle.style.background = nowMuted ? "#E8E3D8" : "#81C784";
-      knob.style.left = nowMuted ? "3px" : "51px";
-      statusText.innerText = nowMuted ? "OFF" : "ON";
-      statusText.style.paddingRight = nowMuted ? "0" : "32px";
-      statusText.style.paddingLeft = nowMuted ? "32px" : "0";
-    };
-
-    toggle.onmousedown = () => (toggle.style.transform = "scale(0.92)");
-    toggle.onmouseup = () => (toggle.style.transform = "scale(1)");
-    toggle.onmouseleave = () => (toggle.style.transform = "scale(1)");
-
-    row.appendChild(text);
-    row.appendChild(toggle);
-    return row;
-  };
-
   // Music row
-  const musicRow = createToggleRow("ÂM NHẠC", !audio.musicMuted, () => {
-    audio.playClick();
+  const musicRow = createToggleRow("🎵 Nhạc nền", !audio.musicMuted, () => {
     audio.toggleMusicMute();
     return !audio.musicMuted;
   });
   rowContainer.appendChild(musicRow);
 
   // SFX row
-  const sfxRow = createToggleRow("HIỆU ỨNG", !audio.sfxMuted, () => {
-    audio.playClick();
+  const sfxRow = createToggleRow("🔊 Hiệu ứng", !audio.sfxMuted, () => {
     audio.toggleSfxMute();
     return !audio.sfxMuted;
   });
   rowContainer.appendChild(sfxRow);
 
   card.appendChild(rowContainer);
-
-  // Note: Reset button "XÓA LỊCH SỬ" completely removed as requested.
 
   // Version Text
   const versionText = document.createElement("div");
@@ -461,41 +484,17 @@ export function showHTMLPaused(game) {
   rowContainer.className = "game-settings-row-container";
 
   // Music row
-  const musicRow = document.createElement("div");
-  musicRow.className = "game-settings-row";
-  const musicLabel = document.createElement("span");
-  musicLabel.className = "game-settings-label";
-  musicLabel.innerText = "🎵 Nhạc nền";
-  musicRow.appendChild(musicLabel);
-
-  const musicToggle = document.createElement("button");
-  musicToggle.className = "game-settings-toggle-btn";
-  musicToggle.style.backgroundImage = `url(${audio.musicMuted ? "/assest/iconbtn/toggle_off.png" : "/assest/iconbtn/toggle_on.png"})`;
-  musicToggle.addEventListener("click", () => {
-    audio.playClick();
+  const musicRow = createToggleRow("🎵 Nhạc nền", !audio.musicMuted, () => {
     audio.toggleMusicMute();
-    musicToggle.style.backgroundImage = `url(${audio.musicMuted ? "/assest/iconbtn/toggle_off.png" : "/assest/iconbtn/toggle_on.png"})`;
+    return !audio.musicMuted;
   });
-  musicRow.appendChild(musicToggle);
   rowContainer.appendChild(musicRow);
 
   // SFX row
-  const sfxRow = document.createElement("div");
-  sfxRow.className = "game-settings-row";
-  const sfxLabel = document.createElement("span");
-  sfxLabel.className = "game-settings-label";
-  sfxLabel.innerText = "🔊 Hiệu ứng";
-  sfxRow.appendChild(sfxLabel);
-
-  const sfxToggle = document.createElement("button");
-  sfxToggle.className = "game-settings-toggle-btn";
-  sfxToggle.style.backgroundImage = `url(${audio.sfxMuted ? "/assest/iconbtn/toggle_off.png" : "/assest/iconbtn/toggle_on.png"})`;
-  sfxToggle.addEventListener("click", () => {
-    audio.playClick();
+  const sfxRow = createToggleRow("🔊 Hiệu ứng", !audio.sfxMuted, () => {
     audio.toggleSfxMute();
-    sfxToggle.style.backgroundImage = `url(${audio.sfxMuted ? "/assest/iconbtn/toggle_off.png" : "/assest/iconbtn/toggle_on.png"})`;
+    return !audio.sfxMuted;
   });
-  sfxRow.appendChild(sfxToggle);
   rowContainer.appendChild(sfxRow);
 
   card.appendChild(rowContainer);
@@ -1126,75 +1125,52 @@ export function showHTMLInstructions(game) {
   title.innerText = "HƯỚNG DẪN CHƠI";
   card.appendChild(title);
 
-  const leftItems = [
-    {
-      label: "Lốp xe (Nhảy né)",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
-    },
-    {
-      label: "Hàng rào (Nhảy né)",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
-    },
-    {
-      label: "Bàn nhựa (Nhảy né)",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.png",
-    },
-    {
-      label: "Bù nhìn (Nhảy né)",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.png",
-    },
-    {
-      label: "Dép tổ ong (Cúi né)",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
-    },
-    {
-      label: "Ghế đỏ bay (Cúi né)",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.png",
-    },
-  ];
-
-  const rightItems = [
-    {
-      label: "Bánh Chưng (+Điểm)",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
-    },
-    {
-      label: "Bánh Mì (+Điểm)",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.png",
-    },
-    {
-      label: "Nước Ngọt (+Điểm)",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.png",
-    },
-    { label: "Khiên Bất Tử (2 giây)", isShield: true },
+  const allItems = [
+    { label: "Lốp xe", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png", tag: "Nhảy né", type: "danger", tagClass: "jump" },
+    { label: "Hàng rào", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png", tag: "Nhảy né", type: "danger", tagClass: "jump" },
+    { label: "Bàn nhựa", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.png", tag: "Nhảy né", type: "danger", tagClass: "jump" },
+    { label: "Bù nhìn", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.png", tag: "Nhảy né", type: "danger", tagClass: "jump" },
+    { label: "Dép tổ ong", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png", tag: "Cúi né", type: "danger", tagClass: "duck" },
+    { label: "Ghế đỏ bay", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.png", tag: "Cúi né", type: "danger", tagClass: "duck" },
+    { label: "Bánh Chưng", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png", tag: "+Điểm", type: "collect", tagClass: "bonus" },
+    { label: "Bánh Mì", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.png", tag: "+Điểm", type: "collect", tagClass: "bonus" },
+    { label: "Nước Ngọt", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.png", tag: "+Điểm", type: "collect", tagClass: "bonus" },
+    { label: "Khiên Bất Tử", isShield: true, tag: "2 giây", type: "shield", tagClass: "power" },
   ];
 
   const grid = document.createElement("div");
   grid.className = "game-instructions-grid";
 
-  const allItems = [...leftItems, ...rightItems];
   allItems.forEach((item) => {
     const row = document.createElement("div");
     row.className = "game-instructions-row";
 
-    const iconContainer = document.createElement("div");
-    iconContainer.className = "game-instructions-icon-container";
-
+    const iconEl = document.createElement("div");
+    iconEl.className = `game-instructions-emoji ${item.type}`;
     if (item.isShield) {
-      iconContainer.innerHTML = `<span style="font-size: 22px; color: #29b6f6; line-height: 1;">🛡️</span>`;
+      iconEl.textContent = "🛡️";
     } else {
       const img = document.createElement("img");
-      img.className = "game-instructions-icon";
       img.src = item.img;
-      iconContainer.appendChild(img);
+      img.style.maxWidth = "26px";
+      img.style.maxHeight = "26px";
+      img.style.objectFit = "contain";
+      iconEl.appendChild(img);
     }
-    row.appendChild(iconContainer);
+    row.appendChild(iconEl);
 
-    const label = document.createElement("span");
+    const textWrap = document.createElement("div");
+    const label = document.createElement("div");
     label.className = "game-instructions-text";
-    label.innerText = item.label;
-    row.appendChild(label);
+    label.textContent = item.label;
+    textWrap.appendChild(label);
 
+    const tag = document.createElement("span");
+    tag.className = `game-instructions-tag ${item.tagClass}`;
+    tag.textContent = item.tag;
+    textWrap.appendChild(tag);
+
+    row.appendChild(textWrap);
     grid.appendChild(row);
   });
 

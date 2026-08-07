@@ -346,17 +346,6 @@ export class GameController extends Container {
       }
       content.addChild(sprite);
 
-      btn.updateStyle = (r) => {
-        const ratio = tex.width && tex.height ? tex.width / tex.height : 1;
-        if (ratio > 1.2 || ratio < 0.8) {
-          sprite.height = r * 2 * mult;
-          sprite.width = r * 2 * ratio * mult;
-        } else {
-          sprite.width = r * 2 * mult;
-          sprite.height = r * 2 * mult;
-        }
-      };
-
       btn.on("pointerover", () => {
         gsap.to(btn.scale, { x: 1.08, y: 1.08, duration: 0.12 });
       });
@@ -370,89 +359,68 @@ export class GameController extends Container {
       btn.on("pointerup", () => {
         gsap.to(content, { y: 0, duration: 0.1 });
         audio.playClick();
-        onClick();
+        if (onClick) onClick();
       });
       btn.on("pointerupoutside", () => {
         gsap.to(content, { y: 0, duration: 0.1 });
       });
 
       return btn;
-    } else {
-      const btn = new Container();
-      btn.eventMode = "static";
-      btn.cursor = "pointer";
-
-      const base = new Graphics();
-      const face = new Graphics();
-
-      const drawGraphics = (pressed = false) => {
-        base.clear();
-        face.clear();
-
-        const offset = pressed ? 1.5 : 3;
-        const color = palettes.purple;
-
-        base.circle(0, offset, radius).fill({ color: color.shadow });
-
-        face
-          .circle(0, 0, radius)
-          .fill({
-            fill: new FillGradient({
-              start: { x: 0, y: -radius },
-              end: { x: 0, y: radius },
-              colorStops: [
-                { offset: 0, color: color.top },
-                { offset: 1, color: color.bottom },
-              ],
-            }),
-          })
-          .stroke({ color: color.stroke, width: 2 });
-
-        face
-          .ellipse(0, -radius * 0.4, radius * 0.72, radius * 0.35)
-          .fill({ color: 0xffffff, alpha: 0.28 });
-      };
-
-      drawGraphics();
-      btn.addChild(base);
-      btn.addChild(face);
-
-      const txt = new Text({
-        text: emoji,
-        style: new TextStyle({
-          fontFamily: "Baloo 2",
-          fontSize: radius * 1.0,
-          fill: 0xffffff,
-          align: "center",
-        }),
-      });
-      txt.anchor.set(0.5);
-      face.addChild(txt);
-
-      btn.on("pointerover", () => {
-        gsap.to(btn.scale, { x: 1.08, y: 1.08, duration: 0.12 });
-      });
-      btn.on("pointerout", () => {
-        gsap.to(btn.scale, { x: 1.0, y: 1.0, duration: 0.12 });
-        drawGraphics(false);
-      });
-      btn.on("pointerdown", () => {
-        drawGraphics(true);
-        gsap.to(face.position, { y: 1.5, duration: 0.05 });
-      });
-      btn.on("pointerup", () => {
-        drawGraphics(false);
-        gsap.to(face.position, { y: 0, duration: 0.1 });
-        audio.playClick();
-        onClick();
-      });
-      btn.on("pointerupoutside", () => {
-        drawGraphics(false);
-        gsap.to(face.position, { y: 0, duration: 0.1 });
-      });
-
-      return btn;
     }
+
+    // Fallback if texture not found
+    const btn = new Container();
+    btn.eventMode = "static";
+    btn.cursor = "pointer";
+
+    const base = new Graphics();
+    const face = new Graphics();
+
+    const drawGraphics = (pressed = false) => {
+      base.clear();
+      face.clear();
+
+      const offset = pressed ? 1.5 : 3;
+      const color = palettes.purple;
+
+      base.circle(0, offset, radius).fill({ color: color.shadow });
+
+      face
+        .circle(0, 0, radius)
+        .fill({
+          fill: new FillGradient({
+            start: { x: 0, y: -radius },
+            end: { x: 0, y: radius },
+            colorStops: [
+              { offset: 0, color: color.top },
+              { offset: 1, color: color.bottom },
+            ],
+          }),
+        })
+        .stroke({ color: color.stroke, width: 2 });
+
+      face
+        .ellipse(0, -radius * 0.4, radius * 0.72, radius * 0.35)
+        .fill({ color: 0xffffff, alpha: 0.28 });
+    };
+
+    drawGraphics();
+    btn.addChild(base);
+    btn.addChild(face);
+
+    const txt = new Text({
+      text: emoji,
+      style: new TextStyle({
+        fontFamily: "Baloo 2",
+        fontSize: radius * 1.0,
+        fill: 0xffffff,
+        align: "center",
+      }),
+    });
+    txt.anchor.set(0.5);
+    face.addChild(txt);
+
+    return btn;
   }
 
   async loadAssets() {
@@ -4047,57 +4015,74 @@ export class GameController extends Container {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 10px;
-          max-height: min(450px, 65vh);
-          overflow-y: auto;
-          padding-right: 4px;
           box-sizing: border-box;
-        }
-        .game-instructions-grid::-webkit-scrollbar {
-          width: 6px;
-        }
-        .game-instructions-grid::-webkit-scrollbar-track {
-          background: #f1ebd8;
-          border-radius: 4px;
-        }
-        .game-instructions-grid::-webkit-scrollbar-thumb {
-          background: #c5beaa;
-          border-radius: 4px;
         }
         .game-instructions-row {
           background: #ffffff;
-          border: 2px solid #ddeaff;
-          border-radius: 12px;
-          padding: 8px;
+          border: 2.5px solid #FFE0B2;
+          border-radius: 14px;
+          padding: 10px 12px;
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 10px;
           box-sizing: border-box;
-          height: 52px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+          transition: transform 0.15s ease;
         }
-        .game-instructions-icon-container {
+        .game-instructions-row:active {
+          transform: scale(0.97);
+        }
+        .game-instructions-emoji {
           width: 36px;
           height: 36px;
-          border: 1.5px solid #FFE082;
-          border-radius: 8px;
-          background: #FFF8E1;
-          display: inline-flex;
-          align-items: center;
+          border-radius: 50%;
+          display: flex;
           justify-content: center;
-          overflow: hidden;
+          align-items: center;
           flex-shrink: 0;
+          font-size: 20px;
+          line-height: 1;
         }
-        .game-instructions-icon {
-          max-width: 30px;
-          max-height: 30px;
-          object-fit: contain;
+        .game-instructions-emoji.danger {
+          background: linear-gradient(135deg, #FFCDD2, #EF9A9A);
+          border: 2px solid #E57373;
+        }
+        .game-instructions-emoji.collect {
+          background: linear-gradient(135deg, #C8E6C9, #A5D6A7);
+          border: 2px solid #66BB6A;
+        }
+        .game-instructions-emoji.shield {
+          background: linear-gradient(135deg, #BBDEFB, #90CAF9);
+          border: 2px solid #42A5F5;
         }
         .game-instructions-text {
           font-family: 'Be Vietnam Pro', sans-serif;
           font-size: 12px;
-          font-weight: 700;
+          font-weight: 800;
           color: #4E342E;
           text-align: left;
-          line-height: 1.2;
+          line-height: 1.3;
+        }
+        .game-instructions-tag {
+          display: inline-block;
+          font-size: 9px;
+          font-weight: 900;
+          padding: 2px 6px;
+          border-radius: 6px;
+          margin-top: 2px;
+          letter-spacing: 0.5px;
+        }
+        .game-instructions-tag.jump {
+          background: #FFF3E0; color: #E65100;
+        }
+        .game-instructions-tag.duck {
+          background: #E8F5E9; color: #2E7D32;
+        }
+        .game-instructions-tag.bonus {
+          background: #F3E5F5; color: #7B1FA2;
+        }
+        .game-instructions-tag.power {
+          background: #E3F2FD; color: #1565C0;
         }
       `;
       document.head.appendChild(style);
