@@ -220,56 +220,21 @@ export function saveStats(stats) {
 export function getLeaderboardData() {
   const stats = getStats();
   const personalBest = stats.highScore || 0;
-
-  // Mock entries
-  const entries = [
-    {
-      name: "Lạc Lạc",
-      score: 580,
-      avatar: "/assest/image/imagenobackgrd/001_avatar_laclac.png",
-      isPlayer: false,
-    },
-    {
-      name: "Đậu Phộng",
-      score: 450,
-      avatar: "/assest/image/imagenobackgrd/015_avatar_dauLan.png",
-      isPlayer: false,
-    },
-    {
-      name: "Ếch Xanh",
-      score: 320,
-      avatar: "/assest/image/imagenobackgrd/010_avatar_echxanh1.png",
-      isPlayer: false,
-    },
-    {
-      name: "Vịt Lùn",
-      score: 210,
-      avatar: "/assest/image/imagenobackgrd/003_avatar_duck.png",
-      isPlayer: false,
-    },
-    {
-      name: "Mèo Ú",
-      score: 150,
-      avatar: "/assest/image/imagenobackgrd/012_avatar_hubcat.png",
-      isPlayer: false,
-    },
-  ];
+  if (personalBest <= 0) return [];
 
   const playerName = "Bạn";
   const playerAvatar =
     window.selectedAvatarUrl ||
     "/assest/image/imagenobackgrd/001_avatar_laclac.png";
 
-  entries.push({
-    name: playerName,
-    score: personalBest,
-    avatar: playerAvatar,
-    isPlayer: true,
-  });
-
-  // Sort descending
-  entries.sort((a, b) => b.score - a.score);
-  return entries;
+  return [
+    {
+      name: playerName,
+      score: personalBest,
+      avatar: playerAvatar,
+      isPlayer: true,
+    },
+  ];
 }
 
 export const palettes = {
