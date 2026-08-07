@@ -1134,16 +1134,76 @@ export function showHTMLInstructions(game) {
   card.appendChild(title);
 
   const allItems = [
-    { label: "Lốp xe", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png", tag: "Nhảy né", type: "danger", tagClass: "jump" },
-    { label: "Hàng rào", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png", tag: "Nhảy né", type: "danger", tagClass: "jump" },
-    { label: "Bàn nhựa", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.png", tag: "Nhảy né", type: "danger", tagClass: "jump" },
-    { label: "Bù nhìn", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.png", tag: "Nhảy né", type: "danger", tagClass: "jump" },
-    { label: "Dép tổ ong", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png", tag: "Cúi né", type: "danger", tagClass: "duck" },
-    { label: "Ghế đỏ bay", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.png", tag: "Cúi né", type: "danger", tagClass: "duck" },
-    { label: "Bánh Chưng", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png", tag: "+Điểm", type: "collect", tagClass: "bonus" },
-    { label: "Bánh Mì", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.png", tag: "+Điểm", type: "collect", tagClass: "bonus" },
-    { label: "Nước Ngọt", img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.png", tag: "+Điểm", type: "collect", tagClass: "bonus" },
-    { label: "Khiên Bất Tử", isShield: true, tag: "2 giây", type: "shield", tagClass: "power" },
+    {
+      label: "Lốp xe",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
+      tag: "Nhảy né",
+      type: "danger",
+      tagClass: "jump",
+    },
+    {
+      label: "Hàng rào",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
+      tag: "Nhảy né",
+      type: "danger",
+      tagClass: "jump",
+    },
+    {
+      label: "Bàn nhựa",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.png",
+      tag: "Nhảy né",
+      type: "danger",
+      tagClass: "jump",
+    },
+    {
+      label: "Bù nhìn",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.png",
+      tag: "Nhảy né",
+      type: "danger",
+      tagClass: "jump",
+    },
+    {
+      label: "Dép tổ ong",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
+      tag: "Cúi né",
+      type: "danger",
+      tagClass: "duck",
+    },
+    {
+      label: "Ghế đỏ bay",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.png",
+      tag: "Cúi né",
+      type: "danger",
+      tagClass: "duck",
+    },
+    {
+      label: "Bánh Chưng",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
+      tag: "+Điểm",
+      type: "collect",
+      tagClass: "bonus",
+    },
+    {
+      label: "Bánh Mì",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.png",
+      tag: "+Điểm",
+      type: "collect",
+      tagClass: "bonus",
+    },
+    {
+      label: "Nước Ngọt",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.png",
+      tag: "+Điểm",
+      type: "collect",
+      tagClass: "bonus",
+    },
+    {
+      label: "Khiên Bất Tử",
+      isShield: true,
+      tag: "2 giây",
+      type: "shield",
+      tagClass: "power",
+    },
   ];
 
   const grid = document.createElement("div");

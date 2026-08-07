@@ -1,6 +1,27 @@
 import { audio } from "./audio";
+import { winkGame } from "./integrations/wink/wink-adapter.js";
 
 export const LOCAL_STORAGE_KEY = "bolacdauphong_dino_stats";
+
+export function getEffectiveUser() {
+  try {
+    const savedUser = localStorage.getItem("google_user");
+    if (savedUser) {
+      const parsed = JSON.parse(savedUser);
+      if (parsed && parsed.name) return parsed;
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+
+  if (winkGame && winkGame.isAuthenticated) {
+    return {
+      name: "Thành viên",
+      avatar: "/assest/image/imagenobackgrd/001_avatar_laclac.png",
+    };
+  }
+  return null;
+}
 
 // HTML Dialog Overlays matching standard lacquer system
 export function gameAlert(message) {
@@ -222,8 +243,10 @@ export function getLeaderboardData() {
   const personalBest = stats.highScore || 0;
   if (personalBest <= 0) return [];
 
-  const playerName = "Bạn";
+  const user = getEffectiveUser();
+  const playerName = user ? user.name : "Bạn (Khách)";
   const playerAvatar =
+    user?.avatar ||
     window.selectedAvatarUrl ||
     "/assest/image/imagenobackgrd/001_avatar_laclac.png";
 
