@@ -5,7 +5,6 @@ import {
   TextStyle,
   FillGradient,
   Sprite,
-  AnimatedSprite,
   TilingSprite,
   Assets,
 } from "pixi.js";
@@ -2332,12 +2331,8 @@ export class GameController extends Container {
           this.spawnDustParticle(sw * 0.2 - 15, groundLevel + 4);
         }
       } else if (this.gameState === "PLAYING") {
-
         if (this.playerShadow) {
-          this.playerShadow.scale.set(
-            1 + Math.sin(this.runTime * 2) * 0.15,
-            1,
-          );
+          this.playerShadow.scale.set(1 + Math.sin(this.runTime * 2) * 0.15, 1);
           this.playerShadow.alpha = 0.35;
         }
 
@@ -2352,7 +2347,7 @@ export class GameController extends Container {
       // Update Skeletal Parts
       if (this.playerHead && this.gameState === "PLAYING") {
         this.runTime = (this.runTime || 0) + elapsed * this.speed * 0.05;
-        
+
         if (this.isJumping) {
           this.playerHead.position.set(0, -72);
           this.playerHead.rotation = 0;
@@ -2375,10 +2370,38 @@ export class GameController extends Container {
           this.playerHead.rotation = Math.sin(this.runTime) * 0.03;
           this.updatePlayerBody(this.playerBody, -46 + bob * 0.5);
           this.playerBody.rotation = 0.12; // Lean forward to create feeling of running
-          this.updatePlayerLeg(this.leftLeg, -6, -32, this.runTime, false, false);
-          this.updatePlayerLeg(this.rightLeg, 6, -32, this.runTime + Math.PI, false, false);
-          this.updatePlayerArm(this.leftArm, -10, -46, this.runTime, false, false);
-          this.updatePlayerArm(this.rightArm, 10, -46, this.runTime + Math.PI, false, false);
+          this.updatePlayerLeg(
+            this.leftLeg,
+            -6,
+            -32,
+            this.runTime,
+            false,
+            false,
+          );
+          this.updatePlayerLeg(
+            this.rightLeg,
+            6,
+            -32,
+            this.runTime + Math.PI,
+            false,
+            false,
+          );
+          this.updatePlayerArm(
+            this.leftArm,
+            -10,
+            -46,
+            this.runTime,
+            false,
+            false,
+          );
+          this.updatePlayerArm(
+            this.rightArm,
+            10,
+            -46,
+            this.runTime + Math.PI,
+            false,
+            false,
+          );
         }
       }
 

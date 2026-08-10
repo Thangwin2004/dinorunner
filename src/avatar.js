@@ -102,9 +102,9 @@ export function getAvatarColors(url) {
 
   return {
     head: skin,
-    body: 0x795548,   // Brown tribal vest
+    body: 0x795548, // Brown tribal vest
     sleeve: 0x8d6e63, // Light brown sleeves
-    pants: 0x4e342e,  // Dark brown pants
+    pants: 0x4e342e, // Dark brown pants
     foot: foot || 0x3e2723, // Very dark feet
   };
 }
@@ -116,15 +116,21 @@ export function getAvatarCrop(url, maskRadius, partType = "head") {
 
   const scale = (maskRadius * 2 * 1.1) / bounds.boundWidth;
   const headCenterX = bounds.minX + bounds.boundWidth / 2.0;
-  
+
   let targetCenterX = headCenterX;
   let targetCenterY = bounds.minY + bounds.boundWidth / 2.0;
 
   if (partType === "body") {
-    targetCenterY = bounds.minY + bounds.boundWidth + (bounds.boundHeight - bounds.boundWidth) * 0.3;
+    targetCenterY =
+      bounds.minY +
+      bounds.boundWidth +
+      (bounds.boundHeight - bounds.boundWidth) * 0.3;
   } else if (partType === "arm") {
     targetCenterX = bounds.minX + bounds.boundWidth * 0.35; // closer to center to hit solid texture
-    targetCenterY = bounds.minY + bounds.boundWidth + (bounds.boundHeight - bounds.boundWidth) * 0.3;
+    targetCenterY =
+      bounds.minY +
+      bounds.boundWidth +
+      (bounds.boundHeight - bounds.boundWidth) * 0.3;
   } else if (partType === "leg") {
     targetCenterX = bounds.minX + bounds.boundWidth * 0.45; // closer to center
     targetCenterY = bounds.maxY - bounds.boundHeight * 0.25; // hit the pants/belly, avoid the bottom gap
@@ -148,23 +154,23 @@ export function getAvatarName(url) {
 
 export function createSkeletalPart(tex, partType, url) {
   const partContainer = new Container();
-  
+
   let maskShape = new Graphics();
   let border = new Graphics();
 
   const sp = new Sprite(tex);
   sp.anchor.set(0.5);
   const isLeftFacing = LEFT_FACING_AVATARS.some((n) => url.includes(n));
-  
+
   const crop = getAvatarCrop(url, 24, partType);
   sp.scale.set(crop.scale);
   if (isLeftFacing) {
-      sp.scale.x = -Math.abs(sp.scale.x);
-      sp.x = -crop.x;
+    sp.scale.x = -Math.abs(sp.scale.x);
+    sp.x = -crop.x;
   } else {
-      sp.x = crop.x;
+    sp.x = crop.x;
   }
-  
+
   // Offset sprite so the target pixel aligns with the center of the mask
   let offsetY = 0;
   if (partType === "body") offsetY = 4;
@@ -177,15 +183,26 @@ export function createSkeletalPart(tex, partType, url) {
     border.circle(0, 0, 24).stroke({ width: 3, color: 0xffffff, alpha: 0.9 });
   } else if (partType === "body") {
     maskShape.roundRect(-14, -6, 28, 20, 8).fill(0xffffff);
-    border.roundRect(-14, -6, 28, 20, 8).stroke({ width: 3.5, color: 0x1a1a2e, alpha: 0.9 });
+    border
+      .roundRect(-14, -6, 28, 20, 8)
+      .stroke({ width: 3.5, color: 0x1a1a2e, alpha: 0.9 });
   } else if (partType === "arm") {
     maskShape.roundRect(-7, 0, 14, 26, 7).circle(0, 26, 8).fill(0xffffff);
-    border.roundRect(-7, 0, 14, 26, 7).stroke({ width: 2.5, color: 0x1a1a2e, alpha: 0.9 });
+    border
+      .roundRect(-7, 0, 14, 26, 7)
+      .stroke({ width: 2.5, color: 0x1a1a2e, alpha: 0.9 });
     border.circle(0, 26, 8).stroke({ width: 2.5, color: 0x1a1a2e, alpha: 0.9 });
   } else if (partType === "leg") {
-    maskShape.roundRect(-9, 0, 18, 30, 9).roundRect(-9, 24, 22, 12, 6).fill(0xffffff);
-    border.roundRect(-9, 0, 18, 30, 9).stroke({ width: 3, color: 0x1a1a2e, alpha: 0.9 });
-    border.roundRect(-9, 24, 22, 12, 6).stroke({ width: 3, color: 0x1a1a2e, alpha: 0.9 });
+    maskShape
+      .roundRect(-9, 0, 18, 30, 9)
+      .roundRect(-9, 24, 22, 12, 6)
+      .fill(0xffffff);
+    border
+      .roundRect(-9, 0, 18, 30, 9)
+      .stroke({ width: 3, color: 0x1a1a2e, alpha: 0.9 });
+    border
+      .roundRect(-9, 24, 22, 12, 6)
+      .stroke({ width: 3, color: 0x1a1a2e, alpha: 0.9 });
   }
 
   sp.mask = maskShape;
@@ -264,7 +281,7 @@ export function updateSkeletalRigTexture(tex, url, rig) {
         sp.scale.x = Math.abs(sp.scale.x);
         sp.x = crop.x;
       }
-      
+
       let offsetY = 0;
       if (type === "body") offsetY = 4;
       if (type === "arm") offsetY = 13;
