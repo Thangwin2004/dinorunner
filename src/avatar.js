@@ -9,7 +9,7 @@ export function getAvatarColors(url) {
   let foot = null;
 
   if (lowercase.includes("laclac")) {
-    skin = 0xe5a65d; // Peanut beige/yellow
+    skin = 0xf5a623; // Vibrant golden-tan (Stitch design)
   } else if (lowercase.includes("cat_lick1")) {
     skin = 0x9e7a61; // Brown cat
   } else if (lowercase.includes("duck")) {
@@ -102,27 +102,37 @@ export function getAvatarColors(url) {
 
   return {
     head: skin,
-    body: skin,
-    pants: skin,
-    sleeve: skin,
-    foot: foot || skin,
+    body: 0x795548,   // Brown tribal vest
+    sleeve: 0x8d6e63, // Light brown sleeves
+    pants: 0x4e342e,  // Dark brown pants
+    foot: foot || 0x3e2723, // Very dark feet
   };
 }
 
-export function getAvatarCrop(url, maskRadius) {
+export function getAvatarCrop(url, maskRadius, partType = "head") {
   const name = url.replace(".png", "").split("_").pop();
   const bounds = AVATAR_BOUNDS[name];
   if (!bounds) return { scale: 1.0, x: 0, y: 0 };
 
-  // Assume head is roughly square (size bounds.boundWidth) at the top of the character box (bounds.minY)
   const scale = (maskRadius * 2 * 1.1) / bounds.boundWidth;
   const headCenterX = bounds.minX + bounds.boundWidth / 2.0;
-  const headCenterY = bounds.minY + bounds.boundWidth / 2.0;
+  
+  let targetCenterX = headCenterX;
+  let targetCenterY = bounds.minY + bounds.boundWidth / 2.0;
 
-  // Calculate pixel offsets relative to texture center (image width equals height)
+  if (partType === "body") {
+    targetCenterY = bounds.minY + bounds.boundWidth + (bounds.boundHeight - bounds.boundWidth) * 0.3;
+  } else if (partType === "arm") {
+    targetCenterX = bounds.minX + bounds.boundWidth * 0.35; // closer to center to hit solid texture
+    targetCenterY = bounds.minY + bounds.boundWidth + (bounds.boundHeight - bounds.boundWidth) * 0.3;
+  } else if (partType === "leg") {
+    targetCenterX = bounds.minX + bounds.boundWidth * 0.45; // closer to center
+    targetCenterY = bounds.maxY - bounds.boundHeight * 0.25; // hit the pants/belly, avoid the bottom gap
+  }
+
   const imgWidth = bounds.height;
-  const distX = headCenterX - imgWidth / 2.0;
-  const distY = headCenterY - bounds.height / 2.0;
+  const distX = targetCenterX - imgWidth / 2.0;
+  const distY = targetCenterY - bounds.height / 2.0;
 
   return {
     scale,
@@ -131,119 +141,135 @@ export function getAvatarCrop(url, maskRadius) {
   };
 }
 
+export function getAvatarName(url) {
+  if (!url) return "001_avatar_laclac";
+  return url.replace(".png", "").split("/").pop();
+}
+
 export function createSkeletalPart(tex, partType, url) {
   const partContainer = new Container();
-  const colors = getAvatarColors(url);
-
+  
   let maskShape = new Graphics();
   let border = new Graphics();
 
+  const sp = new Sprite(tex);
+  sp.anchor.set(0.5);
+  const isLeftFacing = LEFT_FACING_AVATARS.some((n) => url.includes(n));
+  
+  const crop = getAvatarCrop(url, 24, partType);
+  sp.scale.set(crop.scale);
+  if (isLeftFacing) {
+      sp.scale.x = -Math.abs(sp.scale.x);
+      sp.x = -crop.x;
+  } else {
+      sp.x = crop.x;
+  }
+  
+  // Offset sprite so the target pixel aligns with the center of the mask
+  let offsetY = 0;
+  if (partType === "body") offsetY = 4;
+  if (partType === "arm") offsetY = 13;
+  if (partType === "leg") offsetY = 18;
+  sp.y = crop.y + offsetY;
+
   if (partType === "head") {
-    const sp = new Sprite(tex);
-    sp.anchor.set(0.5);
-    const isLeftFacing = LEFT_FACING_AVATARS.some((n) => url.includes(n));
-    sp.scale.x = isLeftFacing ? -Math.abs(sp.scale.x) : Math.abs(sp.scale.x);
-
-    const crop = getAvatarCrop(url, 24); // 24px head radius
-    sp.scale.set(crop.scale);
-    sp.x = isLeftFacing ? -crop.x : crop.x;
-    sp.y = crop.y;
-
     maskShape.circle(0, 0, 24).fill(0xffffff);
-    border.circle(0, 0, 24).stroke({ width: 3, color: 0xffea00 });
-
-    sp.mask = maskShape;
-    partContainer.addChild(sp);
-    partContainer.addChild(maskShape);
+    border.circle(0, 0, 24).stroke({ width: 3, color: 0xffffff, alpha: 0.9 });
   } else if (partType === "body") {
-    border
-      .roundRect(-16, -20, 32, 28, 12)
-      .fill(colors.body)
-      .stroke({ width: 3.5, color: 0x1a1a2e });
+    maskShape.roundRect(-14, -6, 28, 20, 8).fill(0xffffff);
+    border.roundRect(-14, -6, 28, 20, 8).stroke({ width: 3.5, color: 0x1a1a2e, alpha: 0.9 });
   } else if (partType === "arm") {
-    border
-      .roundRect(-6, 0, 12, 24, 6)
-      .fill(colors.sleeve)
-      .stroke({ width: 2.5, color: 0x1a1a2e });
-    border
-      .circle(0, 24, 7)
-      .fill(colors.head)
-      .stroke({ width: 2.5, color: 0x1a1a2e });
+    maskShape.roundRect(-7, 0, 14, 26, 7).circle(0, 26, 8).fill(0xffffff);
+    border.roundRect(-7, 0, 14, 26, 7).stroke({ width: 2.5, color: 0x1a1a2e, alpha: 0.9 });
+    border.circle(0, 26, 8).stroke({ width: 2.5, color: 0x1a1a2e, alpha: 0.9 });
   } else if (partType === "leg") {
-    border
-      .roundRect(-8, 0, 16, 28, 8)
-      .fill(colors.pants)
-      .stroke({ width: 3, color: 0x1a1a2e });
-    border
-      .roundRect(-8, 22, 20, 10, 5)
-      .fill(colors.foot)
-      .stroke({ width: 3, color: 0x1a1a2e });
+    maskShape.roundRect(-9, 0, 18, 30, 9).roundRect(-9, 24, 22, 12, 6).fill(0xffffff);
+    border.roundRect(-9, 0, 18, 30, 9).stroke({ width: 3, color: 0x1a1a2e, alpha: 0.9 });
+    border.roundRect(-9, 24, 22, 12, 6).stroke({ width: 3, color: 0x1a1a2e, alpha: 0.9 });
   }
 
+  sp.mask = maskShape;
+  partContainer.addChild(sp);
+  partContainer.addChild(maskShape);
   partContainer.addChild(border);
+
   return partContainer;
 }
 
+export function createFull2DSprite(tex, url, targetHeight = 110) {
+  const sp = new Sprite(tex);
+  sp.anchor.set(0.5, 1);
+  const isLeftFacing = LEFT_FACING_AVATARS.some((n) => url.includes(n));
+  const texHeight = tex.height > 0 ? tex.height : 256;
+  const baseScale = targetHeight / texHeight;
+  const scaleX = isLeftFacing ? -baseScale : baseScale;
+  const scaleY = baseScale;
+  sp.scale.set(scaleX, scaleY);
+  sp.baseScaleX = scaleX;
+  sp.baseScaleY = scaleY;
+
+  // Trim bottom transparent margin so character feet sit firmly on the dirt road
+  const name = url.replace(".png", "").split("_").pop();
+  const bounds = AVATAR_BOUNDS[name];
+  if (bounds) {
+    const bottomPadRatio = (bounds.height - bounds.maxY) / bounds.height;
+    sp.y = bottomPadRatio * targetHeight;
+  }
+  return sp;
+}
+
 export function updateSkeletalRigTexture(tex, url, rig) {
-  // Update the head sprite
-  if (rig.head && rig.head.children[0]) {
-    const sp = rig.head.children[0];
-    sp.texture = tex;
-    const crop = getAvatarCrop(url, 24); // 24px head radius
-    sp.scale.set(crop.scale);
+  if (rig.fullCharSprite) {
+    rig.fullCharSprite.texture = tex;
     const isLeftFacing = LEFT_FACING_AVATARS.some((n) => url.includes(n));
-    sp.scale.x = isLeftFacing ? -Math.abs(sp.scale.x) : Math.abs(sp.scale.x);
-    sp.x = isLeftFacing ? -crop.x : crop.x;
-    sp.y = crop.y;
-  }
+    const texHeight = tex.height > 0 ? tex.height : 256;
+    const baseScale = 110 / texHeight;
+    rig.fullCharSprite.baseScaleX = isLeftFacing ? -baseScale : baseScale;
+    rig.fullCharSprite.baseScaleY = baseScale;
+    rig.fullCharSprite.scale.set(
+      rig.fullCharSprite.baseScaleX,
+      rig.fullCharSprite.baseScaleY,
+    );
 
-  const colors = getAvatarColors(url);
-
-  // Redraw body Graphics
-  if (rig.body) {
-    const border = rig.body.children.find((c) => c instanceof Graphics);
-    if (border) {
-      border.clear();
-      border
-        .roundRect(-16, -20, 32, 28, 12)
-        .fill(colors.body)
-        .stroke({ width: 3.5, color: 0x1a1a2e });
+    const name = url.replace(".png", "").split("_").pop();
+    const bounds = AVATAR_BOUNDS[name];
+    if (bounds) {
+      const bottomPadRatio = (bounds.height - bounds.maxY) / bounds.height;
+      rig.fullCharSprite.y = bottomPadRatio * 110;
     }
   }
 
-  // Redraw arms Graphics
-  [rig.leftArm, rig.rightArm].forEach((arm) => {
-    if (arm) {
-      const border = arm.children.find((c) => c instanceof Graphics);
-      if (border) {
-        border.clear();
-        border
-          .roundRect(-6, 0, 12, 24, 6)
-          .fill(colors.sleeve)
-          .stroke({ width: 2.5, color: 0x1a1a2e });
-        border
-          .circle(0, 24, 7)
-          .fill(colors.head)
-          .stroke({ width: 2.5, color: 0x1a1a2e });
-      }
-    }
-  });
+  const parts = [
+    { container: rig.head, type: "head" },
+    { container: rig.body, type: "body" },
+    { container: rig.leftArm, type: "arm" },
+    { container: rig.rightArm, type: "arm" },
+    { container: rig.leftLeg, type: "leg" },
+    { container: rig.rightLeg, type: "leg" },
+  ];
 
-  // Redraw legs Graphics
-  [rig.leftLeg, rig.rightLeg].forEach((leg) => {
-    if (leg) {
-      const border = leg.children.find((c) => c instanceof Graphics);
-      if (border) {
-        border.clear();
-        border
-          .roundRect(-8, 0, 16, 28, 8)
-          .fill(colors.pants)
-          .stroke({ width: 3, color: 0x1a1a2e });
-        border
-          .roundRect(-8, 22, 20, 10, 5)
-          .fill(colors.foot)
-          .stroke({ width: 3, color: 0x1a1a2e });
+  const isLeftFacing = LEFT_FACING_AVATARS.some((n) => url.includes(n));
+
+  parts.forEach(({ container, type }) => {
+    if (!container || !container.children[0]) return;
+    const sp = container.children.find((c) => c instanceof Sprite);
+    if (sp) {
+      sp.texture = tex;
+      const crop = getAvatarCrop(url, 24, type);
+      sp.scale.set(crop.scale);
+      if (isLeftFacing) {
+        sp.scale.x = -Math.abs(sp.scale.x);
+        sp.x = -crop.x;
+      } else {
+        sp.scale.x = Math.abs(sp.scale.x);
+        sp.x = crop.x;
       }
+      
+      let offsetY = 0;
+      if (type === "body") offsetY = 4;
+      if (type === "arm") offsetY = 13;
+      if (type === "leg") offsetY = 18;
+      sp.y = crop.y + offsetY;
     }
   });
 }

@@ -36,6 +36,18 @@ export function injectHTMLPopupStyles() {
       font-family: 'Fredoka', 'Baloo 2', 'Be Vietnam Pro', sans-serif;
       box-sizing: border-box;
     }
+    .game-popup-card.game-over-stitch-card {
+      background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF0 60%, #FFF9E6 100%);
+      border: 4.5px solid #FF9800;
+      box-shadow: inset 0 0 0 2px #FFF9C4, 0 8px 0 #E65100, 0 16px 35px rgba(0, 0, 0, 0.4);
+      border-radius: 32px;
+      padding: 42px 20px 24px 20px;
+      width: 88%; max-width: 300px;
+      text-align: center;
+      position: relative;
+      font-family: 'Baloo 2', 'Be Vietnam Pro', sans-serif;
+      box-sizing: border-box;
+    }
     .game-popup-card.wide {
       max-width: 440px;
       padding: 32px 16px 20px 16px;
@@ -55,6 +67,76 @@ export function injectHTMLPopupStyles() {
       text-shadow: 0 2px 3px rgba(0,0,0,0.3);
       letter-spacing: 2px;
       white-space: nowrap;
+    }
+    .game-popup-title.stitch-title-ribbon {
+      top: -26px; left: 50%;
+      transform: translateX(-50%);
+      width: 200px; height: 50px;
+      background: linear-gradient(180deg, #FFE033 0%, #FFB300 65%, #FF8F00 100%);
+      border: 3.5px solid #6D2800;
+      border-radius: 26px;
+      box-shadow: inset 0 3px 0 rgba(255,255,255,0.7), 0 5.5px 0 #6D2800, 0 10px 20px rgba(0,0,0,0.3);
+      color: #FFFFFF;
+      font-size: 25px; font-weight: 900;
+      padding: 0;
+      display: flex; justify-content: center; align-items: center;
+      text-shadow: 0 3px 0 #5D1C00, -1px -1px 0 #5D1C00, 1px -1px 0 #5D1C00, -1px 1px 0 #5D1C00, 1px 1px 0 #5D1C00;
+      letter-spacing: 2px;
+      white-space: nowrap;
+    }
+    .stitch-ribbon-gloss {
+      position: absolute;
+      top: 3px; left: 14px; right: 14px;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.45);
+      border-radius: 10px 10px 50% 50%;
+      pointer-events: none;
+    }
+    .stitch-star-container {
+      margin: 12px 0 4px 0;
+      display: flex; justify-content: center; align-items: center;
+    }
+    .stitch-score-container {
+      margin: 4px 0 16px 0;
+      display: flex; justify-content: center; align-items: center;
+      user-select: none;
+    }
+    .stitch-action-btn-3d {
+      position: relative;
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      border: 3.5px solid #FFFFFF;
+      cursor: pointer;
+      display: flex; justify-content: center; align-items: center;
+      transition: transform 0.12s ease;
+      user-select: none;
+      box-sizing: border-box;
+    }
+    .stitch-action-btn-3d:hover { transform: scale(1.12); }
+    .stitch-action-btn-3d:active { transform: scale(0.92) translateY(3px); }
+
+    .btn-green-3d {
+      background: linear-gradient(180deg, #7CD076 0%, #4CAF50 50%, #2E7D32 100%);
+      box-shadow: inset 0 3.5px 0 rgba(255,255,255,0.6), inset 0 -4.5px 0 #1B5E20, 0 5px 0 #1B5E20, 0 8px 16px rgba(0,0,0,0.3);
+      color: #FFFFFF;
+    }
+    .btn-green-3d .stitch-btn-text {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 24px; font-weight: 900;
+      color: #FFFFFF;
+      text-shadow: 0 2px 0 #1B5E20;
+    }
+
+    .btn-yellow-3d {
+      background: linear-gradient(180deg, #FFEB3B 0%, #FFB300 50%, #FF8F00 100%);
+      box-shadow: inset 0 3.5px 0 rgba(255,255,255,0.7), inset 0 -4.5px 0 #E65100, 0 5px 0 #E65100, 0 8px 16px rgba(0,0,0,0.3);
+      color: #FFFFFF;
+    }
+
+    .btn-blue-3d {
+      background: linear-gradient(180deg, #4FC3F7 0%, #29B6F6 50%, #1565C0 100%);
+      box-shadow: inset 0 3.5px 0 rgba(255,255,255,0.65), inset 0 -4.5px 0 #0D47A1, 0 5px 0 #0D47A1, 0 8px 16px rgba(0,0,0,0.3);
+      color: #FFFFFF;
     }
     .game-popup-close-btn {
       position: absolute;
@@ -135,26 +217,69 @@ export function injectHTMLPopupStyles() {
     .game-paused-btn:active { transform: scale(0.9); }
 
     .game-over-emblem {
-      font-size: 56px; line-height: 1; margin: 10px 0;
-      text-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      font-size: 68px; line-height: 1; margin: 12px 0 4px 0;
+      filter: drop-shadow(0 0 14px rgba(255, 179, 0, 0.65)) drop-shadow(0 4px 8px rgba(0,0,0,0.2));
     }
     .game-over-record-banner {
-      background: #D32F2F; border: 2.5px solid #FFEB3B;
-      border-radius: 6px; color: white; font-weight: 900;
-      font-size: 13px; padding: 3px 12px; display: inline-block;
-      letter-spacing: 1.5px; margin-bottom: 12px;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+      background: linear-gradient(180deg, #FF3D00 0%, #D50000 100%);
+      border: 2px solid #FFEA00;
+      border-radius: 20px; color: white; font-weight: 900;
+      font-size: 13px; padding: 4px 16px; display: inline-block;
+      letter-spacing: 1.5px; margin-bottom: 8px;
+      box-shadow: 0 3px 0 #800000, 0 6px 12px rgba(0,0,0,0.25);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     }
     .game-over-score {
-      font-size: 26px; font-weight: 900; color: #4E342E;
-      letter-spacing: 1px; margin-bottom: 6px;
+      font-family: 'Baloo 2', 'Be Vietnam Pro', sans-serif;
+      font-size: 68px; font-weight: 900;
+      color: #E53935;
+      background: linear-gradient(180deg, #FF5252 0%, #D32F2F 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 0 #8E0000) drop-shadow(0 8px 16px rgba(0,0,0,0.3));
+      letter-spacing: 1px; margin: 8px 0 16px 0;
+      line-height: 1.1;
     }
     .game-over-msg {
-      font-size: 13px; font-weight: bold; color: #795548; margin-bottom: 20px;
+      font-size: 14px; font-weight: 900; color: #D84315; margin-bottom: 16px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.8);
     }
     .game-over-actions {
       display: flex; justify-content: center; align-items: center; gap: 14px;
+      margin-top: 10px;
+    }
+    .stitch-action-btn {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      border: 3px solid #FFFFFF;
+      cursor: pointer;
+      display: flex; justify-content: center; align-items: center;
+      font-family: 'Baloo 2', sans-serif;
+      font-weight: 900;
+      font-size: 22px;
+      transition: transform 0.12s ease;
+      user-select: none;
+      box-sizing: border-box;
+    }
+    .stitch-action-btn:hover { transform: scale(1.12); }
+    .stitch-action-btn:active { transform: scale(0.92) translateY(2px); }
+    .stitch-btn-x2 {
+      background: linear-gradient(180deg, #81C784 0%, #388E3C 100%);
+      box-shadow: 0 4.5px 0 #1B5E20, 0 6px 14px rgba(0,0,0,0.3);
+      color: #FFFFFF;
+      text-shadow: 0 2px 0 #1B5E20;
+    }
+    .stitch-btn-restart {
+      background: linear-gradient(180deg, #FFE082 0%, #FFA000 100%);
+      box-shadow: 0 4.5px 0 #E65100, 0 6px 14px rgba(0,0,0,0.3);
+      color: #FFFFFF;
+      text-shadow: 0 2px 0 #BF360C;
+    }
+    .stitch-btn-home {
+      background: linear-gradient(180deg, #64B5F6 0%, #1976D2 100%);
+      box-shadow: 0 4.5px 0 #0D47A1, 0 6px 14px rgba(0,0,0,0.3);
+      color: #FFFFFF;
+      text-shadow: 0 2px 0 #0D47A1;
     }
     .game-over-btn {
       width: 52px; height: 52px;
@@ -505,8 +630,9 @@ export function showHTMLPaused(game) {
 
   // Home
   const homeBtn = document.createElement("button");
-  homeBtn.className = "game-paused-btn";
-  homeBtn.style.backgroundImage = "url(/assest/iconbtn/Home_btn.png)";
+  homeBtn.className = "stitch-action-btn-3d btn-blue-3d";
+  homeBtn.setAttribute("aria-label", "Trang chủ");
+  homeBtn.innerHTML = `<svg viewBox="0 0 24 24" width="28" height="28" fill="#FFFFFF" style="filter: drop-shadow(0 2px 0 #004080);"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>`;
   homeBtn.addEventListener("click", () => {
     audio.playClick();
     game.switchState("MAIN_MENU");
@@ -515,8 +641,9 @@ export function showHTMLPaused(game) {
 
   // Replay
   const replayBtn = document.createElement("button");
-  replayBtn.className = "game-paused-btn";
-  replayBtn.style.backgroundImage = "url(/assest/iconbtn/replay_btn.png)";
+  replayBtn.className = "stitch-action-btn-3d btn-yellow-3d";
+  replayBtn.setAttribute("aria-label", "Chơi lại");
+  replayBtn.innerHTML = `<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 0 #B73A00);"><path d="M21.5 2v6h-6M2.5 22v-6h6"/><path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M22 12.5a10 10 0 0 1-18.8 4.3L2.5 16"/></svg>`;
   replayBtn.addEventListener("click", () => {
     audio.playClick();
     game.gameState = "PLAYING";
@@ -526,8 +653,9 @@ export function showHTMLPaused(game) {
 
   // Resume
   const resumeBtn = document.createElement("button");
-  resumeBtn.className = "game-paused-btn";
-  resumeBtn.style.backgroundImage = "url(/assest/iconbtn/continue_btn.png)";
+  resumeBtn.className = "stitch-action-btn-3d btn-green-3d";
+  resumeBtn.setAttribute("aria-label", "Tiếp tục");
+  resumeBtn.innerHTML = `<svg viewBox="0 0 24 24" width="30" height="30" fill="#FFFFFF" style="filter: drop-shadow(0 2px 0 #1B5E20);"><path d="M8 5v14l11-7z"/></svg>`;
   resumeBtn.addEventListener("click", () => {
     audio.playClick();
     game.switchState("PLAYING");
@@ -597,7 +725,7 @@ export function showHTMLReviveOffer(game, onRevive, onSkip) {
 
   const yesBtn = document.createElement("button");
   yesBtn.style.cssText =
-    "margin: 0 auto; background:linear-gradient(to bottom, #ffa726, #F9A825);border:none;border-radius:12px;padding:10px 60px;color:white;font-size:26px;font-weight:900;font-family:'Nunito', 'Segoe UI', Arial, sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 #e65100, 0 8px 10px rgba(0,0,0,0.3);transition:transform 0.1s, box-shadow 0.1s;text-transform:uppercase;";
+    "margin: 0 auto; background: linear-gradient(180deg, #FFE082 0%, #FFB300 50%, #FF8F00 100%); border: 3.5px solid #FFFFFF; border-radius: 28px; padding: 12px 50px; color: #FFFFFF; font-size: 24px; font-weight: 900; font-family: 'Baloo 2', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 3.5px 0 rgba(255,255,255,0.7), inset 0 -4px 0 #E65100, 0 5.5px 0 #E65100, 0 10px 20px rgba(0,0,0,0.3); transition: transform 0.12s ease; text-shadow: 0 2px 0 #BF360C;";
 
   const tvIcon = document.createElement("img");
   tvIcon.src = "/assest/iconbtn/images.png";
@@ -666,20 +794,53 @@ export function showHTMLGameOver(game) {
   overlay.className = "game-popup-overlay";
 
   const card = document.createElement("div");
-  card.className = "game-popup-card";
+  card.className = "game-popup-card game-over-stitch-card";
 
+  // Ribbon Header
   const title = document.createElement("div");
-  title.className = "game-popup-title";
-  title.innerText = "KẾT THÚC";
+  title.className = "game-popup-title stitch-title-ribbon";
+  title.innerHTML = `<div class="stitch-ribbon-gloss"></div><span>KẾT THÚC</span>`;
   card.appendChild(title);
 
-  // 1. Golden Emblem with Star
+  // 1. 3D Golden Toy Star SVG Emblem (Juicy & Vibrant)
   const emblem = document.createElement("div");
-  emblem.className = "game-over-emblem";
-  emblem.innerText = "⭐";
+  emblem.className = "stitch-star-container";
+  emblem.innerHTML = `
+    <style>
+      @keyframes popStarAnim {
+        0%, 100% { transform: scale(0.9) rotate(-2deg); filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.25)); }
+        50% { transform: scale(1.0) rotate(3deg); filter: drop-shadow(0px 8px 6px rgba(0,0,0,0.15)); }
+      }
+      .anim-star {
+        animation: popStarAnim 2.5s infinite ease-in-out;
+      }
+    </style>
+    <svg class="anim-star" width="120" height="120" viewBox="0 0 100 100" style="overflow: visible;">
+      <defs>
+        <linearGradient id="starGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#FFFF8D"/>
+          <stop offset="35%" stop-color="#FFD54F"/>
+          <stop offset="75%" stop-color="#FF8F00"/>
+          <stop offset="100%" stop-color="#D84315"/>
+        </linearGradient>
+      </defs>
+      
+      <!-- Thick 3D Bottom Base (Brown) -->
+      <polygon points="50,7 63.5,34.5 93.5,39 72,60 77,90 50,75.5 23,90 28,60 6.5,39 36.5,34.5" 
+               fill="#A64000" stroke="#702B00" stroke-width="12" stroke-linejoin="round" transform="translate(0, 6)"/>
+               
+      <!-- Main Golden Body with Crisp White Highlight Stroke -->
+      <polygon points="50,7 63.5,34.5 93.5,39 72,60 77,90 50,75.5 23,90 28,60 6.5,39 36.5,34.5" 
+               fill="url(#starGrad)" stroke="#FFFFFF" stroke-width="3" stroke-linejoin="round"/>
+               
+      <!-- Inner Glossy Reflection (top half only) -->
+      <polygon points="50,12 61,35 85,38 70,54 50,47 30,54 15,38 39,35" 
+               fill="#FFFFFF" opacity="0.4" stroke="none" pointer-events="none" />
+    </svg>
+  `;
   card.appendChild(emblem);
 
-  // 2. New Record Banner
+  // 2. New Record Banner (If applicable)
   if (game.isNewRecordThisRun) {
     const recordBanner = document.createElement("div");
     recordBanner.className = "game-over-record-banner";
@@ -687,30 +848,55 @@ export function showHTMLGameOver(game) {
     card.appendChild(recordBanner);
   }
 
-  // 3. Score
+  // 3. 3D Sculpted Score Component (SVG Single-Object Render - Zero lines, Zero gaps!)
   const finalScore = Math.floor(game.score);
   const scoreVal = document.createElement("div");
-  scoreVal.className = "game-over-score";
-  scoreVal.innerText = `ĐIỂM SỐ: ${finalScore}`;
+  scoreVal.className = "stitch-score-container";
+
+  const createScoreMarkup = (val) => `
+    <svg viewBox="0 0 200 84" width="200" height="84" style="overflow: visible;">
+      <defs>
+        <linearGradient id="scoreRedGradFace" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#FF5252"/>
+          <stop offset="45%" stop-color="#E53935"/>
+          <stop offset="100%" stop-color="#B71C1C"/>
+        </linearGradient>
+        <filter id="scoreShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="rgba(0,0,0,0.3)"/>
+        </filter>
+      </defs>
+      <!-- Layer 1: Dark Red 3D Base -->
+      <text x="100" y="62" text-anchor="middle" font-family="'Baloo 2', 'Impact', sans-serif" font-weight="900" font-size="68" fill="#5D0000" filter="url(#scoreShadow)">${val}</text>
+      <!-- Layer 2: Gold Outer Stroke -->
+      <text x="100" y="56" text-anchor="middle" font-family="'Baloo 2', 'Impact', sans-serif" font-weight="900" font-size="68" fill="#FFC107" stroke="#FFC107" stroke-width="9" stroke-linejoin="round">${val}</text>
+      <!-- Layer 3: Dark Red Outline -->
+      <text x="100" y="56" text-anchor="middle" font-family="'Baloo 2', 'Impact', sans-serif" font-weight="900" font-size="68" fill="#7A0000" stroke="#7A0000" stroke-width="3" stroke-linejoin="round">${val}</text>
+      <!-- Layer 4: Main Red Gradient Face -->
+      <text x="100" y="56" text-anchor="middle" font-family="'Baloo 2', 'Impact', sans-serif" font-weight="900" font-size="68" fill="url(#scoreRedGradFace)">${val}</text>
+    </svg>
+  `;
+  scoreVal.innerHTML = createScoreMarkup(finalScore);
   card.appendChild(scoreVal);
 
-  // 4. Message
-  const msgVal = document.createElement("div");
-  msgVal.className = "game-over-msg";
-  msgVal.innerText = game.isNewRecordThisRun
-    ? "👑 KỶ LỤC MỚI CỦA BỘ LẠC! 👑"
-    : "Bạn đã va phải chướng ngại vật!";
-  card.appendChild(msgVal);
+  // 4. Message (Only if new record)
+  let msgVal = null;
+  if (game.isNewRecordThisRun) {
+    msgVal = document.createElement("div");
+    msgVal.className = "game-over-msg";
+    msgVal.innerText = "👑 KỶ LỤC MỚI CỦA BỘ LẠC! 👑";
+    card.appendChild(msgVal);
+  }
 
-  // 5. Actions: Revive, Try Again, Home, Double Score
+  // 5. Actions: Double Score (x2), Restart, Home
   const actionContainer = document.createElement("div");
   actionContainer.className = "game-over-actions";
 
-  // Double Score
+  // Double Score (x2)
   if (!game.hasDoubledThisRun) {
     const doubleBtn = document.createElement("button");
-    doubleBtn.className = "game-over-btn";
-    doubleBtn.style.backgroundImage = "url(/assest/iconbtn/x2_btn.png)";
+    doubleBtn.className = "stitch-action-btn-3d btn-green-3d";
+    doubleBtn.setAttribute("aria-label", "X2 Điểm");
+    doubleBtn.innerHTML = `<span class="stitch-btn-text">x2</span>`;
     doubleBtn.addEventListener("click", async () => {
       audio.playClick();
       const success = await AdManager.showRewardedVideo();
@@ -731,9 +917,8 @@ export function showHTMLGameOver(game) {
         }
         saveStats(stats);
 
-        // Update text overlays
-        scoreVal.innerText = `ĐIỂM SỐ: ${newScore} (X2!)`;
-        msgVal.innerText = "KỶ LỤC MỚI! HẠNG #1";
+        scoreVal.innerHTML = createScoreMarkup(newScore);
+        if (msgVal) msgVal.innerText = "KỶ LỤC MỚI! HẠNG #1";
         doubleBtn.remove();
         game.updateUserUI();
       }
@@ -743,8 +928,9 @@ export function showHTMLGameOver(game) {
 
   // Replay
   const replayBtn = document.createElement("button");
-  replayBtn.className = "game-over-btn";
-  replayBtn.style.backgroundImage = "url(/assest/iconbtn/replay_btn.png)";
+  replayBtn.className = "stitch-action-btn-3d btn-yellow-3d";
+  replayBtn.setAttribute("aria-label", "Chơi lại");
+  replayBtn.innerHTML = `<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 0 #B73A00);"><path d="M21.5 2v6h-6M2.5 22v-6h6"/><path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M22 12.5a10 10 0 0 1-18.8 4.3L2.5 16"/></svg>`;
   replayBtn.addEventListener("click", () => {
     audio.playClick();
     game.switchState("PLAYING");
@@ -753,8 +939,9 @@ export function showHTMLGameOver(game) {
 
   // Home
   const homeBtn = document.createElement("button");
-  homeBtn.className = "game-over-btn";
-  homeBtn.style.backgroundImage = "url(/assest/iconbtn/Home_btn.png)";
+  homeBtn.className = "stitch-action-btn-3d btn-blue-3d";
+  homeBtn.setAttribute("aria-label", "Trang chủ");
+  homeBtn.innerHTML = `<svg viewBox="0 0 24 24" width="28" height="28" fill="#FFFFFF" style="filter: drop-shadow(0 2px 0 #004080);"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>`;
   homeBtn.addEventListener("click", () => {
     audio.playClick();
     game.switchState("MAIN_MENU");
@@ -762,7 +949,6 @@ export function showHTMLGameOver(game) {
   actionContainer.appendChild(homeBtn);
 
   card.appendChild(actionContainer);
-
   overlay.appendChild(card);
   const appContainer = document.getElementById("app") || document.body;
   appContainer.appendChild(overlay);

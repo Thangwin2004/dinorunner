@@ -64,6 +64,8 @@ export class WinkGameIntegration {
     if (this.#completedRounds.has(round.roundId)) return false;
     this.#completedRounds.add(round.roundId);
 
+    if (!this.capabilities.complete) return false;
+
     const { playDurationMs, ...rest } = extra;
     try {
       complete({

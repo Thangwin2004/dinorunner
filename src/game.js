@@ -5,6 +5,8 @@ import {
   TextStyle,
   FillGradient,
   Sprite,
+  AnimatedSprite,
+  TilingSprite,
   Assets,
 } from "pixi.js";
 import { audio } from "./audio";
@@ -88,6 +90,9 @@ export class GameController extends Container {
     this.highScore = getStats().highScore;
 
     // Background Layers
+    this.parallaxContainer = new Container();
+    this.addChildAt(this.parallaxContainer, 0);
+
     this.bgOverlay = new Graphics();
     this.addChild(this.bgOverlay);
 
@@ -425,6 +430,52 @@ export class GameController extends Container {
 
   async loadAssets() {
     try {
+      const [skyTex, hillsTex, roadTex] = await Promise.all([
+        Assets.load("/assest/image/bg_parallax_sky_mountains.png"),
+        Assets.load("/assest/image/bg_parallax_hills_transparent.png"),
+        Assets.load("/assest/image/bg_parallax_road_tile.png"),
+      ]);
+
+      if (!this.destroyed) {
+        const sw = this.app.screen.width || 800;
+        const sh = this.app.screen.height || 600;
+
+        // Layer 0 (Back): Sky + clouds + mountains — top 55%
+        if (skyTex) {
+          this.parallaxSkySprite = new TilingSprite({
+            texture: skyTex,
+            width: sw,
+            height: sh * 0.55,
+          });
+          this.parallaxSkySprite.y = 0;
+          this.parallaxContainer.addChild(this.parallaxSkySprite);
+        }
+
+        // Layer 1 (Mid): Hills + trees — from 20% to 82%
+        if (hillsTex) {
+          this.parallaxHillsSprite = new TilingSprite({
+            texture: hillsTex,
+            width: sw,
+            height: sh * 0.62,
+          });
+          this.parallaxHillsSprite.y = sh * 0.2;
+          this.parallaxContainer.addChild(this.parallaxHillsSprite);
+        }
+
+        // Layer 2 (Front): Dirt road — from 78% to 100%
+        if (roadTex) {
+          this.groundRoadSprite = new TilingSprite({
+            texture: roadTex,
+            width: sw,
+            height: sh * 0.22,
+          });
+          this.groundRoadSprite.y = sh * 0.78;
+          this.parallaxContainer.addChild(this.groundRoadSprite);
+        }
+
+        this.resize();
+      }
+
       this.laclacTexture = await Assets.load(
         "/assest/image/imagenobackgrd/001_avatar_laclac.png",
       );
@@ -456,31 +507,36 @@ export class GameController extends Container {
 
       if (this.destroyed) return;
 
-      // Initialize 2D character on play screen
+      // Initialize 2D Cartoon Runner Character
       this.playerSprite = new Container();
 
       const savedAvatar =
         window.localStorage.getItem("selected_avatar_url") ||
         "/assest/image/imagenobackgrd/001_avatar_laclac.png";
       window.selectedAvatarUrl = savedAvatar;
-      this.playerColors = this.getAvatarColors(savedAvatar);
-      const activeTex = await Assets.load(savedAvatar);
+      await Assets.load(savedAvatar);
 
-      // 1. Create Skeletal Rig Parts from the active avatar texture
-      this.playerHead = this.createSkeletalPart(activeTex, "head", savedAvatar);
-      this.playerHead.position.set(0, -62);
+      // Dark Oval Ground Shadow
+      this.playerShadow = new Graphics();
+      this.playerShadow
+        .ellipse(0, 0, 22, 6)
+        .fill({ color: 0x000000, alpha: 0.35 });
+      this.playerSprite.addChild(this.playerShadow);
 
-      this.playerBody = this.createSkeletalPart(activeTex, "body", savedAvatar);
-      this.leftArm = this.createSkeletalPart(activeTex, "arm", savedAvatar);
-      this.rightArm = this.createSkeletalPart(activeTex, "arm", savedAvatar);
-      this.leftLeg = this.createSkeletalPart(activeTex, "leg", savedAvatar);
-      this.rightLeg = this.createSkeletalPart(activeTex, "leg", savedAvatar);
+      // Initialize Modular Skeletal Avatar
+      const avatarTex = Assets.get(savedAvatar);
+      this.playerBody = this.createSkeletalPart(avatarTex, "body", savedAvatar);
+      this.playerHead = this.createSkeletalPart(avatarTex, "head", savedAvatar);
+      this.leftArm = this.createSkeletalPart(avatarTex, "arm", savedAvatar);
+      this.rightArm = this.createSkeletalPart(avatarTex, "arm", savedAvatar);
+      this.leftLeg = this.createSkeletalPart(avatarTex, "leg", savedAvatar);
+      this.rightLeg = this.createSkeletalPart(avatarTex, "leg", savedAvatar);
 
-      // Add to player container in correct layering order (back to front)
+      // Z-Order layering
       this.playerSprite.addChild(this.leftArm);
       this.playerSprite.addChild(this.leftLeg);
-      this.playerSprite.addChild(this.rightLeg);
       this.playerSprite.addChild(this.playerBody);
+      this.playerSprite.addChild(this.rightLeg);
       this.playerSprite.addChild(this.playerHead);
       this.playerSprite.addChild(this.rightArm);
 
@@ -692,7 +748,7 @@ export class GameController extends Container {
       }),
       roundPixels: true,
     });
-    this.highScoreText.anchor.set(1, 0.5);
+    this.highScoreText.anchor.set(0, 0.5);
     this.gamePlayContainer.addChild(this.highScoreText);
 
     this.pauseBtn = this.createIconOnlyButton("⏸", 16, () => {
@@ -1285,27 +1341,27 @@ export class GameController extends Container {
 
     // Score Text
     this.gameOverScoreText = new Text({
-      text: "ĐIỂM SỐ: 0",
+      text: "0",
       style: new TextStyle({
         fontFamily: "Baloo 2",
-        fontSize: 28,
+        fontSize: 44,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
           colorStops: [
-            { color: 0xffffff, offset: 0 },
-            { color: 0xffe066, offset: 1 },
+            { color: 0xffea00, offset: 0 },
+            { color: 0xff9800, offset: 1 },
           ],
         }),
-        stroke: { color: 0x794000, width: 3, join: "round" },
+        stroke: { color: 0x794000, width: 4, join: "round" },
         dropShadow: {
           color: 0x000000,
-          blur: 2,
-          angle: Math.PI / 4,
-          distance: 2,
-          alpha: 0.5,
+          blur: 0,
+          angle: Math.PI / 2,
+          distance: 3,
+          alpha: 0.4,
         },
         fontWeight: "900",
-        letterSpacing: 4,
+        letterSpacing: 2,
       }),
       roundPixels: true,
     });
@@ -1379,7 +1435,7 @@ export class GameController extends Container {
         }
         saveStats(stats);
 
-        this.gameOverScoreText.text = `ĐIỂM SỐ: ${newScore} (X2!)`;
+        this.gameOverScoreText.text = `${newScore} (X2!)`;
         this.highScoreText.text = `KỶ LỤC: ${this.highScore}`;
         this.gameOverMsgText.text = "KỶ LỤC MỚI! HẠNG #1";
         this.doubleBtn.visible = false;
@@ -1407,9 +1463,9 @@ export class GameController extends Container {
     this.isDucking = false;
     this.playerVy = 0;
 
-    // Position player a bit above the ground to be safe
-    const sh = this.app.screen.height;
-    this.playerY = sh * 0.7 - 50;
+    // Position player firmly on the ground level
+    const sh = this.app.screen.height || 600;
+    this.playerY = sh * 0.78;
 
     // Clean obstacles near the player to prevent instant death
     this.obstacles.forEach((obs) => {
@@ -1432,7 +1488,7 @@ export class GameController extends Container {
     const sw = this.app.screen.width;
     const sh = this.app.screen.height;
     const scale = Math.min(1.0, sw / 450, sh / 650);
-    const groundLevel = sh * 0.7;
+    const groundLevel = sh * 0.78;
 
     this.dustPool = this.dustPool || [];
     let dust;
@@ -1969,11 +2025,7 @@ export class GameController extends Container {
 
     this.gameState = newState;
 
-    this.mainMenuContainer.visible =
-      newState === "MAIN_MENU" ||
-      newState === "SETTINGS" ||
-      newState === "CHAR_SELECT" ||
-      newState === "INSTRUCTIONS";
+    this.mainMenuContainer.visible = false;
     this.gamePlayContainer.visible =
       newState === "PLAYING" ||
       newState === "PAUSED" ||
@@ -1996,6 +2048,15 @@ export class GameController extends Container {
 
     if (menuOverlay) {
       menuOverlay.style.display = newState === "MAIN_MENU" ? "flex" : "none";
+      if (newState === "MAIN_MENU") {
+        const activeAvatar =
+          window.localStorage.getItem("selected_avatar_url") ||
+          "/assest/image/imagenobackgrd/001_avatar_laclac.png";
+        const menuAvatarImg = document.getElementById("menu-avatar-img");
+        if (menuAvatarImg) {
+          menuAvatarImg.src = activeAvatar;
+        }
+      }
     }
 
     this.syncDOMScoreAndHighScore();
@@ -2116,6 +2177,9 @@ export class GameController extends Container {
     this.isDucking = false;
     this.lastMilestoneScore = 0;
 
+    const sh = this.app.screen.height || 600;
+    this.playerY = sh * 0.78;
+
     // ── Wink: start a new round ──
     this._winkRound = winkGame.startRound();
 
@@ -2136,16 +2200,43 @@ export class GameController extends Container {
     const elapsed = ticker.deltaTime;
     const sw = this.app.screen.width;
 
-    // Background clouds drift
-    this.clouds.forEach((cloud) => {
-      cloud.x -= cloud.speed * elapsed;
-      if (cloud.x + cloud.w < 0) {
-        cloud.x = sw + 50;
-        cloud.y = 50 + Math.random() * 150;
-      }
-    });
+    // Determine scrolling speed: full speed in-game, ambient speed on Main Menu, frozen (0) on popups/modals
+    let activeScrollSpeed = 0;
+    if (this.gameState === "PLAYING" && !this.isAdShowing) {
+      activeScrollSpeed = this.speed;
+    } else if (this.gameState === "MAIN_MENU") {
+      activeScrollSpeed = 3.5;
+    } else {
+      activeScrollSpeed = 0; // Freeze background when popup/modal is open
+    }
 
-    // Parallax Mountain Scrolling
+    // Background clouds drift (only drift when not in popups/modals)
+    if (activeScrollSpeed > 0) {
+      this.clouds.forEach((cloud) => {
+        cloud.x -= cloud.speed * elapsed;
+        if (cloud.x + cloud.w < 0) {
+          cloud.x = sw + 50;
+          cloud.y = 50 + Math.random() * 150;
+        }
+      });
+    }
+
+    // Multi-Layer Parallax Background Endless Horizontal Scrolling
+    if (activeScrollSpeed > 0) {
+      if (this.parallaxSkySprite && this.parallaxSkySprite.tilePosition) {
+        this.parallaxSkySprite.tilePosition.x -=
+          activeScrollSpeed * elapsed * 0.08;
+      }
+      if (this.parallaxHillsSprite && this.parallaxHillsSprite.tilePosition) {
+        this.parallaxHillsSprite.tilePosition.x -=
+          activeScrollSpeed * elapsed * 0.35;
+      }
+      if (this.groundRoadSprite && this.groundRoadSprite.tilePosition) {
+        this.groundRoadSprite.tilePosition.x -=
+          activeScrollSpeed * elapsed * 1.0;
+      }
+    }
+
     if (this.gameState === "PLAYING") {
       this.distX = (this.distX || 0) + 0.05 * elapsed;
       this.midX = (this.midX || 0) + 0.2 * elapsed;
@@ -2174,9 +2265,12 @@ export class GameController extends Container {
     if (currentIntScore !== this.lastIntScore) {
       this.lastIntScore = currentIntScore;
       this.scoreText.text = `ĐIỂM: ${currentIntScore}`;
-      const domScore = document.getElementById("hud-score");
-      if (domScore) {
-        domScore.innerText = `ĐIỂM: ${currentIntScore}`;
+      const domScoreVal = document.getElementById("hud-score-val");
+      if (domScoreVal) {
+        domScoreVal.innerText = `${currentIntScore}`;
+      } else {
+        const domScore = document.getElementById("hud-score");
+        if (domScore) domScore.innerText = `ĐIỂM: ${currentIntScore}`;
       }
     }
 
@@ -2194,7 +2288,7 @@ export class GameController extends Container {
     const sw = this.app.screen.width;
     const sh = this.app.screen.height;
     const scale = Math.min(1.0, sw / 450, sh / 650);
-    const groundLevel = sh * 0.7;
+    const groundLevel = sh * 0.78;
 
     if (this.isJumping) {
       this.playerVy += this.gravity * elapsed;
@@ -2205,100 +2299,90 @@ export class GameController extends Container {
         this.playerVy = 0;
         this.isJumping = false;
       }
+    } else {
+      this.playerY = groundLevel;
+      this.playerVy = 0;
     }
 
-    // Position player and animate legs
+    // Position player and animate 2D character (AnimatedSprite)
     if (this.playerSprite) {
       this.playerSprite.position.set(sw * 0.2, this.playerY);
 
-      // Update running/jumping/ducking animations for the 2D cartoon character
-      if (!this.isJumping && !this.isDucking && this.gameState === "PLAYING") {
-        this.runTime = (this.runTime || 0) + elapsed * this.speed * 0.05;
+      if (this.isJumping) {
+        // Skeletal jump pose is handled by updatePlayerLeg below
 
-        // Bounce the head vertically with a subtle active bob, keeping it upright
-        const bob = Math.abs(Math.sin(this.runTime)) * 3;
-        this.playerHead.y = -72 + bob; // Shifted up 10px
-        this.playerHead.rotation = Math.sin(this.runTime) * 0.03;
-
-        this.updatePlayerBody(this.playerBody, -46); // Shifted up 10px
-        this.updatePlayerLeg(
-          this.leftLeg,
-          -10,
-          -32,
-          this.runTime,
-          false,
-          false,
-        ); // Adjusted for longer legs
-        this.updatePlayerLeg(
-          this.rightLeg,
-          10,
-          -32,
-          this.runTime + Math.PI,
-          false,
-          false,
-        );
-        this.updatePlayerArm(
-          this.leftArm,
-          -16,
-          -46,
-          this.runTime,
-          false,
-          false,
-        ); // Shifted up 10px
-        this.updatePlayerArm(
-          this.rightArm,
-          16,
-          -46,
-          this.runTime + Math.PI,
-          false,
-          false,
-        );
-
-        // Running dust particles
-        this.dustTimer = (this.dustTimer || 0) + elapsed;
-        if (this.dustTimer >= 8) {
-          this.dustTimer = 0;
-          this.spawnDustParticle();
+        const jumpHeight = Math.max(0, groundLevel - this.playerY);
+        const shadowFactor = Math.max(0.2, 1 - jumpHeight / 180);
+        if (this.playerShadow) {
+          this.playerShadow.scale.set(shadowFactor, shadowFactor);
+          this.playerShadow.alpha = 0.35 * shadowFactor;
         }
-      } else if (this.isJumping) {
-        this.playerHead.y = -72;
-        this.playerHead.rotation = 0; // head straight in the air
-
-        this.updatePlayerBody(this.playerBody, -46);
-        this.updatePlayerLeg(this.leftLeg, -10, -32, 0, true, false);
-        this.updatePlayerLeg(this.rightLeg, 10, -32, 0, true, false);
-        this.updatePlayerArm(this.leftArm, -16, -46, 0, true, false);
-        this.updatePlayerArm(this.rightArm, 16, -46, 0, true, false);
       } else if (this.isDucking) {
-        this.playerHead.y = -58; // Shifted up 10px from -48
-        this.playerHead.rotation = 0;
+        // Skeletal duck pose is handled below
 
-        this.updatePlayerBody(this.playerBody, -36); // Shifted body up relatively
-        this.updatePlayerLeg(this.leftLeg, -10, -22, 0, false, true);
-        this.updatePlayerLeg(this.rightLeg, 10, -22, 0, false, true);
-        this.updatePlayerArm(this.leftArm, -16, -36, 0, false, true);
-        this.updatePlayerArm(this.rightArm, 16, -36, 0, false, true);
-      } else {
-        // Idle
-        this.playerHead.y = -72;
-        this.playerHead.rotation = 0;
+        if (this.playerShadow) {
+          this.playerShadow.scale.set(1.4, 0.8);
+          this.playerShadow.alpha = 0.45;
+        }
 
-        this.updatePlayerBody(this.playerBody, -46);
-        this.updatePlayerLeg(this.leftLeg, -10, -32, 0, false, false);
-        this.updatePlayerLeg(this.rightLeg, 10, -32, 0, false, false);
-        this.updatePlayerArm(this.leftArm, -16, -46, 0, false, false);
-        this.updatePlayerArm(this.rightArm, 16, -46, 0, false, false);
+        // Sliding dust
+        this.dustTimer = (this.dustTimer || 0) + elapsed;
+        if (this.dustTimer >= 4) {
+          this.dustTimer = 0;
+          this.spawnDustParticle(sw * 0.2 - 15, groundLevel + 4);
+        }
+      } else if (this.gameState === "PLAYING") {
+
+        if (this.playerShadow) {
+          this.playerShadow.scale.set(
+            1 + Math.sin(this.runTime * 2) * 0.15,
+            1,
+          );
+          this.playerShadow.alpha = 0.35;
+        }
+
+        // Dust puffs at feet
+        this.dustTimer = (this.dustTimer || 0) + elapsed;
+        if (this.dustTimer >= 7) {
+          this.dustTimer = 0;
+          this.spawnDustParticle(sw * 0.2 - 12, groundLevel);
+        }
       }
 
-      // Adjust player scale based on jumping/ducking (squash vertically for ducking)
-      if (this.isDucking) {
-        this.playerSprite.scale.set(scale * 0.95, scale * 0.45);
-      } else {
-        this.playerSprite.scale.set(scale * 0.95);
+      // Update Skeletal Parts
+      if (this.playerHead && this.gameState === "PLAYING") {
+        this.runTime = (this.runTime || 0) + elapsed * this.speed * 0.05;
+        
+        if (this.isJumping) {
+          this.playerHead.position.set(0, -72);
+          this.playerHead.rotation = 0;
+          this.updatePlayerBody(this.playerBody, -46);
+          this.updatePlayerLeg(this.leftLeg, -10, -32, 0, true, false);
+          this.updatePlayerLeg(this.rightLeg, 10, -32, 0, true, false);
+          this.updatePlayerArm(this.leftArm, -16, -46, 0, true, false);
+          this.updatePlayerArm(this.rightArm, 16, -46, 0, true, false);
+        } else if (this.isDucking) {
+          this.playerHead.position.set(0, -58);
+          this.playerHead.rotation = 0;
+          this.updatePlayerBody(this.playerBody, -36);
+          this.updatePlayerLeg(this.leftLeg, -10, -22, 0, false, true);
+          this.updatePlayerLeg(this.rightLeg, 10, -22, 0, false, true);
+          this.updatePlayerArm(this.leftArm, -16, -36, 0, false, true);
+          this.updatePlayerArm(this.rightArm, 16, -36, 0, false, true);
+        } else {
+          const bob = Math.abs(Math.sin(this.runTime)) * 3;
+          this.playerHead.position.set(0, -72 + bob);
+          this.playerHead.rotation = Math.sin(this.runTime) * 0.03;
+          this.updatePlayerBody(this.playerBody, -46 + bob * 0.5);
+          this.playerBody.rotation = 0.12; // Lean forward to create feeling of running
+          this.updatePlayerLeg(this.leftLeg, -6, -32, this.runTime, false, false);
+          this.updatePlayerLeg(this.rightLeg, 6, -32, this.runTime + Math.PI, false, false);
+          this.updatePlayerArm(this.leftArm, -10, -46, this.runTime, false, false);
+          this.updatePlayerArm(this.rightArm, 10, -46, this.runTime + Math.PI, false, false);
+        }
       }
 
-      // Update shield overlay (centered around middle of body at y = -35)
-      // Update shield overlay (centered around middle of body at y = -35)
+      // Update shield overlay
       if (this.shieldTime > 0) {
         this.shieldTime -= elapsed;
         this.playerShieldGraphics.visible = true;
@@ -2306,6 +2390,13 @@ export class GameController extends Container {
         this.playerShieldGraphics.scale.set(pulseScale);
       } else {
         this.playerShieldGraphics.visible = false;
+      }
+
+      // Adjust player scale based on jumping/ducking (squash vertically for ducking)
+      if (this.isDucking) {
+        this.playerSprite.scale.set(scale * 0.95, scale * 0.45);
+      } else {
+        this.playerSprite.scale.set(scale * 0.95);
       }
     }
 
@@ -2376,8 +2467,8 @@ export class GameController extends Container {
   spawnObstacle() {
     const sw = this.app.screen.width;
     const sh = this.app.screen.height;
-    const scale = Math.min(1.0, sw / 450, sh / 650);
-    const groundLevel = sh * 0.7;
+    const scale = Math.max(0.85, Math.min(1.2, sw / 450));
+    const groundLevel = sh * 0.78;
 
     // Obstacle/Item types: 0 (Ground set A), 1 (Ground set B), 2 (Flying), 3 (Collectible)
     let type = Math.floor(Math.random() * 4);
@@ -2390,25 +2481,25 @@ export class GameController extends Container {
     const container = new Container();
 
     let spawnY = groundLevel;
-    let width = 44 * scale;
-    let height = 45 * scale;
+    let width = 60 * scale;
+    let height = 60 * scale;
     let baseY = groundLevel;
     let isSlipper = false;
 
     if (type === 0) {
-      // Ground Set A: Tires and fences
+      // Ground Set A: Tires and fences (Placed firmly on road)
       const choices = [
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
-          w: 75,
-          h: 75,
-          yOffset: 10,
+          w: 100,
+          h: 100,
+          yOffset: 18, // Compensate for 10% bottom transparent PNG margin
         },
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
-          w: 100,
-          h: 75,
-          yOffset: 10,
+          w: 130,
+          h: 95,
+          yOffset: 14,
         },
       ];
       const selected = choices[Math.floor(Math.random() * choices.length)];
@@ -2422,19 +2513,19 @@ export class GameController extends Container {
       width = selected.w * scale;
       height = selected.h * scale;
     } else if (type === 1) {
-      // Ground Set B: Blue tables and scarecrows
+      // Ground Set B: Blue tables and scarecrows (Placed firmly on road)
       const choices = [
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.png",
-          w: 85,
-          h: 75,
-          yOffset: 10,
+          w: 110,
+          h: 95,
+          yOffset: 18, // Compensate for 10% bottom transparent PNG margin
         },
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.png",
-          w: 60,
-          h: 85,
-          yOffset: 10,
+          w: 80,
+          h: 110,
+          yOffset: 8,
         },
       ];
       const selected = choices[Math.floor(Math.random() * choices.length)];
@@ -2448,25 +2539,25 @@ export class GameController extends Container {
       width = selected.w * scale;
       height = selected.h * scale;
     } else if (type === 2) {
-      // Flying Obstacles: Throwing chairs and slippers
+      // Flying Obstacles: Throwing chairs and slippers (Enlarged)
       const choices = [
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.png",
-          w: 65,
-          h: 65,
+          w: 85,
+          h: 85,
           slipper: true,
         },
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
-          w: 65,
-          h: 65,
+          w: 85,
+          h: 85,
           slipper: true,
         },
       ];
       const selected = choices[Math.floor(Math.random() * choices.length)];
 
       const isHighSlipper = Math.random() > 0.5;
-      spawnY = groundLevel - (isHighSlipper ? 130 : 85) * scale;
+      spawnY = groundLevel - (isHighSlipper ? 140 : 90) * scale;
       width = selected.w * scale;
       height = selected.h * scale;
 
@@ -2496,29 +2587,37 @@ export class GameController extends Container {
       const choices = [
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
-          w: 60,
-          h: 60,
+          w: 80,
+          h: 80,
         },
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.png",
-          w: 60,
-          h: 60,
+          w: 80,
+          h: 80,
         },
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.png",
-          w: 45,
-          h: 70,
+          w: 60,
+          h: 90,
         },
       ];
       const selected = choices[Math.floor(Math.random() * choices.length)];
 
       spawnY =
         Math.random() > 0.5
-          ? groundLevel - 18 * scale
-          : groundLevel - 72 * scale;
+          ? groundLevel - 24 * scale
+          : groundLevel - 80 * scale;
       baseY = spawnY;
       width = selected.w * scale;
       height = selected.h * scale;
+
+      // Glowing yellow/white cartoon aura behind collectible item for high contrast
+      const aura = new Graphics();
+      aura
+        .circle(0, 0, Math.max(width, height) * 0.52)
+        .fill({ color: 0xffea00, alpha: 0.4 })
+        .stroke({ color: 0xffffff, width: 3, alpha: 0.9 });
+      container.addChild(aura);
 
       const sprite = Sprite.from(selected.path);
       sprite.width = selected.w * scale;
@@ -2571,7 +2670,7 @@ export class GameController extends Container {
     audio.playGameOver();
 
     const finalScore = Math.floor(this.score);
-    this.gameOverScoreText.text = `ĐIỂM SỐ: ${finalScore}`;
+    this.gameOverScoreText.text = `${finalScore}`;
 
     // Save stats
     const stats = getStats();
@@ -2596,9 +2695,10 @@ export class GameController extends Container {
     if (isNewRecord) {
       this.gameOverMsgText.text = "👑 KỶ LỤC MỚI CỦA BỘ LẠC! 👑";
       this.gameOverMsgText.style.fill = 0xffea00;
+      this.gameOverMsgText.visible = true;
     } else {
-      this.gameOverMsgText.text = "Bạn đã va phải chướng ngại vật!";
-      this.gameOverMsgText.style.fill = 0xffecb3;
+      this.gameOverMsgText.text = "";
+      this.gameOverMsgText.visible = false;
     }
 
     if (!this.hasRevivedThisRun) {
@@ -2830,84 +2930,136 @@ export class GameController extends Container {
   resize() {
     const sw = this.app.screen.width;
     const sh = this.app.screen.height;
+    const groundLevel = sh * 0.78;
     const modalScale = Math.min(1.0, (sw - 32) / 460, (sh - 40) / 600);
 
-    // Draw bright and happy daylight sky gradient
-    const bgGrad = new FillGradient({
-      start: { x: 0, y: 0 },
-      end: { x: sw, y: sh },
-      colorStops: [
-        { offset: 0, color: 0xb3e5fc }, // Bright cyan sky
-        { offset: 1, color: 0xe1f5fe }, // Warm sun-kissed horizon
-      ],
-    });
-    this.bgOverlay.clear().rect(0, 0, sw, sh).fill(bgGrad);
+    if (
+      this.parallaxSkySprite ||
+      this.parallaxHillsSprite ||
+      this.groundRoadSprite
+    ) {
+      this.bgOverlay.clear();
+      this.distantMountains.clear();
+      this.midMountains.clear();
+      this.closeMountains.clear();
+      this.clouds.forEach((cloud) => cloud.clear());
 
-    // Redraw and scale fluffy white cartoon clouds
-    this.clouds.forEach((cloud) => {
-      cloud.clear();
-      cloud.beginPath();
-      // Friendly white border and solid white-translucent fill
-      cloud.setStrokeStyle({ width: 1.5, color: 0xffffff, alpha: 0.95 });
-      cloud.fill({ color: 0xffffff, alpha: 0.8 });
+      // Layer 0: Sky — top 55%
+      if (this.parallaxSkySprite) {
+        const skyH = sh * 0.55;
+        this.parallaxSkySprite.visible = true;
+        this.parallaxSkySprite.width = sw;
+        this.parallaxSkySprite.height = skyH;
+        this.parallaxSkySprite.y = 0;
+        const texH = this.parallaxSkySprite.texture?.height || 1024;
+        const s = skyH / texH;
+        this.parallaxSkySprite.tileScale.set(s, s);
+      }
 
-      const ch = cloud.h;
-      const cw = cloud.w;
-      cloud
-        .circle(0, 0, ch * 0.5)
-        .fill()
-        .stroke();
-      cloud
-        .circle(-cw * 0.25, ch * 0.1, ch * 0.35)
-        .fill()
-        .stroke();
-      cloud
-        .circle(cw * 0.25, ch * 0.1, ch * 0.35)
-        .fill()
-        .stroke();
-      cloud
-        .moveTo(-cw * 0.5, ch * 0.22)
-        .lineTo(cw * 0.5, ch * 0.22)
-        .stroke();
-      cloud
-        .moveTo(-cw * 0.35, ch * 0.38)
-        .bezierCurveTo(
-          -cw * 0.15,
-          ch * 0.45,
-          cw * 0.15,
-          ch * 0.45,
-          cw * 0.35,
-          ch * 0.38,
-        )
-        .stroke();
-    });
+      // Layer 1: Hills — from 20% to 82%
+      if (this.parallaxHillsSprite) {
+        const h = sh * 0.62;
+        this.parallaxHillsSprite.visible = true;
+        this.parallaxHillsSprite.width = sw;
+        this.parallaxHillsSprite.height = h;
+        this.parallaxHillsSprite.y = sh * 0.2;
+        const texH = this.parallaxHillsSprite.texture?.height || 1024;
+        const s = h / texH;
+        this.parallaxHillsSprite.tileScale.set(s, s);
+      }
 
-    const groundLevel = sh * 0.7;
+      // Layer 2: Road — from 78% to 100%
+      if (this.groundRoadSprite) {
+        const h = sh * 0.22;
+        this.groundRoadSprite.visible = true;
+        this.groundRoadSprite.width = sw;
+        this.groundRoadSprite.height = h;
+        this.groundRoadSprite.y = sh * 0.78;
+        const texH = this.groundRoadSprite.texture?.height || 1024;
+        const s = h / texH;
+        this.groundRoadSprite.tileScale.set(s, s);
+      }
+    } else {
+      // Redraw and scale fluffy white cartoon clouds (fallback)
+      this.clouds.forEach((cloud) => {
+        cloud.clear();
+        cloud.beginPath();
+        // Friendly white border and solid white-translucent fill
+        cloud.setStrokeStyle({ width: 1.5, color: 0xffffff, alpha: 0.95 });
+        cloud.fill({ color: 0xffffff, alpha: 0.8 });
 
-    // Parallax Mountain Rendering (Vietnamese Mountains)
-    const drawMountainRange = (
-      graphics,
-      heights,
-      color,
-      alpha,
-      maxPeakHeight,
-    ) => {
-      graphics.clear();
+        const ch = cloud.h;
+        const cw = cloud.w;
+        cloud
+          .circle(0, 0, ch * 0.5)
+          .fill()
+          .stroke();
+        cloud
+          .circle(-cw * 0.25, ch * 0.1, ch * 0.35)
+          .fill()
+          .stroke();
+        cloud
+          .circle(cw * 0.25, ch * 0.1, ch * 0.35)
+          .fill()
+          .stroke();
+        cloud
+          .moveTo(-cw * 0.5, ch * 0.22)
+          .lineTo(cw * 0.5, ch * 0.22)
+          .stroke();
+        cloud
+          .moveTo(-cw * 0.35, ch * 0.38)
+          .bezierCurveTo(
+            -cw * 0.15,
+            ch * 0.45,
+            cw * 0.15,
+            ch * 0.45,
+            cw * 0.35,
+            ch * 0.38,
+          )
+          .stroke();
+      });
 
-      graphics.beginPath();
-      graphics.moveTo(0, groundLevel);
+      // Parallax Mountain Rendering (Vietnamese Mountains)
+      const drawMountainRange = (
+        graphics,
+        heights,
+        color,
+        alpha,
+        maxPeakHeight,
+      ) => {
+        graphics.clear();
 
-      const numPoints = heights.length;
-      const dx = sw / (numPoints - 1);
+        graphics.beginPath();
+        graphics.moveTo(0, groundLevel);
 
-      // Draw first range (from 0 to sw)
-      for (let i = 0; i < numPoints; i++) {
-        const x = i * dx;
-        const peakY = groundLevel - heights[i] * maxPeakHeight;
-        if (i === 0) {
-          graphics.lineTo(x, peakY);
-        } else {
-          const prevX = (i - 1) * dx;
+        const numPoints = heights.length;
+        const dx = sw / (numPoints - 1);
+
+        // Draw first range (from 0 to sw)
+        for (let i = 0; i < numPoints; i++) {
+          const x = i * dx;
+          const peakY = groundLevel - heights[i] * maxPeakHeight;
+          if (i === 0) {
+            graphics.lineTo(x, peakY);
+          } else {
+            const prevX = (i - 1) * dx;
+            const prevPeakY = groundLevel - heights[i - 1] * maxPeakHeight;
+            graphics.bezierCurveTo(
+              prevX + dx * 0.5,
+              prevPeakY,
+              x - dx * 0.5,
+              peakY,
+              x,
+              peakY,
+            );
+          }
+        }
+
+        // Draw second range (from sw to sw * 2) for seamless wrapping
+        for (let i = 0; i < numPoints; i++) {
+          const x = sw + i * dx;
+          const peakY = groundLevel - heights[i] * maxPeakHeight;
+          const prevX = sw + (i - 1) * dx;
           const prevPeakY = groundLevel - heights[i - 1] * maxPeakHeight;
           graphics.bezierCurveTo(
             prevX + dx * 0.5,
@@ -2918,92 +3070,84 @@ export class GameController extends Container {
             peakY,
           );
         }
-      }
 
-      // Draw second range (from sw to sw * 2) for seamless wrapping
-      for (let i = 0; i < numPoints; i++) {
-        const x = sw + i * dx;
-        const peakY = groundLevel - heights[i] * maxPeakHeight;
-        const prevX = sw + (i - 1) * dx;
-        const prevPeakY = groundLevel - heights[i - 1] * maxPeakHeight;
-        graphics.bezierCurveTo(
-          prevX + dx * 0.5,
-          prevPeakY,
-          x - dx * 0.5,
-          peakY,
-          x,
-          peakY,
-        );
-      }
+        graphics.lineTo(sw * 2, groundLevel);
+        graphics.closePath();
+        graphics.fill({ color, alpha });
+      };
 
-      graphics.lineTo(sw * 2, groundLevel);
-      graphics.closePath();
-      graphics.fill({ color, alpha });
-    };
+      // Draw the 3 layers of Ha Long style limestone mountains
+      const distHeights = [
+        0.35, 0.55, 0.28, 0.48, 0.2, 0.38, 0.28, 0.48, 0.22, 0.35,
+      ];
+      const midHeights = [
+        0.22, 0.38, 0.16, 0.42, 0.26, 0.34, 0.22, 0.38, 0.18, 0.25,
+      ];
+      const closeHeights = [
+        0.12, 0.24, 0.08, 0.28, 0.14, 0.2, 0.12, 0.22, 0.1, 0.16,
+      ];
 
-    // Draw the 3 layers of Ha Long style limestone mountains
-    const distHeights = [
-      0.35, 0.55, 0.28, 0.48, 0.2, 0.38, 0.28, 0.48, 0.22, 0.35,
-    ];
-    const midHeights = [
-      0.22, 0.38, 0.16, 0.42, 0.26, 0.34, 0.22, 0.38, 0.18, 0.25,
-    ];
-    const closeHeights = [
-      0.12, 0.24, 0.08, 0.28, 0.14, 0.2, 0.12, 0.22, 0.1, 0.16,
-    ];
+      drawMountainRange(
+        this.distantMountains,
+        distHeights,
+        0xb0bec5, // Soft pastel blue/lavender
+        0.65,
+        sh * 0.45,
+      );
+      drawMountainRange(
+        this.midMountains,
+        midHeights,
+        0x81c784, // Cheerful mint green
+        0.8,
+        sh * 0.32,
+      );
+      drawMountainRange(
+        this.closeMountains,
+        closeHeights,
+        0x4caf50, // Bright grassy green
+        1.0,
+        sh * 0.22,
+      );
 
-    drawMountainRange(
-      this.distantMountains,
-      distHeights,
-      0xb0bec5, // Soft pastel blue/lavender
-      0.65,
-      sh * 0.45,
-    );
-    drawMountainRange(
-      this.midMountains,
-      midHeights,
-      0x81c784, // Cheerful mint green
-      0.8,
-      sh * 0.32,
-    );
-    drawMountainRange(
-      this.closeMountains,
-      closeHeights,
-      0x4caf50, // Bright grassy green
-      1.0,
-      sh * 0.22,
-    );
-
-    // Solid Ground Base (Dirt and Grass)
-    this.bgOverlay
-      .rect(0, groundLevel, sw, sh - groundLevel)
-      .fill({ color: 0x8d6e63 });
-    this.bgOverlay.rect(0, groundLevel, sw, 12).fill({ color: 0x4caf50 });
-
-    // Cheerful green ground outlines
-    this.bgOverlay.save();
-    this.bgOverlay.setStrokeStyle({ width: 2.0, color: 0x388e3c, alpha: 0.45 });
-    this.bgOverlay.moveTo(0, groundLevel).lineTo(sw, groundLevel).stroke();
-
-    // Traditional lacquer wave details below ground
-    const waveHeight = 8;
-    const waveLength = 36;
-    const yBase = groundLevel + 12;
-    this.bgOverlay.setStrokeStyle({ width: 1.5, color: 0x5d4037, alpha: 0.25 });
-    for (let x = -waveLength; x < sw + waveLength; x += waveLength) {
+      // Solid Ground Base (Dirt and Grass)
       this.bgOverlay
-        .moveTo(x, yBase)
-        .bezierCurveTo(
-          x + waveLength * 0.25,
-          yBase - waveHeight,
-          x + waveLength * 0.75,
-          yBase - waveHeight,
-          x + waveLength,
-          yBase,
-        )
-        .stroke();
+        .rect(0, groundLevel, sw, sh - groundLevel)
+        .fill({ color: 0x8d6e63 });
+      this.bgOverlay.rect(0, groundLevel, sw, 12).fill({ color: 0x4caf50 });
+
+      // Cheerful green ground outlines
+      this.bgOverlay.save();
+      this.bgOverlay.setStrokeStyle({
+        width: 2.0,
+        color: 0x388e3c,
+        alpha: 0.45,
+      });
+      this.bgOverlay.moveTo(0, groundLevel).lineTo(sw, groundLevel).stroke();
+
+      // Traditional lacquer wave details below ground
+      const waveHeight = 8;
+      const waveLength = 36;
+      const yBase = groundLevel + 12;
+      this.bgOverlay.setStrokeStyle({
+        width: 1.5,
+        color: 0x5d4037,
+        alpha: 0.25,
+      });
+      for (let x = -waveLength; x < sw + waveLength; x += waveLength) {
+        this.bgOverlay
+          .moveTo(x, yBase)
+          .bezierCurveTo(
+            x + waveLength * 0.25,
+            yBase - waveHeight,
+            x + waveLength * 0.75,
+            yBase - waveHeight,
+            x + waveLength,
+            yBase,
+          )
+          .stroke();
+      }
+      this.bgOverlay.restore();
     }
-    this.bgOverlay.restore();
 
     const scale = Math.min(1.0, sw / 450, sh / 650);
 
@@ -3076,13 +3220,13 @@ export class GameController extends Container {
     // ==========================================
     if (this.gameState === "PLAYING") {
       this.scoreText.style.fontSize = Math.max(16, Math.min(22, 22 * scale));
-      this.scoreText.position.set(25 * scale, 75 * scale);
+      this.scoreText.position.set(20 * scale, 30 * scale);
 
       this.highScoreText.style.fontSize = Math.max(
         12,
         Math.min(16, 16 * scale),
       );
-      this.highScoreText.position.set(sw - 25 * scale, 75 * scale);
+      this.highScoreText.position.set(20 * scale, 65 * scale);
 
       this.pauseBtn.position.set(sw - 35 * scale, 35 * scale);
       this.pauseBtn.scale.set(scale);
@@ -3569,17 +3713,31 @@ export class GameController extends Container {
   }
 
   syncDOMScoreAndHighScore() {
-    const domScore = document.getElementById("hud-score");
-    if (domScore) {
-      domScore.innerText = `ĐIỂM: ${Math.floor(this.score)}`;
+    const currentScore = Math.floor(this.score);
+    const domScoreVal = document.getElementById("hud-score-val");
+    if (domScoreVal) {
+      domScoreVal.innerText = `${currentScore}`;
+    } else {
+      const domScore = document.getElementById("hud-score");
+      if (domScore) domScore.innerText = `ĐIỂM: ${currentScore}`;
     }
-    const domHighScore = document.getElementById("hud-highscore");
-    if (domHighScore) {
-      domHighScore.innerText = `KỶ LỤC: ${this.highScore}`;
+
+    const domHighScoreVal = document.getElementById("hud-highscore-val");
+    if (domHighScoreVal) {
+      domHighScoreVal.innerText = `${this.highScore}`;
+    } else {
+      const domHighScore = document.getElementById("hud-highscore");
+      if (domHighScore) domHighScore.innerText = `KỶ LỤC: ${this.highScore}`;
     }
-    const menuHighScoreText = document.getElementById("menu-highscore");
-    if (menuHighScoreText) {
-      menuHighScoreText.innerText = `🏆 KỶ LỤC ĐIỂM: ${this.highScore}`;
+
+    const menuHighScoreVal = document.getElementById("menu-highscore-text");
+    if (menuHighScoreVal) {
+      menuHighScoreVal.innerText = `KỶ LỤC ĐIỂM: ${this.highScore}`;
+    } else {
+      const menuHighScoreText = document.getElementById("menu-highscore");
+      if (menuHighScoreText) {
+        menuHighScoreText.innerText = `🏆 KỶ LỤC ĐIỂM: ${this.highScore}`;
+      }
     }
   }
 
@@ -3801,13 +3959,14 @@ export class GameController extends Container {
           text-shadow: 0 1px 1px rgba(0,0,0,0.5);
         }
         .game-over-score {
-          font-family: 'Be Vietnam Pro', sans-serif;
-          font-size: 28px;
+          font-family: 'Baloo 2', 'Be Vietnam Pro', sans-serif;
+          font-size: 44px;
           font-weight: 900;
-          color: #4E342E;
-          margin: 8px 0;
-          letter-spacing: 2px;
-          text-shadow: 0 1px 0 #ffffff;
+          color: #E65100;
+          margin: 4px 0 10px 0;
+          letter-spacing: 1.5px;
+          line-height: 1.1;
+          text-shadow: 0 3px 0 #8C2500, 0 6px 12px rgba(0,0,0,0.15);
         }
         .game-over-msg {
           font-family: 'Be Vietnam Pro', sans-serif;
@@ -4117,6 +4276,7 @@ GameController.prototype.updatePlayerBody = updatePlayerBody;
 
 GameController.prototype.updateSkeletalRigTexture = function (tex, url) {
   updateSkeletalRigTexture(tex, url, {
+    fullCharSprite: this.fullCharSprite,
     head: this.playerHead,
     body: this.playerBody,
     leftArm: this.leftArm,

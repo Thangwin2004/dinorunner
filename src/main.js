@@ -17,7 +17,7 @@ Text.defaultAutoResolution = false;
 
   // 2. Initialize the application asynchronously (Vite safe IIFE pattern)
   await app.init({
-    background: "#0a0b1e",
+    background: "#87CEEB",
     resizeTo: container,
     antialias: true,
     autoDensity: true,
