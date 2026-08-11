@@ -74,6 +74,13 @@ export class GameController extends Container {
 
     // Game objects
     this.obstacles = [];
+    this.obstaclePool0 = []; // Ground Set A
+    this.obstaclePool1 = []; // Ground Set B
+    this.obstaclePool2 = []; // Flying
+    this.obstaclePool3 = []; // Collectibles
+    this.sparklePool = [];
+    this.floatTextPool = [];
+    
     this.nextSpawnTime = 0;
     this.lastMilestoneScore = 0;
 
@@ -1525,8 +1532,15 @@ export class GameController extends Container {
     const scale = Math.min(1.0, sw / 450, sh / 650);
 
     for (let i = 0; i < 8; i++) {
-      const sparkle = new Graphics();
-      sparkle.circle(0, 0, 2 + Math.random() * 3).fill({ color: 0xffea00 });
+      let sparkle;
+      if (this.sparklePool.length > 0) {
+        sparkle = this.sparklePool.pop();
+        sparkle.alpha = 1; // reset alpha
+      } else {
+        sparkle = new Graphics();
+        sparkle.circle(0, 0, 2 + Math.random() * 3).fill({ color: 0xffea00 });
+      }
+      
       sparkle.x = x;
       sparkle.y = y;
       this.gamePlayContainer.addChild(sparkle);
@@ -1543,7 +1557,7 @@ export class GameController extends Container {
         onComplete: () => {
           if (this.gamePlayContainer.destroyed) return;
           this.gamePlayContainer.removeChild(sparkle);
-          sparkle.destroy();
+          this.sparklePool.push(sparkle);
         },
       });
     }
@@ -1555,7 +1569,7 @@ export class GameController extends Container {
     this.spawnSparkleParticles(obs.sprite.x, obs.sprite.y);
     this.spawnFloatingText("+10", obs.sprite.x, obs.sprite.y);
     this.gamePlayContainer.removeChild(obs.sprite);
-    obs.sprite.destroy({ children: true });
+    this.returnObstacleToPool(obs);
     this.obstacles.splice(index, 1);
   }
 
@@ -1564,19 +1578,27 @@ export class GameController extends Container {
     const sh = this.app.screen.height;
     const scale = Math.min(1.0, sw / 450, sh / 650);
 
-    const floatText = new Text({
-      text: text,
-      style: new TextStyle({
-        fontFamily: "Baloo 2",
-        fontSize: 24,
-        fontWeight: "900",
-        fill: 0xffea00, // Gold yellow
-        stroke: { color: 0x5d4037, width: 4 }, // Dark brown stroke
-        align: "center",
-      }),
-      resolution: 3,
-    });
-    floatText.anchor.set(0.5);
+    let floatText;
+    if (this.floatTextPool.length > 0) {
+      floatText = this.floatTextPool.pop();
+      floatText.text = text;
+      floatText.alpha = 1;
+    } else {
+      floatText = new Text({
+        text: text,
+        style: new TextStyle({
+          fontFamily: "Baloo 2",
+          fontSize: 24,
+          fontWeight: "900",
+          fill: 0xffea00, // Gold yellow
+          stroke: { color: 0x5d4037, width: 4 }, // Dark brown stroke
+          align: "center",
+        }),
+        resolution: 3,
+      });
+      floatText.anchor.set(0.5);
+    }
+    
     floatText.position.set(x, y - 20 * scale);
     floatText.scale.set(scale);
     this.gamePlayContainer.addChild(floatText);
@@ -1588,8 +1610,9 @@ export class GameController extends Container {
       duration: 0.8,
       ease: "power1.out",
       onComplete: () => {
+        if (this.gamePlayContainer.destroyed) return;
         this.gamePlayContainer.removeChild(floatText);
-        floatText.destroy();
+        this.floatTextPool.push(floatText);
       },
     });
   }
@@ -2468,7 +2491,7 @@ export class GameController extends Container {
             // Invulnerable: break obstacle!
             this.spawnSparkleParticles(obs.sprite.x, obs.sprite.y);
             this.gamePlayContainer.removeChild(obs.sprite);
-            obs.sprite.destroy({ children: true });
+            this.returnObstacleToPool(obs);
             this.obstacles.splice(i, 1);
             continue;
           } else {
@@ -2481,9 +2504,24 @@ export class GameController extends Container {
       // Remove out of screen obstacles
       if (obs.sprite.x + obs.width < 0) {
         this.gamePlayContainer.removeChild(obs.sprite);
-        obs.sprite.destroy({ children: true });
+        this.returnObstacleToPool(obs);
         this.obstacles.splice(i, 1);
       }
+    }
+  }
+
+  returnObstacleToPool(obs) {
+    const type = obs.type;
+    if (type === 0) {
+      this.obstaclePool0.push(obs.sprite);
+    } else if (type === 1) {
+      this.obstaclePool1.push(obs.sprite);
+    } else if (type === 2) {
+      this.obstaclePool2.push(obs.sprite);
+    } else if (type === 3) {
+      this.obstaclePool3.push(obs.sprite);
+    } else {
+      obs.sprite.destroy({ children: true });
     }
   }
 
@@ -2501,7 +2539,9 @@ export class GameController extends Container {
       type = Math.floor(Math.random() * 2); // 0 or 1
     }
 
-    const container = new Container();
+    let container;
+    let sprite;
+    let aura;
 
     let spawnY = groundLevel;
     let width = 60 * scale;
@@ -2526,12 +2566,20 @@ export class GameController extends Container {
         },
       ];
       const selected = choices[Math.floor(Math.random() * choices.length)];
-      const sprite = Sprite.from(selected.path);
+      if (this.obstaclePool0.length > 0) {
+        container = this.obstaclePool0.pop();
+        sprite = container.children[0];
+      } else {
+        container = new Container();
+        sprite = new Sprite();
+        container.addChild(sprite);
+      }
+      
+      sprite.texture = Sprite.from(selected.path).texture;
       sprite.width = selected.w * scale;
       sprite.height = selected.h * scale;
       sprite.anchor.set(0.5, 1);
       sprite.y = selected.yOffset * scale;
-      container.addChild(sprite);
 
       width = selected.w * scale;
       height = selected.h * scale;
@@ -2552,12 +2600,20 @@ export class GameController extends Container {
         },
       ];
       const selected = choices[Math.floor(Math.random() * choices.length)];
-      const sprite = Sprite.from(selected.path);
+      if (this.obstaclePool1.length > 0) {
+        container = this.obstaclePool1.pop();
+        sprite = container.children[0];
+      } else {
+        container = new Container();
+        sprite = new Sprite();
+        container.addChild(sprite);
+      }
+
+      sprite.texture = Sprite.from(selected.path).texture;
       sprite.width = selected.w * scale;
       sprite.height = selected.h * scale;
       sprite.anchor.set(0.5, 1);
       sprite.y = selected.yOffset * scale;
-      container.addChild(sprite);
 
       width = selected.w * scale;
       height = selected.h * scale;
@@ -2584,11 +2640,22 @@ export class GameController extends Container {
       width = selected.w * scale;
       height = selected.h * scale;
 
-      const sprite = Sprite.from(selected.path);
+      if (this.obstaclePool2.length > 0) {
+        container = this.obstaclePool2.pop();
+        sprite = container.children[0];
+        gsap.killTweensOf(sprite);
+      } else {
+        container = new Container();
+        sprite = new Sprite();
+        container.addChild(sprite);
+      }
+
+      sprite.texture = Sprite.from(selected.path).texture;
       sprite.width = selected.w * scale;
       sprite.height = selected.h * scale;
       sprite.anchor.set(0.5, 0.5);
-      container.addChild(sprite);
+      sprite.y = 0; // reset y from previous gsap
+      sprite.rotation = 0;
 
       // SFX for flying spawn
       audio.playBird();
@@ -2634,19 +2701,32 @@ export class GameController extends Container {
       width = selected.w * scale;
       height = selected.h * scale;
 
+      if (this.obstaclePool3.length > 0) {
+        container = this.obstaclePool3.pop();
+        aura = container.children[0];
+        sprite = container.children[1];
+        aura.clear();
+      } else {
+        container = new Container();
+        aura = new Graphics();
+        sprite = new Sprite();
+        container.addChild(aura);
+        container.addChild(sprite);
+      }
+
       // Glowing yellow/white cartoon aura behind collectible item for high contrast
-      const aura = new Graphics();
       aura
         .circle(0, 0, Math.max(width, height) * 0.52)
         .fill({ color: 0xffea00, alpha: 0.4 })
         .stroke({ color: 0xffffff, width: 3, alpha: 0.9 });
-      container.addChild(aura);
+      aura.scale.set(1); // reset scale
 
-      const sprite = Sprite.from(selected.path);
+      sprite.texture = Sprite.from(selected.path).texture;
       sprite.width = selected.w * scale;
       sprite.height = selected.h * scale;
       sprite.anchor.set(0.5, 0.5);
-      container.addChild(sprite);
+      sprite.rotation = 0; // reset rotation
+      container.scale.set(1);
     }
 
     container.position.set(sw + 50, spawnY);
