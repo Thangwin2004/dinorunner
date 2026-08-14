@@ -2,7 +2,18 @@ import js from "@eslint/js";
 import prettier from "eslint-plugin-prettier/recommended";
 
 export default [
-  { ignores: ["dist", "public", "public/**", "**/wink-bridge.js"] },
+  // .worktrees holds a full duplicate checkout (241MB). Without it here,
+  // `eslint .` walks the copy and `pnpm build` takes minutes instead of seconds.
+  {
+    ignores: [
+      "dist",
+      "public",
+      "public/**",
+      "**/wink-bridge.js",
+      ".worktrees",
+      ".worktrees/**",
+    ],
+  },
   js.configs.recommended,
   prettier,
   {
