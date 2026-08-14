@@ -483,29 +483,29 @@ export class GameController extends Container {
       }
 
       this.laclacTexture = await Assets.load(
-        "/assest/image/imagenobackgrd/001_avatar_laclac.png",
+        "/assest/image/imagenobackgrd/001_avatar_laclac.webp",
       );
       this.daulanTexture = await Assets.load(
-        "/assest/image/imagenobackgrd/015_avatar_dauLan.png",
+        "/assest/image/imagenobackgrd/015_avatar_dauLan.webp",
       );
       this.echxanhTexture = await Assets.load(
-        "/assest/image/imagenobackgrd/010_avatar_echxanh1.png",
+        "/assest/image/imagenobackgrd/010_avatar_echxanh1.webp",
       );
       this.duckTexture = await Assets.load(
-        "/assest/image/imagenobackgrd/003_avatar_duck.png",
+        "/assest/image/imagenobackgrd/003_avatar_duck.webp",
       );
 
       // Preload obstacles and collectibles (multi-asset expansion)
       const assetPaths = [
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.png",
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.png",
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.png",
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.png",
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.png",
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.webp",
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.webp",
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.webp",
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).webp",
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.webp",
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.webp",
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.webp",
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.webp",
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.webp",
       ];
       for (const path of assetPaths) {
         await Assets.load(path);
@@ -518,7 +518,7 @@ export class GameController extends Container {
 
       const savedAvatar =
         window.localStorage.getItem("selected_avatar_url") ||
-        "/assest/image/imagenobackgrd/001_avatar_laclac.png";
+        "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
       window.selectedAvatarUrl = savedAvatar;
       await Assets.load(savedAvatar);
 
@@ -1883,7 +1883,7 @@ export class GameController extends Container {
     const startIndex = this.charSelectPage * itemsPerPage;
     const currentAvatar =
       window.selectedAvatarUrl ||
-      "/assest/image/imagenobackgrd/001_avatar_laclac.png";
+      "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
 
     // Pad avatar file list
     const avatarList = [];
@@ -1937,7 +1937,7 @@ export class GameController extends Container {
     for (let i = 0; i < 44; i++) {
       const idxStr = String(i + 1).padStart(3, "0");
       avatarList.push({
-        url: `/assest/image/imagenobackgrd/${idxStr}_avatar_${avatarNames[i]}.png`,
+        url: `/assest/image/imagenobackgrd/${idxStr}_avatar_${avatarNames[i]}.webp`,
         name: avatarNames[i].toUpperCase(),
       });
     }
@@ -2073,7 +2073,7 @@ export class GameController extends Container {
       if (newState === "MAIN_MENU") {
         const activeAvatar =
           window.localStorage.getItem("selected_avatar_url") ||
-          "/assest/image/imagenobackgrd/001_avatar_laclac.png";
+          "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
         const menuAvatarImg = document.getElementById("menu-avatar-img");
         if (menuAvatarImg) {
           menuAvatarImg.src = activeAvatar;
@@ -2553,13 +2553,13 @@ export class GameController extends Container {
       // Ground Set A: Tires and fences (Placed firmly on road)
       const choices = [
         {
-          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.webp",
           w: 100,
           h: 100,
           yOffset: 18, // Compensate for 10% bottom transparent PNG margin
         },
         {
-          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.webp",
           w: 130,
           h: 95,
           yOffset: 14,
@@ -2587,13 +2587,13 @@ export class GameController extends Container {
       // Ground Set B: Blue tables and scarecrows (Placed firmly on road)
       const choices = [
         {
-          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.png",
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.webp",
           w: 110,
           h: 95,
           yOffset: 18, // Compensate for 10% bottom transparent PNG margin
         },
         {
-          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.png",
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.webp",
           w: 80,
           h: 110,
           yOffset: 8,
@@ -2621,13 +2621,13 @@ export class GameController extends Container {
       // Flying Obstacles: Throwing chairs and slippers (Enlarged)
       const choices = [
         {
-          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.png",
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.webp",
           w: 85,
           h: 85,
           slipper: true,
         },
         {
-          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.webp",
           w: 85,
           h: 85,
           slipper: true,
@@ -2676,17 +2676,17 @@ export class GameController extends Container {
       // Collectibles: Sticky Rice Cake, Bread, Red Drink bottle
       const choices = [
         {
-          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).webp",
           w: 80,
           h: 80,
         },
         {
-          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.png",
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.webp",
           w: 80,
           h: 80,
         },
         {
-          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.png",
+          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.webp",
           w: 60,
           h: 90,
         },
@@ -3269,7 +3269,7 @@ export class GameController extends Container {
       // Make sure the mascot sprite texture is updated with the current avatar on load/change
       const activeAvatar =
         window.localStorage.getItem("selected_avatar_url") ||
-        "/assest/image/imagenobackgrd/001_avatar_laclac.png";
+        "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
       Assets.load(activeAvatar)
         .then((tex) => {
           if (!this.menuMascotSprite.destroyed) {
@@ -3906,7 +3906,7 @@ export class GameController extends Container {
           width: 40px;
           height: 40px;
           border: none;
-          background: url(/assest/iconbtn/close_btn.png) no-repeat center center;
+          background: url(/assest/iconbtn/close_btn.webp) no-repeat center center;
           background-size: contain;
           cursor: pointer;
           transition: transform 0.15s ease;

@@ -728,7 +728,7 @@ export function showHTMLReviveOffer(game, onRevive, onSkip) {
     "margin: 0 auto; background: linear-gradient(180deg, #FFE082 0%, #FFB300 50%, #FF8F00 100%); border: 3.5px solid #FFFFFF; border-radius: 28px; padding: 12px 50px; color: #FFFFFF; font-size: 24px; font-weight: 900; font-family: 'Baloo 2', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 3.5px 0 rgba(255,255,255,0.7), inset 0 -4px 0 #E65100, 0 5.5px 0 #E65100, 0 10px 20px rgba(0,0,0,0.3); transition: transform 0.12s ease; text-shadow: 0 2px 0 #BF360C;";
 
   const tvIcon = document.createElement("img");
-  tvIcon.src = "/assest/iconbtn/images.png";
+  tvIcon.src = "/assest/iconbtn/images.webp";
   tvIcon.style.cssText = "height:30px;width:auto;margin-right:15px;";
 
   const yesText = document.createElement("span");
@@ -1158,7 +1158,7 @@ export function showHTMLCharSelect(game) {
 
   const currentAvatar =
     window.selectedAvatarUrl ||
-    "/assest/image/imagenobackgrd/001_avatar_laclac.png";
+    "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
 
   const avatarNames = [
     "laclac",
@@ -1211,7 +1211,7 @@ export function showHTMLCharSelect(game) {
   for (let i = 0; i < 44; i++) {
     const idxStr = String(i + 1).padStart(3, "0");
     avatarList.push({
-      url: `/assest/image/imagenobackgrd/${idxStr}_avatar_${avatarNames[i]}.png`,
+      url: `/assest/image/imagenobackgrd/${idxStr}_avatar_${avatarNames[i]}.webp`,
       name: avatarNames[i].toUpperCase(),
     });
   }
@@ -1322,63 +1322,63 @@ export function showHTMLInstructions(game) {
   const allItems = [
     {
       label: "Lốp xe",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.webp",
       tag: "Nhảy né",
       type: "danger",
       tagClass: "jump",
     },
     {
       label: "Hàng rào",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.webp",
       tag: "Nhảy né",
       type: "danger",
       tagClass: "jump",
     },
     {
       label: "Bàn nhựa",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.png",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.webp",
       tag: "Nhảy né",
       type: "danger",
       tagClass: "jump",
     },
     {
       label: "Bù nhìn",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.png",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.webp",
       tag: "Nhảy né",
       type: "danger",
       tagClass: "jump",
     },
     {
       label: "Dép tổ ong",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.webp",
       tag: "Cúi né",
       type: "danger",
       tagClass: "duck",
     },
     {
       label: "Ghế đỏ bay",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.png",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.webp",
       tag: "Cúi né",
       type: "danger",
       tagClass: "duck",
     },
     {
       label: "Bánh Chưng",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).webp",
       tag: "+Điểm",
       type: "collect",
       tagClass: "bonus",
     },
     {
       label: "Bánh Mì",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.png",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.webp",
       tag: "+Điểm",
       type: "collect",
       tagClass: "bonus",
     },
     {
       label: "Nước Ngọt",
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.png",
+      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.webp",
       tag: "+Điểm",
       type: "collect",
       tagClass: "bonus",

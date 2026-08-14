@@ -110,7 +110,7 @@ export function getAvatarColors(url) {
 }
 
 export function getAvatarCrop(url, maskRadius, partType = "head") {
-  const name = url.replace(".png", "").split("_").pop();
+  const name = url.replace(".webp", "").split("_").pop();
   const bounds = AVATAR_BOUNDS[name];
   if (!bounds) return { scale: 1.0, x: 0, y: 0 };
 
@@ -149,7 +149,7 @@ export function getAvatarCrop(url, maskRadius, partType = "head") {
 
 export function getAvatarName(url) {
   if (!url) return "001_avatar_laclac";
-  return url.replace(".png", "").split("/").pop();
+  return url.replace(".webp", "").split("/").pop();
 }
 
 export function createSkeletalPart(tex, partType, url) {
@@ -226,7 +226,7 @@ export function createFull2DSprite(tex, url, targetHeight = 110) {
   sp.baseScaleY = scaleY;
 
   // Trim bottom transparent margin so character feet sit firmly on the dirt road
-  const name = url.replace(".png", "").split("_").pop();
+  const name = url.replace(".webp", "").split("_").pop();
   const bounds = AVATAR_BOUNDS[name];
   if (bounds) {
     const bottomPadRatio = (bounds.height - bounds.maxY) / bounds.height;
@@ -248,7 +248,7 @@ export function updateSkeletalRigTexture(tex, url, rig) {
       rig.fullCharSprite.baseScaleY,
     );
 
-    const name = url.replace(".png", "").split("_").pop();
+    const name = url.replace(".webp", "").split("_").pop();
     const bounds = AVATAR_BOUNDS[name];
     if (bounds) {
       const bottomPadRatio = (bounds.height - bounds.maxY) / bounds.height;

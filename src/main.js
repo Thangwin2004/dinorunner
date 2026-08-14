@@ -70,88 +70,88 @@ Text.defaultAutoResolution = false;
   // Preload UI button assets
   const { Assets: PixiAssets } = await import("pixi.js");
 
-  PixiAssets.add({ alias: "home_btn", src: "/assest/iconbtn/Home_btn.png" });
+  PixiAssets.add({ alias: "home_btn", src: "/assest/iconbtn/Home_btn.webp" });
   PixiAssets.add({
     alias: "settings_btn",
-    src: "/assest/iconbtn/setting_btn.png",
+    src: "/assest/iconbtn/setting_btn.webp",
   });
-  PixiAssets.add({ alias: "close_btn", src: "/assest/iconbtn/close_btn.png" });
-  PixiAssets.add({ alias: "back_btn", src: "/assest/iconbtn/back_btn.png" });
+  PixiAssets.add({ alias: "close_btn", src: "/assest/iconbtn/close_btn.webp" });
+  PixiAssets.add({ alias: "back_btn", src: "/assest/iconbtn/back_btn.webp" });
   PixiAssets.add({
     alias: "replay_btn",
-    src: "/assest/iconbtn/replay_btn.png",
+    src: "/assest/iconbtn/replay_btn.webp",
   });
   PixiAssets.add({
     alias: "trophy_btn",
-    src: "/assest/iconbtn/trophy_btn.png",
+    src: "/assest/iconbtn/trophy_btn.webp",
   });
-  PixiAssets.add({ alias: "yes_btn", src: "/assest/iconbtn/yes_btn.png" });
+  PixiAssets.add({ alias: "yes_btn", src: "/assest/iconbtn/yes_btn.webp" });
   PixiAssets.add({
     alias: "delete_btn",
-    src: "/assest/iconbtn/delete_btn.png",
+    src: "/assest/iconbtn/delete_btn.webp",
   });
-  PixiAssets.add({ alias: "hint_btn", src: "/assest/iconbtn/hint_btn.png" });
-  PixiAssets.add({ alias: "toggle_on", src: "/assest/iconbtn/toggle_on.png" });
+  PixiAssets.add({ alias: "hint_btn", src: "/assest/iconbtn/hint_btn.webp" });
+  PixiAssets.add({ alias: "toggle_on", src: "/assest/iconbtn/toggle_on.webp" });
   PixiAssets.add({
     alias: "toggle_off",
-    src: "/assest/iconbtn/toggle_off.png",
+    src: "/assest/iconbtn/toggle_off.webp",
   });
-  PixiAssets.add({ alias: "x2_btn", src: "/assest/iconbtn/x2_btn.png" });
+  PixiAssets.add({ alias: "x2_btn", src: "/assest/iconbtn/x2_btn.webp" });
   PixiAssets.add({
     alias: "revive_btn",
-    src: "/assest/iconbtn/revive_btn.png",
+    src: "/assest/iconbtn/revive_btn.webp",
   });
   PixiAssets.add({
     alias: "continue_btn",
-    src: "/assest/iconbtn/continue_btn.png",
+    src: "/assest/iconbtn/continue_btn.webp",
   });
   PixiAssets.add({
     alias: "next_btn",
-    src: "/assest/iconbtn/next_btn.png",
+    src: "/assest/iconbtn/next_btn.webp",
   });
-  PixiAssets.add({ alias: "quest_btn", src: "/assest/iconbtn/quest_btn.png" });
-  PixiAssets.add({ alias: "user_btn", src: "/assest/iconbtn/user_btn.png" });
+  PixiAssets.add({ alias: "quest_btn", src: "/assest/iconbtn/quest_btn.webp" });
+  PixiAssets.add({ alias: "user_btn", src: "/assest/iconbtn/user_btn.webp" });
   PixiAssets.add({
     alias: "avatar_laclac",
-    src: "/assest/image/imagenobackgrd/001_avatar_laclac.png",
+    src: "/assest/image/imagenobackgrd/001_avatar_laclac.webp",
   });
 
   // Obstacle/Item preview assets for instructions UI
   PixiAssets.add({
     alias: "prop_lopxe",
-    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.webp",
   });
   PixiAssets.add({
     alias: "prop_hangrao",
-    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.webp",
   });
   PixiAssets.add({
     alias: "prop_deptoong",
-    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.webp",
   });
   PixiAssets.add({
     alias: "prop_redchair",
-    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.png",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.webp",
   });
   PixiAssets.add({
     alias: "prop_banhchung",
-    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).webp",
   });
   PixiAssets.add({
     alias: "prop_banhmi",
-    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.png",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.webp",
   });
   PixiAssets.add({
     alias: "prop_bluetable",
-    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.png",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.webp",
   });
   PixiAssets.add({
     alias: "prop_bunhin",
-    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.png",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.webp",
   });
   PixiAssets.add({
     alias: "prop_reddrink",
-    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.png",
+    src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.webp",
   });
 
   await PixiAssets.load([
