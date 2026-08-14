@@ -80,7 +80,7 @@ export class GameController extends Container {
     this.obstaclePool3 = []; // Collectibles
     this.sparklePool = [];
     this.floatTextPool = [];
-    
+
     this.nextSpawnTime = 0;
     this.lastMilestoneScore = 0;
 
@@ -1540,7 +1540,7 @@ export class GameController extends Container {
         sparkle = new Graphics();
         sparkle.circle(0, 0, 2 + Math.random() * 3).fill({ color: 0xffea00 });
       }
-      
+
       sparkle.x = x;
       sparkle.y = y;
       this.gamePlayContainer.addChild(sparkle);
@@ -1598,7 +1598,7 @@ export class GameController extends Container {
       });
       floatText.anchor.set(0.5);
     }
-    
+
     floatText.position.set(x, y - 20 * scale);
     floatText.scale.set(scale);
     this.gamePlayContainer.addChild(floatText);
@@ -2574,7 +2574,7 @@ export class GameController extends Container {
         sprite = new Sprite();
         container.addChild(sprite);
       }
-      
+
       sprite.texture = Sprite.from(selected.path).texture;
       sprite.width = selected.w * scale;
       sprite.height = selected.h * scale;
