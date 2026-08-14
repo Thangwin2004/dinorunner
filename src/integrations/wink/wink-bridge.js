@@ -59,7 +59,18 @@ export function getCapabilities() {
  * @returns {Promise<{ entries: Array, total: number }>}
  */
 export function getLeaderboard(options) {
-  return Promise.resolve().then(() => requireBridge().getLeaderboard(options));
+  return Promise.resolve()
+    .then(() => {
+      const bridge = getWinkBridge();
+      if (!bridge || !bridge.getCapabilities?.()?.getLeaderboard) {
+        return { entries: [], total: 0 };
+      }
+      return bridge.getLeaderboard(options);
+    })
+    .catch((err) => {
+      console.warn("[WinkBridge] getLeaderboard error:", err?.message || err);
+      return { entries: [], total: 0 };
+    });
 }
 
 /**
@@ -68,7 +79,18 @@ export function getLeaderboard(options) {
  * @returns {Promise<{ entry: object, isNewBest: boolean, previousBest: number|null }>}
  */
 export function submitScore(input) {
-  return Promise.resolve().then(() => requireBridge().submitScore(input));
+  return Promise.resolve()
+    .then(() => {
+      const bridge = getWinkBridge();
+      if (!bridge || !bridge.getCapabilities?.()?.submitScore) {
+        return { entry: null, isNewBest: false, previousBest: null };
+      }
+      return bridge.submitScore(input);
+    })
+    .catch((err) => {
+      console.warn("[WinkBridge] submitScore error:", err?.message || err);
+      return { entry: null, isNewBest: false, previousBest: null };
+    });
 }
 
 /**
@@ -76,7 +98,14 @@ export function submitScore(input) {
  * @param {{ roundId: string, playDurationMs?: number, metadata?: object }} input
  */
 export function complete(input) {
-  getWinkBridge()?.complete(input);
+  try {
+    const bridge = getWinkBridge();
+    if (bridge && bridge.getCapabilities?.()?.complete) {
+      bridge.complete(input);
+    }
+  } catch (err) {
+    console.warn("[WinkBridge] complete error:", err?.message || err);
+  }
 }
 
 /**

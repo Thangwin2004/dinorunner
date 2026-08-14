@@ -7,6 +7,7 @@ Text.defaultAutoResolution = false;
 
 (async () => {
   // Wait for Google Fonts to be loaded before initializing the app or starting the game
+  await document.fonts.load("700 1em 'Baloo 2'", "Bộ Lạc Đậu Phộng");
   await document.fonts.ready;
 
   // 1. Create a new Application instance
@@ -16,7 +17,7 @@ Text.defaultAutoResolution = false;
 
   // 2. Initialize the application asynchronously (Vite safe IIFE pattern)
   await app.init({
-    background: "#0a0b1e",
+    background: "#87CEEB",
     resizeTo: container,
     antialias: true,
     autoDensity: true,

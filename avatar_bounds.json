@@ -1,11 +1,11 @@
 {
   "laclac": {
-    "minY": 20,
-    "maxY": 238,
-    "minX": 82,
-    "maxX": 173,
-    "boundWidth": 91,
-    "boundHeight": 218,
+    "minY": 65,
+    "maxY": 255,
+    "minX": 79.80000000000001,
+    "maxX": 186.2,
+    "boundWidth": 106.39999999999999,
+    "boundHeight": 190,
     "height": 256
   },
   "lick1": {

@@ -5,6 +5,7 @@ import {
   TextStyle,
   FillGradient,
   Sprite,
+  TilingSprite,
   Assets,
 } from "pixi.js";
 import { audio } from "./audio";
@@ -73,6 +74,13 @@ export class GameController extends Container {
 
     // Game objects
     this.obstacles = [];
+    this.obstaclePool0 = []; // Ground Set A
+    this.obstaclePool1 = []; // Ground Set B
+    this.obstaclePool2 = []; // Flying
+    this.obstaclePool3 = []; // Collectibles
+    this.sparklePool = [];
+    this.floatTextPool = [];
+
     this.nextSpawnTime = 0;
     this.lastMilestoneScore = 0;
 
@@ -88,6 +96,9 @@ export class GameController extends Container {
     this.highScore = getStats().highScore;
 
     // Background Layers
+    this.parallaxContainer = new Container();
+    this.addChildAt(this.parallaxContainer, 0);
+
     this.bgOverlay = new Graphics();
     this.addChild(this.bgOverlay);
 
@@ -346,17 +357,6 @@ export class GameController extends Container {
       }
       content.addChild(sprite);
 
-      btn.updateStyle = (r) => {
-        const ratio = tex.width && tex.height ? tex.width / tex.height : 1;
-        if (ratio > 1.2 || ratio < 0.8) {
-          sprite.height = r * 2 * mult;
-          sprite.width = r * 2 * ratio * mult;
-        } else {
-          sprite.width = r * 2 * mult;
-          sprite.height = r * 2 * mult;
-        }
-      };
-
       btn.on("pointerover", () => {
         gsap.to(btn.scale, { x: 1.08, y: 1.08, duration: 0.12 });
       });
@@ -370,93 +370,118 @@ export class GameController extends Container {
       btn.on("pointerup", () => {
         gsap.to(content, { y: 0, duration: 0.1 });
         audio.playClick();
-        onClick();
+        if (onClick) onClick();
       });
       btn.on("pointerupoutside", () => {
         gsap.to(content, { y: 0, duration: 0.1 });
       });
 
       return btn;
-    } else {
-      const btn = new Container();
-      btn.eventMode = "static";
-      btn.cursor = "pointer";
-
-      const base = new Graphics();
-      const face = new Graphics();
-
-      const drawGraphics = (pressed = false) => {
-        base.clear();
-        face.clear();
-
-        const offset = pressed ? 1.5 : 3;
-        const color = palettes.purple;
-
-        base.circle(0, offset, radius).fill({ color: color.shadow });
-
-        face
-          .circle(0, 0, radius)
-          .fill({
-            fill: new FillGradient({
-              start: { x: 0, y: -radius },
-              end: { x: 0, y: radius },
-              colorStops: [
-                { offset: 0, color: color.top },
-                { offset: 1, color: color.bottom },
-              ],
-            }),
-          })
-          .stroke({ color: color.stroke, width: 2 });
-
-        face
-          .ellipse(0, -radius * 0.4, radius * 0.72, radius * 0.35)
-          .fill({ color: 0xffffff, alpha: 0.28 });
-      };
-
-      drawGraphics();
-      btn.addChild(base);
-      btn.addChild(face);
-
-      const txt = new Text({
-        text: emoji,
-        style: new TextStyle({
-          fontFamily: "Baloo 2",
-          fontSize: radius * 1.0,
-          fill: 0xffffff,
-          align: "center",
-        }),
-      });
-      txt.anchor.set(0.5);
-      face.addChild(txt);
-
-      btn.on("pointerover", () => {
-        gsap.to(btn.scale, { x: 1.08, y: 1.08, duration: 0.12 });
-      });
-      btn.on("pointerout", () => {
-        gsap.to(btn.scale, { x: 1.0, y: 1.0, duration: 0.12 });
-        drawGraphics(false);
-      });
-      btn.on("pointerdown", () => {
-        drawGraphics(true);
-        gsap.to(face.position, { y: 1.5, duration: 0.05 });
-      });
-      btn.on("pointerup", () => {
-        drawGraphics(false);
-        gsap.to(face.position, { y: 0, duration: 0.1 });
-        audio.playClick();
-        onClick();
-      });
-      btn.on("pointerupoutside", () => {
-        drawGraphics(false);
-        gsap.to(face.position, { y: 0, duration: 0.1 });
-      });
-
-      return btn;
     }
+
+    // Fallback if texture not found
+    const btn = new Container();
+    btn.eventMode = "static";
+    btn.cursor = "pointer";
+
+    const base = new Graphics();
+    const face = new Graphics();
+
+    const drawGraphics = (pressed = false) => {
+      base.clear();
+      face.clear();
+
+      const offset = pressed ? 1.5 : 3;
+      const color = palettes.purple;
+
+      base.circle(0, offset, radius).fill({ color: color.shadow });
+
+      face
+        .circle(0, 0, radius)
+        .fill({
+          fill: new FillGradient({
+            start: { x: 0, y: -radius },
+            end: { x: 0, y: radius },
+            colorStops: [
+              { offset: 0, color: color.top },
+              { offset: 1, color: color.bottom },
+            ],
+          }),
+        })
+        .stroke({ color: color.stroke, width: 2 });
+
+      face
+        .ellipse(0, -radius * 0.4, radius * 0.72, radius * 0.35)
+        .fill({ color: 0xffffff, alpha: 0.28 });
+    };
+
+    drawGraphics();
+    btn.addChild(base);
+    btn.addChild(face);
+
+    const txt = new Text({
+      text: emoji,
+      style: new TextStyle({
+        fontFamily: "Baloo 2",
+        fontSize: radius * 1.0,
+        fill: 0xffffff,
+        align: "center",
+      }),
+    });
+    txt.anchor.set(0.5);
+    face.addChild(txt);
+
+    return btn;
   }
 
   async loadAssets() {
     try {
+      const [skyTex, hillsTex, roadTex] = await Promise.all([
+        Assets.load("/assest/image/bg_parallax_sky_mountains.png"),
+        Assets.load("/assest/image/bg_parallax_hills_transparent.png"),
+        Assets.load("/assest/image/bg_parallax_road_tile.png"),
+      ]);
+
+      if (!this.destroyed) {
+        const sw = this.app.screen.width || 800;
+        const sh = this.app.screen.height || 600;
+
+        // Layer 0 (Back): Sky + clouds + mountains — top 55%
+        if (skyTex) {
+          this.parallaxSkySprite = new TilingSprite({
+            texture: skyTex,
+            width: sw,
+            height: sh * 0.55,
+          });
+          this.parallaxSkySprite.y = 0;
+          this.parallaxContainer.addChild(this.parallaxSkySprite);
+        }
+
+        // Layer 1 (Mid): Hills + trees — from 20% to 82%
+        if (hillsTex) {
+          this.parallaxHillsSprite = new TilingSprite({
+            texture: hillsTex,
+            width: sw,
+            height: sh * 0.62,
+          });
+          this.parallaxHillsSprite.y = sh * 0.2;
+          this.parallaxContainer.addChild(this.parallaxHillsSprite);
+        }
+
+        // Layer 2 (Front): Dirt road — from 78% to 100%
+        if (roadTex) {
+          this.groundRoadSprite = new TilingSprite({
+            texture: roadTex,
+            width: sw,
+            height: sh * 0.22,
+          });
+          this.groundRoadSprite.y = sh * 0.78;
+          this.parallaxContainer.addChild(this.groundRoadSprite);
+        }
+
+        this.resize();
+      }
+
       this.laclacTexture = await Assets.load(
         "/assest/image/imagenobackgrd/001_avatar_laclac.png",
       );
@@ -488,31 +513,36 @@ export class GameController extends Container {
 
       if (this.destroyed) return;
 
-      // Initialize 2D character on play screen
+      // Initialize 2D Cartoon Runner Character
       this.playerSprite = new Container();
 
       const savedAvatar =
         window.localStorage.getItem("selected_avatar_url") ||
         "/assest/image/imagenobackgrd/001_avatar_laclac.png";
       window.selectedAvatarUrl = savedAvatar;
-      this.playerColors = this.getAvatarColors(savedAvatar);
-      const activeTex = await Assets.load(savedAvatar);
+      await Assets.load(savedAvatar);
 
-      // 1. Create Skeletal Rig Parts from the active avatar texture
-      this.playerHead = this.createSkeletalPart(activeTex, "head", savedAvatar);
-      this.playerHead.position.set(0, -62);
+      // Dark Oval Ground Shadow
+      this.playerShadow = new Graphics();
+      this.playerShadow
+        .ellipse(0, 0, 22, 6)
+        .fill({ color: 0x000000, alpha: 0.35 });
+      this.playerSprite.addChild(this.playerShadow);
 
-      this.playerBody = this.createSkeletalPart(activeTex, "body", savedAvatar);
-      this.leftArm = this.createSkeletalPart(activeTex, "arm", savedAvatar);
-      this.rightArm = this.createSkeletalPart(activeTex, "arm", savedAvatar);
-      this.leftLeg = this.createSkeletalPart(activeTex, "leg", savedAvatar);
-      this.rightLeg = this.createSkeletalPart(activeTex, "leg", savedAvatar);
+      // Initialize Modular Skeletal Avatar
+      const avatarTex = Assets.get(savedAvatar);
+      this.playerBody = this.createSkeletalPart(avatarTex, "body", savedAvatar);
+      this.playerHead = this.createSkeletalPart(avatarTex, "head", savedAvatar);
+      this.leftArm = this.createSkeletalPart(avatarTex, "arm", savedAvatar);
+      this.rightArm = this.createSkeletalPart(avatarTex, "arm", savedAvatar);
+      this.leftLeg = this.createSkeletalPart(avatarTex, "leg", savedAvatar);
+      this.rightLeg = this.createSkeletalPart(avatarTex, "leg", savedAvatar);
 
-      // Add to player container in correct layering order (back to front)
+      // Z-Order layering
       this.playerSprite.addChild(this.leftArm);
       this.playerSprite.addChild(this.leftLeg);
-      this.playerSprite.addChild(this.rightLeg);
       this.playerSprite.addChild(this.playerBody);
+      this.playerSprite.addChild(this.rightLeg);
       this.playerSprite.addChild(this.playerHead);
       this.playerSprite.addChild(this.rightArm);
 
@@ -724,7 +754,7 @@ export class GameController extends Container {
       }),
       roundPixels: true,
     });
-    this.highScoreText.anchor.set(1, 0.5);
+    this.highScoreText.anchor.set(0, 0.5);
     this.gamePlayContainer.addChild(this.highScoreText);
 
     this.pauseBtn = this.createIconOnlyButton("⏸", 16, () => {
@@ -1317,27 +1347,27 @@ export class GameController extends Container {
 
     // Score Text
     this.gameOverScoreText = new Text({
-      text: "ĐIỂM SỐ: 0",
+      text: "0",
       style: new TextStyle({
         fontFamily: "Baloo 2",
-        fontSize: 28,
+        fontSize: 44,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
           colorStops: [
-            { color: 0xffffff, offset: 0 },
-            { color: 0xffe066, offset: 1 },
+            { color: 0xffea00, offset: 0 },
+            { color: 0xff9800, offset: 1 },
           ],
         }),
-        stroke: { color: 0x794000, width: 3, join: "round" },
+        stroke: { color: 0x794000, width: 4, join: "round" },
         dropShadow: {
           color: 0x000000,
-          blur: 2,
-          angle: Math.PI / 4,
-          distance: 2,
-          alpha: 0.5,
+          blur: 0,
+          angle: Math.PI / 2,
+          distance: 3,
+          alpha: 0.4,
         },
         fontWeight: "900",
-        letterSpacing: 4,
+        letterSpacing: 2,
       }),
       roundPixels: true,
     });
@@ -1411,7 +1441,7 @@ export class GameController extends Container {
         }
         saveStats(stats);
 
-        this.gameOverScoreText.text = `ĐIỂM SỐ: ${newScore} (X2!)`;
+        this.gameOverScoreText.text = `${newScore} (X2!)`;
         this.highScoreText.text = `KỶ LỤC: ${this.highScore}`;
         this.gameOverMsgText.text = "KỶ LỤC MỚI! HẠNG #1";
         this.doubleBtn.visible = false;
@@ -1439,9 +1469,9 @@ export class GameController extends Container {
     this.isDucking = false;
     this.playerVy = 0;
 
-    // Position player a bit above the ground to be safe
-    const sh = this.app.screen.height;
-    this.playerY = sh * 0.7 - 50;
+    // Position player firmly on the ground level
+    const sh = this.app.screen.height || 600;
+    this.playerY = sh * 0.78;
 
     // Clean obstacles near the player to prevent instant death
     this.obstacles.forEach((obs) => {
@@ -1464,7 +1494,7 @@ export class GameController extends Container {
     const sw = this.app.screen.width;
     const sh = this.app.screen.height;
     const scale = Math.min(1.0, sw / 450, sh / 650);
-    const groundLevel = sh * 0.7;
+    const groundLevel = sh * 0.78;
 
     this.dustPool = this.dustPool || [];
     let dust;
@@ -1502,8 +1532,15 @@ export class GameController extends Container {
     const scale = Math.min(1.0, sw / 450, sh / 650);
 
     for (let i = 0; i < 8; i++) {
-      const sparkle = new Graphics();
-      sparkle.circle(0, 0, 2 + Math.random() * 3).fill({ color: 0xffea00 });
+      let sparkle;
+      if (this.sparklePool.length > 0) {
+        sparkle = this.sparklePool.pop();
+        sparkle.alpha = 1; // reset alpha
+      } else {
+        sparkle = new Graphics();
+        sparkle.circle(0, 0, 2 + Math.random() * 3).fill({ color: 0xffea00 });
+      }
+
       sparkle.x = x;
       sparkle.y = y;
       this.gamePlayContainer.addChild(sparkle);
@@ -1520,7 +1557,7 @@ export class GameController extends Container {
         onComplete: () => {
           if (this.gamePlayContainer.destroyed) return;
           this.gamePlayContainer.removeChild(sparkle);
-          sparkle.destroy();
+          this.sparklePool.push(sparkle);
         },
       });
     }
@@ -1532,7 +1569,7 @@ export class GameController extends Container {
     this.spawnSparkleParticles(obs.sprite.x, obs.sprite.y);
     this.spawnFloatingText("+10", obs.sprite.x, obs.sprite.y);
     this.gamePlayContainer.removeChild(obs.sprite);
-    obs.sprite.destroy({ children: true });
+    this.returnObstacleToPool(obs);
     this.obstacles.splice(index, 1);
   }
 
@@ -1541,19 +1578,27 @@ export class GameController extends Container {
     const sh = this.app.screen.height;
     const scale = Math.min(1.0, sw / 450, sh / 650);
 
-    const floatText = new Text({
-      text: text,
-      style: new TextStyle({
-        fontFamily: "Baloo 2",
-        fontSize: 24,
-        fontWeight: "900",
-        fill: 0xffea00, // Gold yellow
-        stroke: { color: 0x5d4037, width: 4 }, // Dark brown stroke
-        align: "center",
-      }),
-      resolution: 3,
-    });
-    floatText.anchor.set(0.5);
+    let floatText;
+    if (this.floatTextPool.length > 0) {
+      floatText = this.floatTextPool.pop();
+      floatText.text = text;
+      floatText.alpha = 1;
+    } else {
+      floatText = new Text({
+        text: text,
+        style: new TextStyle({
+          fontFamily: "Baloo 2",
+          fontSize: 24,
+          fontWeight: "900",
+          fill: 0xffea00, // Gold yellow
+          stroke: { color: 0x5d4037, width: 4 }, // Dark brown stroke
+          align: "center",
+        }),
+        resolution: 3,
+      });
+      floatText.anchor.set(0.5);
+    }
+
     floatText.position.set(x, y - 20 * scale);
     floatText.scale.set(scale);
     this.gamePlayContainer.addChild(floatText);
@@ -1565,8 +1610,9 @@ export class GameController extends Container {
       duration: 0.8,
       ease: "power1.out",
       onComplete: () => {
+        if (this.gamePlayContainer.destroyed) return;
         this.gamePlayContainer.removeChild(floatText);
-        floatText.destroy();
+        this.floatTextPool.push(floatText);
       },
     });
   }
@@ -2001,11 +2047,7 @@ export class GameController extends Container {
 
     this.gameState = newState;
 
-    this.mainMenuContainer.visible =
-      newState === "MAIN_MENU" ||
-      newState === "SETTINGS" ||
-      newState === "CHAR_SELECT" ||
-      newState === "INSTRUCTIONS";
+    this.mainMenuContainer.visible = false;
     this.gamePlayContainer.visible =
       newState === "PLAYING" ||
       newState === "PAUSED" ||
@@ -2028,6 +2070,15 @@ export class GameController extends Container {
 
     if (menuOverlay) {
       menuOverlay.style.display = newState === "MAIN_MENU" ? "flex" : "none";
+      if (newState === "MAIN_MENU") {
+        const activeAvatar =
+          window.localStorage.getItem("selected_avatar_url") ||
+          "/assest/image/imagenobackgrd/001_avatar_laclac.png";
+        const menuAvatarImg = document.getElementById("menu-avatar-img");
+        if (menuAvatarImg) {
+          menuAvatarImg.src = activeAvatar;
+        }
+      }
     }
 
     this.syncDOMScoreAndHighScore();
@@ -2148,6 +2199,9 @@ export class GameController extends Container {
     this.isDucking = false;
     this.lastMilestoneScore = 0;
 
+    const sh = this.app.screen.height || 600;
+    this.playerY = sh * 0.78;
+
     // ── Wink: start a new round ──
     this._winkRound = winkGame.startRound();
 
@@ -2168,16 +2222,43 @@ export class GameController extends Container {
     const elapsed = ticker.deltaTime;
     const sw = this.app.screen.width;
 
-    // Background clouds drift
-    this.clouds.forEach((cloud) => {
-      cloud.x -= cloud.speed * elapsed;
-      if (cloud.x + cloud.w < 0) {
-        cloud.x = sw + 50;
-        cloud.y = 50 + Math.random() * 150;
-      }
-    });
+    // Determine scrolling speed: full speed in-game, ambient speed on Main Menu, frozen (0) on popups/modals
+    let activeScrollSpeed = 0;
+    if (this.gameState === "PLAYING" && !this.isAdShowing) {
+      activeScrollSpeed = this.speed;
+    } else if (this.gameState === "MAIN_MENU") {
+      activeScrollSpeed = 3.5;
+    } else {
+      activeScrollSpeed = 0; // Freeze background when popup/modal is open
+    }
 
-    // Parallax Mountain Scrolling
+    // Background clouds drift (only drift when not in popups/modals)
+    if (activeScrollSpeed > 0) {
+      this.clouds.forEach((cloud) => {
+        cloud.x -= cloud.speed * elapsed;
+        if (cloud.x + cloud.w < 0) {
+          cloud.x = sw + 50;
+          cloud.y = 50 + Math.random() * 150;
+        }
+      });
+    }
+
+    // Multi-Layer Parallax Background Endless Horizontal Scrolling
+    if (activeScrollSpeed > 0) {
+      if (this.parallaxSkySprite && this.parallaxSkySprite.tilePosition) {
+        this.parallaxSkySprite.tilePosition.x -=
+          activeScrollSpeed * elapsed * 0.08;
+      }
+      if (this.parallaxHillsSprite && this.parallaxHillsSprite.tilePosition) {
+        this.parallaxHillsSprite.tilePosition.x -=
+          activeScrollSpeed * elapsed * 0.35;
+      }
+      if (this.groundRoadSprite && this.groundRoadSprite.tilePosition) {
+        this.groundRoadSprite.tilePosition.x -=
+          activeScrollSpeed * elapsed * 1.0;
+      }
+    }
+
     if (this.gameState === "PLAYING") {
       this.distX = (this.distX || 0) + 0.05 * elapsed;
       this.midX = (this.midX || 0) + 0.2 * elapsed;
@@ -2206,9 +2287,12 @@ export class GameController extends Container {
     if (currentIntScore !== this.lastIntScore) {
       this.lastIntScore = currentIntScore;
       this.scoreText.text = `ĐIỂM: ${currentIntScore}`;
-      const domScore = document.getElementById("hud-score");
-      if (domScore) {
-        domScore.innerText = `ĐIỂM: ${currentIntScore}`;
+      const domScoreVal = document.getElementById("hud-score-val");
+      if (domScoreVal) {
+        domScoreVal.innerText = `${currentIntScore}`;
+      } else {
+        const domScore = document.getElementById("hud-score");
+        if (domScore) domScore.innerText = `ĐIỂM: ${currentIntScore}`;
       }
     }
 
@@ -2226,7 +2310,7 @@ export class GameController extends Container {
     const sw = this.app.screen.width;
     const sh = this.app.screen.height;
     const scale = Math.min(1.0, sw / 450, sh / 650);
-    const groundLevel = sh * 0.7;
+    const groundLevel = sh * 0.78;
 
     if (this.isJumping) {
       this.playerVy += this.gravity * elapsed;
@@ -2237,100 +2321,114 @@ export class GameController extends Container {
         this.playerVy = 0;
         this.isJumping = false;
       }
+    } else {
+      this.playerY = groundLevel;
+      this.playerVy = 0;
     }
 
-    // Position player and animate legs
+    // Position player and animate 2D character (AnimatedSprite)
     if (this.playerSprite) {
       this.playerSprite.position.set(sw * 0.2, this.playerY);
 
-      // Update running/jumping/ducking animations for the 2D cartoon character
-      if (!this.isJumping && !this.isDucking && this.gameState === "PLAYING") {
+      if (this.isJumping) {
+        // Skeletal jump pose is handled by updatePlayerLeg below
+
+        const jumpHeight = Math.max(0, groundLevel - this.playerY);
+        const shadowFactor = Math.max(0.2, 1 - jumpHeight / 180);
+        if (this.playerShadow) {
+          this.playerShadow.scale.set(shadowFactor, shadowFactor);
+          this.playerShadow.alpha = 0.35 * shadowFactor;
+        }
+      } else if (this.isDucking) {
+        // Skeletal duck pose is handled below
+
+        if (this.playerShadow) {
+          this.playerShadow.scale.set(1.4, 0.8);
+          this.playerShadow.alpha = 0.45;
+        }
+
+        // Sliding dust
+        this.dustTimer = (this.dustTimer || 0) + elapsed;
+        if (this.dustTimer >= 4) {
+          this.dustTimer = 0;
+          this.spawnDustParticle(sw * 0.2 - 15, groundLevel + 4);
+        }
+      } else if (this.gameState === "PLAYING") {
+        if (this.playerShadow) {
+          this.playerShadow.scale.set(1 + Math.sin(this.runTime * 2) * 0.15, 1);
+          this.playerShadow.alpha = 0.35;
+        }
+
+        // Dust puffs at feet
+        this.dustTimer = (this.dustTimer || 0) + elapsed;
+        if (this.dustTimer >= 7) {
+          this.dustTimer = 0;
+          this.spawnDustParticle(sw * 0.2 - 12, groundLevel);
+        }
+      }
+
+      // Update Skeletal Parts
+      if (this.playerHead && this.gameState === "PLAYING") {
         this.runTime = (this.runTime || 0) + elapsed * this.speed * 0.05;
 
-        // Bounce the head vertically with a subtle active bob, keeping it upright
-        const bob = Math.abs(Math.sin(this.runTime)) * 3;
-        this.playerHead.y = -72 + bob; // Shifted up 10px
-        this.playerHead.rotation = Math.sin(this.runTime) * 0.03;
-
-        this.updatePlayerBody(this.playerBody, -46); // Shifted up 10px
-        this.updatePlayerLeg(
-          this.leftLeg,
-          -10,
-          -32,
-          this.runTime,
-          false,
-          false,
-        ); // Adjusted for longer legs
-        this.updatePlayerLeg(
-          this.rightLeg,
-          10,
-          -32,
-          this.runTime + Math.PI,
-          false,
-          false,
-        );
-        this.updatePlayerArm(
-          this.leftArm,
-          -16,
-          -46,
-          this.runTime,
-          false,
-          false,
-        ); // Shifted up 10px
-        this.updatePlayerArm(
-          this.rightArm,
-          16,
-          -46,
-          this.runTime + Math.PI,
-          false,
-          false,
-        );
-
-        // Running dust particles
-        this.dustTimer = (this.dustTimer || 0) + elapsed;
-        if (this.dustTimer >= 8) {
-          this.dustTimer = 0;
-          this.spawnDustParticle();
+        if (this.isJumping) {
+          this.playerHead.position.set(0, -72);
+          this.playerHead.rotation = 0;
+          this.updatePlayerBody(this.playerBody, -46);
+          this.updatePlayerLeg(this.leftLeg, -10, -32, 0, true, false);
+          this.updatePlayerLeg(this.rightLeg, 10, -32, 0, true, false);
+          this.updatePlayerArm(this.leftArm, -16, -46, 0, true, false);
+          this.updatePlayerArm(this.rightArm, 16, -46, 0, true, false);
+        } else if (this.isDucking) {
+          this.playerHead.position.set(0, -58);
+          this.playerHead.rotation = 0;
+          this.updatePlayerBody(this.playerBody, -36);
+          this.updatePlayerLeg(this.leftLeg, -10, -22, 0, false, true);
+          this.updatePlayerLeg(this.rightLeg, 10, -22, 0, false, true);
+          this.updatePlayerArm(this.leftArm, -16, -36, 0, false, true);
+          this.updatePlayerArm(this.rightArm, 16, -36, 0, false, true);
+        } else {
+          const bob = Math.abs(Math.sin(this.runTime)) * 3;
+          this.playerHead.position.set(0, -72 + bob);
+          this.playerHead.rotation = Math.sin(this.runTime) * 0.03;
+          this.updatePlayerBody(this.playerBody, -46 + bob * 0.5);
+          this.playerBody.rotation = 0.12; // Lean forward to create feeling of running
+          this.updatePlayerLeg(
+            this.leftLeg,
+            -6,
+            -32,
+            this.runTime,
+            false,
+            false,
+          );
+          this.updatePlayerLeg(
+            this.rightLeg,
+            6,
+            -32,
+            this.runTime + Math.PI,
+            false,
+            false,
+          );
+          this.updatePlayerArm(
+            this.leftArm,
+            -10,
+            -46,
+            this.runTime,
+            false,
+            false,
+          );
+          this.updatePlayerArm(
+            this.rightArm,
+            10,
+            -46,
+            this.runTime + Math.PI,
+            false,
+            false,
+          );
         }
-      } else if (this.isJumping) {
-        this.playerHead.y = -72;
-        this.playerHead.rotation = 0; // head straight in the air
-
-        this.updatePlayerBody(this.playerBody, -46);
-        this.updatePlayerLeg(this.leftLeg, -10, -32, 0, true, false);
-        this.updatePlayerLeg(this.rightLeg, 10, -32, 0, true, false);
-        this.updatePlayerArm(this.leftArm, -16, -46, 0, true, false);
-        this.updatePlayerArm(this.rightArm, 16, -46, 0, true, false);
-      } else if (this.isDucking) {
-        this.playerHead.y = -58; // Shifted up 10px from -48
-        this.playerHead.rotation = 0;
-
-        this.updatePlayerBody(this.playerBody, -36); // Shifted body up relatively
-        this.updatePlayerLeg(this.leftLeg, -10, -22, 0, false, true);
-        this.updatePlayerLeg(this.rightLeg, 10, -22, 0, false, true);
-        this.updatePlayerArm(this.leftArm, -16, -36, 0, false, true);
-        this.updatePlayerArm(this.rightArm, 16, -36, 0, false, true);
-      } else {
-        // Idle
-        this.playerHead.y = -72;
-        this.playerHead.rotation = 0;
-
-        this.updatePlayerBody(this.playerBody, -46);
-        this.updatePlayerLeg(this.leftLeg, -10, -32, 0, false, false);
-        this.updatePlayerLeg(this.rightLeg, 10, -32, 0, false, false);
-        this.updatePlayerArm(this.leftArm, -16, -46, 0, false, false);
-        this.updatePlayerArm(this.rightArm, 16, -46, 0, false, false);
       }
 
-      // Adjust player scale based on jumping/ducking (squash vertically for ducking)
-      if (this.isDucking) {
-        this.playerSprite.scale.set(scale * 0.95, scale * 0.45);
-      } else {
-        this.playerSprite.scale.set(scale * 0.95);
-      }
-
-      // Update shield overlay (centered around middle of body at y = -35)
-      // Update shield overlay (centered around middle of body at y = -35)
+      // Update shield overlay
       if (this.shieldTime > 0) {
         this.shieldTime -= elapsed;
         this.playerShieldGraphics.visible = true;
@@ -2338,6 +2436,13 @@ export class GameController extends Container {
         this.playerShieldGraphics.scale.set(pulseScale);
       } else {
         this.playerShieldGraphics.visible = false;
+      }
+
+      // Adjust player scale based on jumping/ducking (squash vertically for ducking)
+      if (this.isDucking) {
+        this.playerSprite.scale.set(scale * 0.95, scale * 0.45);
+      } else {
+        this.playerSprite.scale.set(scale * 0.95);
       }
     }
 
@@ -2386,7 +2491,7 @@ export class GameController extends Container {
             // Invulnerable: break obstacle!
             this.spawnSparkleParticles(obs.sprite.x, obs.sprite.y);
             this.gamePlayContainer.removeChild(obs.sprite);
-            obs.sprite.destroy({ children: true });
+            this.returnObstacleToPool(obs);
             this.obstacles.splice(i, 1);
             continue;
           } else {
@@ -2399,17 +2504,32 @@ export class GameController extends Container {
       // Remove out of screen obstacles
       if (obs.sprite.x + obs.width < 0) {
         this.gamePlayContainer.removeChild(obs.sprite);
-        obs.sprite.destroy({ children: true });
+        this.returnObstacleToPool(obs);
         this.obstacles.splice(i, 1);
       }
+    }
+  }
+
+  returnObstacleToPool(obs) {
+    const type = obs.type;
+    if (type === 0) {
+      this.obstaclePool0.push(obs.sprite);
+    } else if (type === 1) {
+      this.obstaclePool1.push(obs.sprite);
+    } else if (type === 2) {
+      this.obstaclePool2.push(obs.sprite);
+    } else if (type === 3) {
+      this.obstaclePool3.push(obs.sprite);
+    } else {
+      obs.sprite.destroy({ children: true });
     }
   }
 
   spawnObstacle() {
     const sw = this.app.screen.width;
     const sh = this.app.screen.height;
-    const scale = Math.min(1.0, sw / 450, sh / 650);
-    const groundLevel = sh * 0.7;
+    const scale = Math.max(0.85, Math.min(1.2, sw / 450));
+    const groundLevel = sh * 0.78;
 
     // Obstacle/Item types: 0 (Ground set A), 1 (Ground set B), 2 (Flying), 3 (Collectible)
     let type = Math.floor(Math.random() * 4);
@@ -2419,94 +2539,123 @@ export class GameController extends Container {
       type = Math.floor(Math.random() * 2); // 0 or 1
     }
 
-    const container = new Container();
+    let container;
+    let sprite;
+    let aura;
 
     let spawnY = groundLevel;
-    let width = 44 * scale;
-    let height = 45 * scale;
+    let width = 60 * scale;
+    let height = 60 * scale;
     let baseY = groundLevel;
     let isSlipper = false;
 
     if (type === 0) {
-      // Ground Set A: Tires and fences
+      // Ground Set A: Tires and fences (Placed firmly on road)
       const choices = [
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.png",
-          w: 75,
-          h: 75,
-          yOffset: 10,
+          w: 100,
+          h: 100,
+          yOffset: 18, // Compensate for 10% bottom transparent PNG margin
         },
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.png",
-          w: 100,
-          h: 75,
-          yOffset: 10,
+          w: 130,
+          h: 95,
+          yOffset: 14,
         },
       ];
       const selected = choices[Math.floor(Math.random() * choices.length)];
-      const sprite = Sprite.from(selected.path);
+      if (this.obstaclePool0.length > 0) {
+        container = this.obstaclePool0.pop();
+        sprite = container.children[0];
+      } else {
+        container = new Container();
+        sprite = new Sprite();
+        container.addChild(sprite);
+      }
+
+      sprite.texture = Sprite.from(selected.path).texture;
       sprite.width = selected.w * scale;
       sprite.height = selected.h * scale;
       sprite.anchor.set(0.5, 1);
       sprite.y = selected.yOffset * scale;
-      container.addChild(sprite);
 
       width = selected.w * scale;
       height = selected.h * scale;
     } else if (type === 1) {
-      // Ground Set B: Blue tables and scarecrows
+      // Ground Set B: Blue tables and scarecrows (Placed firmly on road)
       const choices = [
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.png",
-          w: 85,
-          h: 75,
-          yOffset: 10,
+          w: 110,
+          h: 95,
+          yOffset: 18, // Compensate for 10% bottom transparent PNG margin
         },
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.png",
-          w: 60,
-          h: 85,
-          yOffset: 10,
+          w: 80,
+          h: 110,
+          yOffset: 8,
         },
       ];
       const selected = choices[Math.floor(Math.random() * choices.length)];
-      const sprite = Sprite.from(selected.path);
+      if (this.obstaclePool1.length > 0) {
+        container = this.obstaclePool1.pop();
+        sprite = container.children[0];
+      } else {
+        container = new Container();
+        sprite = new Sprite();
+        container.addChild(sprite);
+      }
+
+      sprite.texture = Sprite.from(selected.path).texture;
       sprite.width = selected.w * scale;
       sprite.height = selected.h * scale;
       sprite.anchor.set(0.5, 1);
       sprite.y = selected.yOffset * scale;
-      container.addChild(sprite);
 
       width = selected.w * scale;
       height = selected.h * scale;
     } else if (type === 2) {
-      // Flying Obstacles: Throwing chairs and slippers
+      // Flying Obstacles: Throwing chairs and slippers (Enlarged)
       const choices = [
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.png",
-          w: 65,
-          h: 65,
+          w: 85,
+          h: 85,
           slipper: true,
         },
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.png",
-          w: 65,
-          h: 65,
+          w: 85,
+          h: 85,
           slipper: true,
         },
       ];
       const selected = choices[Math.floor(Math.random() * choices.length)];
 
       const isHighSlipper = Math.random() > 0.5;
-      spawnY = groundLevel - (isHighSlipper ? 130 : 85) * scale;
+      spawnY = groundLevel - (isHighSlipper ? 140 : 90) * scale;
       width = selected.w * scale;
       height = selected.h * scale;
 
-      const sprite = Sprite.from(selected.path);
+      if (this.obstaclePool2.length > 0) {
+        container = this.obstaclePool2.pop();
+        sprite = container.children[0];
+        gsap.killTweensOf(sprite);
+      } else {
+        container = new Container();
+        sprite = new Sprite();
+        container.addChild(sprite);
+      }
+
+      sprite.texture = Sprite.from(selected.path).texture;
       sprite.width = selected.w * scale;
       sprite.height = selected.h * scale;
       sprite.anchor.set(0.5, 0.5);
-      container.addChild(sprite);
+      sprite.y = 0; // reset y from previous gsap
+      sprite.rotation = 0;
 
       // SFX for flying spawn
       audio.playBird();
@@ -2528,35 +2677,56 @@ export class GameController extends Container {
       const choices = [
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).png",
-          w: 60,
-          h: 60,
+          w: 80,
+          h: 80,
         },
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.png",
-          w: 60,
-          h: 60,
+          w: 80,
+          h: 80,
         },
         {
           path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.png",
-          w: 45,
-          h: 70,
+          w: 60,
+          h: 90,
         },
       ];
       const selected = choices[Math.floor(Math.random() * choices.length)];
 
       spawnY =
         Math.random() > 0.5
-          ? groundLevel - 18 * scale
-          : groundLevel - 72 * scale;
+          ? groundLevel - 24 * scale
+          : groundLevel - 80 * scale;
       baseY = spawnY;
       width = selected.w * scale;
       height = selected.h * scale;
 
-      const sprite = Sprite.from(selected.path);
+      if (this.obstaclePool3.length > 0) {
+        container = this.obstaclePool3.pop();
+        aura = container.children[0];
+        sprite = container.children[1];
+        aura.clear();
+      } else {
+        container = new Container();
+        aura = new Graphics();
+        sprite = new Sprite();
+        container.addChild(aura);
+        container.addChild(sprite);
+      }
+
+      // Glowing yellow/white cartoon aura behind collectible item for high contrast
+      aura
+        .circle(0, 0, Math.max(width, height) * 0.52)
+        .fill({ color: 0xffea00, alpha: 0.4 })
+        .stroke({ color: 0xffffff, width: 3, alpha: 0.9 });
+      aura.scale.set(1); // reset scale
+
+      sprite.texture = Sprite.from(selected.path).texture;
       sprite.width = selected.w * scale;
       sprite.height = selected.h * scale;
       sprite.anchor.set(0.5, 0.5);
-      container.addChild(sprite);
+      sprite.rotation = 0; // reset rotation
+      container.scale.set(1);
     }
 
     container.position.set(sw + 50, spawnY);
@@ -2603,7 +2773,7 @@ export class GameController extends Container {
     audio.playGameOver();
 
     const finalScore = Math.floor(this.score);
-    this.gameOverScoreText.text = `ĐIỂM SỐ: ${finalScore}`;
+    this.gameOverScoreText.text = `${finalScore}`;
 
     // Save stats
     const stats = getStats();
@@ -2628,9 +2798,10 @@ export class GameController extends Container {
     if (isNewRecord) {
       this.gameOverMsgText.text = "👑 KỶ LỤC MỚI CỦA BỘ LẠC! 👑";
       this.gameOverMsgText.style.fill = 0xffea00;
+      this.gameOverMsgText.visible = true;
     } else {
-      this.gameOverMsgText.text = "Bạn đã va phải chướng ngại vật!";
-      this.gameOverMsgText.style.fill = 0xffecb3;
+      this.gameOverMsgText.text = "";
+      this.gameOverMsgText.visible = false;
     }
 
     if (!this.hasRevivedThisRun) {
@@ -2862,84 +3033,136 @@ export class GameController extends Container {
   resize() {
     const sw = this.app.screen.width;
     const sh = this.app.screen.height;
+    const groundLevel = sh * 0.78;
     const modalScale = Math.min(1.0, (sw - 32) / 460, (sh - 40) / 600);
 
-    // Draw bright and happy daylight sky gradient
-    const bgGrad = new FillGradient({
-      start: { x: 0, y: 0 },
-      end: { x: sw, y: sh },
-      colorStops: [
-        { offset: 0, color: 0xb3e5fc }, // Bright cyan sky
-        { offset: 1, color: 0xe1f5fe }, // Warm sun-kissed horizon
-      ],
-    });
-    this.bgOverlay.clear().rect(0, 0, sw, sh).fill(bgGrad);
+    if (
+      this.parallaxSkySprite ||
+      this.parallaxHillsSprite ||
+      this.groundRoadSprite
+    ) {
+      this.bgOverlay.clear();
+      this.distantMountains.clear();
+      this.midMountains.clear();
+      this.closeMountains.clear();
+      this.clouds.forEach((cloud) => cloud.clear());
 
-    // Redraw and scale fluffy white cartoon clouds
-    this.clouds.forEach((cloud) => {
-      cloud.clear();
-      cloud.beginPath();
-      // Friendly white border and solid white-translucent fill
-      cloud.setStrokeStyle({ width: 1.5, color: 0xffffff, alpha: 0.95 });
-      cloud.fill({ color: 0xffffff, alpha: 0.8 });
+      // Layer 0: Sky — top 55%
+      if (this.parallaxSkySprite) {
+        const skyH = sh * 0.55;
+        this.parallaxSkySprite.visible = true;
+        this.parallaxSkySprite.width = sw;
+        this.parallaxSkySprite.height = skyH;
+        this.parallaxSkySprite.y = 0;
+        const texH = this.parallaxSkySprite.texture?.height || 1024;
+        const s = skyH / texH;
+        this.parallaxSkySprite.tileScale.set(s, s);
+      }
 
-      const ch = cloud.h;
-      const cw = cloud.w;
-      cloud
-        .circle(0, 0, ch * 0.5)
-        .fill()
-        .stroke();
-      cloud
-        .circle(-cw * 0.25, ch * 0.1, ch * 0.35)
-        .fill()
-        .stroke();
-      cloud
-        .circle(cw * 0.25, ch * 0.1, ch * 0.35)
-        .fill()
-        .stroke();
-      cloud
-        .moveTo(-cw * 0.5, ch * 0.22)
-        .lineTo(cw * 0.5, ch * 0.22)
-        .stroke();
-      cloud
-        .moveTo(-cw * 0.35, ch * 0.38)
-        .bezierCurveTo(
-          -cw * 0.15,
-          ch * 0.45,
-          cw * 0.15,
-          ch * 0.45,
-          cw * 0.35,
-          ch * 0.38,
-        )
-        .stroke();
-    });
+      // Layer 1: Hills — from 20% to 82%
+      if (this.parallaxHillsSprite) {
+        const h = sh * 0.62;
+        this.parallaxHillsSprite.visible = true;
+        this.parallaxHillsSprite.width = sw;
+        this.parallaxHillsSprite.height = h;
+        this.parallaxHillsSprite.y = sh * 0.2;
+        const texH = this.parallaxHillsSprite.texture?.height || 1024;
+        const s = h / texH;
+        this.parallaxHillsSprite.tileScale.set(s, s);
+      }
 
-    const groundLevel = sh * 0.7;
+      // Layer 2: Road — from 78% to 100%
+      if (this.groundRoadSprite) {
+        const h = sh * 0.22;
+        this.groundRoadSprite.visible = true;
+        this.groundRoadSprite.width = sw;
+        this.groundRoadSprite.height = h;
+        this.groundRoadSprite.y = sh * 0.78;
+        const texH = this.groundRoadSprite.texture?.height || 1024;
+        const s = h / texH;
+        this.groundRoadSprite.tileScale.set(s, s);
+      }
+    } else {
+      // Redraw and scale fluffy white cartoon clouds (fallback)
+      this.clouds.forEach((cloud) => {
+        cloud.clear();
+        cloud.beginPath();
+        // Friendly white border and solid white-translucent fill
+        cloud.setStrokeStyle({ width: 1.5, color: 0xffffff, alpha: 0.95 });
+        cloud.fill({ color: 0xffffff, alpha: 0.8 });
 
-    // Parallax Mountain Rendering (Vietnamese Mountains)
-    const drawMountainRange = (
-      graphics,
-      heights,
-      color,
-      alpha,
-      maxPeakHeight,
-    ) => {
-      graphics.clear();
+        const ch = cloud.h;
+        const cw = cloud.w;
+        cloud
+          .circle(0, 0, ch * 0.5)
+          .fill()
+          .stroke();
+        cloud
+          .circle(-cw * 0.25, ch * 0.1, ch * 0.35)
+          .fill()
+          .stroke();
+        cloud
+          .circle(cw * 0.25, ch * 0.1, ch * 0.35)
+          .fill()
+          .stroke();
+        cloud
+          .moveTo(-cw * 0.5, ch * 0.22)
+          .lineTo(cw * 0.5, ch * 0.22)
+          .stroke();
+        cloud
+          .moveTo(-cw * 0.35, ch * 0.38)
+          .bezierCurveTo(
+            -cw * 0.15,
+            ch * 0.45,
+            cw * 0.15,
+            ch * 0.45,
+            cw * 0.35,
+            ch * 0.38,
+          )
+          .stroke();
+      });
 
-      graphics.beginPath();
-      graphics.moveTo(0, groundLevel);
+      // Parallax Mountain Rendering (Vietnamese Mountains)
+      const drawMountainRange = (
+        graphics,
+        heights,
+        color,
+        alpha,
+        maxPeakHeight,
+      ) => {
+        graphics.clear();
 
-      const numPoints = heights.length;
-      const dx = sw / (numPoints - 1);
+        graphics.beginPath();
+        graphics.moveTo(0, groundLevel);
 
-      // Draw first range (from 0 to sw)
-      for (let i = 0; i < numPoints; i++) {
-        const x = i * dx;
-        const peakY = groundLevel - heights[i] * maxPeakHeight;
-        if (i === 0) {
-          graphics.lineTo(x, peakY);
-        } else {
-          const prevX = (i - 1) * dx;
+        const numPoints = heights.length;
+        const dx = sw / (numPoints - 1);
+
+        // Draw first range (from 0 to sw)
+        for (let i = 0; i < numPoints; i++) {
+          const x = i * dx;
+          const peakY = groundLevel - heights[i] * maxPeakHeight;
+          if (i === 0) {
+            graphics.lineTo(x, peakY);
+          } else {
+            const prevX = (i - 1) * dx;
+            const prevPeakY = groundLevel - heights[i - 1] * maxPeakHeight;
+            graphics.bezierCurveTo(
+              prevX + dx * 0.5,
+              prevPeakY,
+              x - dx * 0.5,
+              peakY,
+              x,
+              peakY,
+            );
+          }
+        }
+
+        // Draw second range (from sw to sw * 2) for seamless wrapping
+        for (let i = 0; i < numPoints; i++) {
+          const x = sw + i * dx;
+          const peakY = groundLevel - heights[i] * maxPeakHeight;
+          const prevX = sw + (i - 1) * dx;
           const prevPeakY = groundLevel - heights[i - 1] * maxPeakHeight;
           graphics.bezierCurveTo(
             prevX + dx * 0.5,
@@ -2950,92 +3173,84 @@ export class GameController extends Container {
             peakY,
           );
         }
-      }
 
-      // Draw second range (from sw to sw * 2) for seamless wrapping
-      for (let i = 0; i < numPoints; i++) {
-        const x = sw + i * dx;
-        const peakY = groundLevel - heights[i] * maxPeakHeight;
-        const prevX = sw + (i - 1) * dx;
-        const prevPeakY = groundLevel - heights[i - 1] * maxPeakHeight;
-        graphics.bezierCurveTo(
-          prevX + dx * 0.5,
-          prevPeakY,
-          x - dx * 0.5,
-          peakY,
-          x,
-          peakY,
-        );
-      }
+        graphics.lineTo(sw * 2, groundLevel);
+        graphics.closePath();
+        graphics.fill({ color, alpha });
+      };
 
-      graphics.lineTo(sw * 2, groundLevel);
-      graphics.closePath();
-      graphics.fill({ color, alpha });
-    };
+      // Draw the 3 layers of Ha Long style limestone mountains
+      const distHeights = [
+        0.35, 0.55, 0.28, 0.48, 0.2, 0.38, 0.28, 0.48, 0.22, 0.35,
+      ];
+      const midHeights = [
+        0.22, 0.38, 0.16, 0.42, 0.26, 0.34, 0.22, 0.38, 0.18, 0.25,
+      ];
+      const closeHeights = [
+        0.12, 0.24, 0.08, 0.28, 0.14, 0.2, 0.12, 0.22, 0.1, 0.16,
+      ];
 
-    // Draw the 3 layers of Ha Long style limestone mountains
-    const distHeights = [
-      0.35, 0.55, 0.28, 0.48, 0.2, 0.38, 0.28, 0.48, 0.22, 0.35,
-    ];
-    const midHeights = [
-      0.22, 0.38, 0.16, 0.42, 0.26, 0.34, 0.22, 0.38, 0.18, 0.25,
-    ];
-    const closeHeights = [
-      0.12, 0.24, 0.08, 0.28, 0.14, 0.2, 0.12, 0.22, 0.1, 0.16,
-    ];
+      drawMountainRange(
+        this.distantMountains,
+        distHeights,
+        0xb0bec5, // Soft pastel blue/lavender
+        0.65,
+        sh * 0.45,
+      );
+      drawMountainRange(
+        this.midMountains,
+        midHeights,
+        0x81c784, // Cheerful mint green
+        0.8,
+        sh * 0.32,
+      );
+      drawMountainRange(
+        this.closeMountains,
+        closeHeights,
+        0x4caf50, // Bright grassy green
+        1.0,
+        sh * 0.22,
+      );
 
-    drawMountainRange(
-      this.distantMountains,
-      distHeights,
-      0xb0bec5, // Soft pastel blue/lavender
-      0.65,
-      sh * 0.45,
-    );
-    drawMountainRange(
-      this.midMountains,
-      midHeights,
-      0x81c784, // Cheerful mint green
-      0.8,
-      sh * 0.32,
-    );
-    drawMountainRange(
-      this.closeMountains,
-      closeHeights,
-      0x4caf50, // Bright grassy green
-      1.0,
-      sh * 0.22,
-    );
-
-    // Solid Ground Base (Dirt and Grass)
-    this.bgOverlay
-      .rect(0, groundLevel, sw, sh - groundLevel)
-      .fill({ color: 0x8d6e63 });
-    this.bgOverlay.rect(0, groundLevel, sw, 12).fill({ color: 0x4caf50 });
-
-    // Cheerful green ground outlines
-    this.bgOverlay.save();
-    this.bgOverlay.setStrokeStyle({ width: 2.0, color: 0x388e3c, alpha: 0.45 });
-    this.bgOverlay.moveTo(0, groundLevel).lineTo(sw, groundLevel).stroke();
-
-    // Traditional lacquer wave details below ground
-    const waveHeight = 8;
-    const waveLength = 36;
-    const yBase = groundLevel + 12;
-    this.bgOverlay.setStrokeStyle({ width: 1.5, color: 0x5d4037, alpha: 0.25 });
-    for (let x = -waveLength; x < sw + waveLength; x += waveLength) {
+      // Solid Ground Base (Dirt and Grass)
       this.bgOverlay
-        .moveTo(x, yBase)
-        .bezierCurveTo(
-          x + waveLength * 0.25,
-          yBase - waveHeight,
-          x + waveLength * 0.75,
-          yBase - waveHeight,
-          x + waveLength,
-          yBase,
-        )
-        .stroke();
+        .rect(0, groundLevel, sw, sh - groundLevel)
+        .fill({ color: 0x8d6e63 });
+      this.bgOverlay.rect(0, groundLevel, sw, 12).fill({ color: 0x4caf50 });
+
+      // Cheerful green ground outlines
+      this.bgOverlay.save();
+      this.bgOverlay.setStrokeStyle({
+        width: 2.0,
+        color: 0x388e3c,
+        alpha: 0.45,
+      });
+      this.bgOverlay.moveTo(0, groundLevel).lineTo(sw, groundLevel).stroke();
+
+      // Traditional lacquer wave details below ground
+      const waveHeight = 8;
+      const waveLength = 36;
+      const yBase = groundLevel + 12;
+      this.bgOverlay.setStrokeStyle({
+        width: 1.5,
+        color: 0x5d4037,
+        alpha: 0.25,
+      });
+      for (let x = -waveLength; x < sw + waveLength; x += waveLength) {
+        this.bgOverlay
+          .moveTo(x, yBase)
+          .bezierCurveTo(
+            x + waveLength * 0.25,
+            yBase - waveHeight,
+            x + waveLength * 0.75,
+            yBase - waveHeight,
+            x + waveLength,
+            yBase,
+          )
+          .stroke();
+      }
+      this.bgOverlay.restore();
     }
-    this.bgOverlay.restore();
 
     const scale = Math.min(1.0, sw / 450, sh / 650);
 
@@ -3108,13 +3323,13 @@ export class GameController extends Container {
     // ==========================================
     if (this.gameState === "PLAYING") {
       this.scoreText.style.fontSize = Math.max(16, Math.min(22, 22 * scale));
-      this.scoreText.position.set(25 * scale, 75 * scale);
+      this.scoreText.position.set(20 * scale, 30 * scale);
 
       this.highScoreText.style.fontSize = Math.max(
         12,
         Math.min(16, 16 * scale),
       );
-      this.highScoreText.position.set(sw - 25 * scale, 75 * scale);
+      this.highScoreText.position.set(20 * scale, 65 * scale);
 
       this.pauseBtn.position.set(sw - 35 * scale, 35 * scale);
       this.pauseBtn.scale.set(scale);
@@ -3601,17 +3816,31 @@ export class GameController extends Container {
   }
 
   syncDOMScoreAndHighScore() {
-    const domScore = document.getElementById("hud-score");
-    if (domScore) {
-      domScore.innerText = `ĐIỂM: ${Math.floor(this.score)}`;
+    const currentScore = Math.floor(this.score);
+    const domScoreVal = document.getElementById("hud-score-val");
+    if (domScoreVal) {
+      domScoreVal.innerText = `${currentScore}`;
+    } else {
+      const domScore = document.getElementById("hud-score");
+      if (domScore) domScore.innerText = `ĐIỂM: ${currentScore}`;
     }
-    const domHighScore = document.getElementById("hud-highscore");
-    if (domHighScore) {
-      domHighScore.innerText = `KỶ LỤC: ${this.highScore}`;
+
+    const domHighScoreVal = document.getElementById("hud-highscore-val");
+    if (domHighScoreVal) {
+      domHighScoreVal.innerText = `${this.highScore}`;
+    } else {
+      const domHighScore = document.getElementById("hud-highscore");
+      if (domHighScore) domHighScore.innerText = `KỶ LỤC: ${this.highScore}`;
     }
-    const menuHighScoreText = document.getElementById("menu-highscore");
-    if (menuHighScoreText) {
-      menuHighScoreText.innerText = `🏆 KỶ LỤC ĐIỂM: ${this.highScore}`;
+
+    const menuHighScoreVal = document.getElementById("menu-highscore-text");
+    if (menuHighScoreVal) {
+      menuHighScoreVal.innerText = `KỶ LỤC ĐIỂM: ${this.highScore}`;
+    } else {
+      const menuHighScoreText = document.getElementById("menu-highscore");
+      if (menuHighScoreText) {
+        menuHighScoreText.innerText = `🏆 KỶ LỤC ĐIỂM: ${this.highScore}`;
+      }
     }
   }
 
@@ -3833,13 +4062,14 @@ export class GameController extends Container {
           text-shadow: 0 1px 1px rgba(0,0,0,0.5);
         }
         .game-over-score {
-          font-family: 'Be Vietnam Pro', sans-serif;
-          font-size: 28px;
+          font-family: 'Baloo 2', 'Be Vietnam Pro', sans-serif;
+          font-size: 44px;
           font-weight: 900;
-          color: #4E342E;
-          margin: 8px 0;
-          letter-spacing: 2px;
-          text-shadow: 0 1px 0 #ffffff;
+          color: #E65100;
+          margin: 4px 0 10px 0;
+          letter-spacing: 1.5px;
+          line-height: 1.1;
+          text-shadow: 0 3px 0 #8C2500, 0 6px 12px rgba(0,0,0,0.15);
         }
         .game-over-msg {
           font-family: 'Be Vietnam Pro', sans-serif;
@@ -4062,57 +4292,74 @@ export class GameController extends Container {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 10px;
-          max-height: min(450px, 65vh);
-          overflow-y: auto;
-          padding-right: 4px;
           box-sizing: border-box;
-        }
-        .game-instructions-grid::-webkit-scrollbar {
-          width: 6px;
-        }
-        .game-instructions-grid::-webkit-scrollbar-track {
-          background: #f1ebd8;
-          border-radius: 4px;
-        }
-        .game-instructions-grid::-webkit-scrollbar-thumb {
-          background: #c5beaa;
-          border-radius: 4px;
         }
         .game-instructions-row {
           background: #ffffff;
-          border: 2px solid #ddeaff;
-          border-radius: 12px;
-          padding: 8px;
+          border: 2.5px solid #FFE0B2;
+          border-radius: 14px;
+          padding: 10px 12px;
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 10px;
           box-sizing: border-box;
-          height: 52px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+          transition: transform 0.15s ease;
         }
-        .game-instructions-icon-container {
+        .game-instructions-row:active {
+          transform: scale(0.97);
+        }
+        .game-instructions-emoji {
           width: 36px;
           height: 36px;
-          border: 1.5px solid #FFE082;
-          border-radius: 8px;
-          background: #FFF8E1;
-          display: inline-flex;
-          align-items: center;
+          border-radius: 50%;
+          display: flex;
           justify-content: center;
-          overflow: hidden;
+          align-items: center;
           flex-shrink: 0;
+          font-size: 20px;
+          line-height: 1;
         }
-        .game-instructions-icon {
-          max-width: 30px;
-          max-height: 30px;
-          object-fit: contain;
+        .game-instructions-emoji.danger {
+          background: linear-gradient(135deg, #FFCDD2, #EF9A9A);
+          border: 2px solid #E57373;
+        }
+        .game-instructions-emoji.collect {
+          background: linear-gradient(135deg, #C8E6C9, #A5D6A7);
+          border: 2px solid #66BB6A;
+        }
+        .game-instructions-emoji.shield {
+          background: linear-gradient(135deg, #BBDEFB, #90CAF9);
+          border: 2px solid #42A5F5;
         }
         .game-instructions-text {
           font-family: 'Be Vietnam Pro', sans-serif;
           font-size: 12px;
-          font-weight: 700;
+          font-weight: 800;
           color: #4E342E;
           text-align: left;
-          line-height: 1.2;
+          line-height: 1.3;
+        }
+        .game-instructions-tag {
+          display: inline-block;
+          font-size: 9px;
+          font-weight: 900;
+          padding: 2px 6px;
+          border-radius: 6px;
+          margin-top: 2px;
+          letter-spacing: 0.5px;
+        }
+        .game-instructions-tag.jump {
+          background: #FFF3E0; color: #E65100;
+        }
+        .game-instructions-tag.duck {
+          background: #E8F5E9; color: #2E7D32;
+        }
+        .game-instructions-tag.bonus {
+          background: #F3E5F5; color: #7B1FA2;
+        }
+        .game-instructions-tag.power {
+          background: #E3F2FD; color: #1565C0;
         }
       `;
       document.head.appendChild(style);
@@ -4132,6 +4379,7 @@ GameController.prototype.updatePlayerBody = updatePlayerBody;
 
 GameController.prototype.updateSkeletalRigTexture = function (tex, url) {
   updateSkeletalRigTexture(tex, url, {
+    fullCharSprite: this.fullCharSprite,
     head: this.playerHead,
     body: this.playerBody,
     leftArm: this.leftArm,
