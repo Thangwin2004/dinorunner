@@ -18,6 +18,11 @@ export default [
   js.configs.recommended,
   prettier,
   {
+    rules: {
+      "prettier/prettier": ["error", { endOfLine: "auto" }],
+    },
+  },
+  {
     files: ["**/*.{js,jsx}"],
     languageOptions: {
       ecmaVersion: "latest",

@@ -2,14 +2,23 @@ import { Application, Text } from "pixi.js";
 import { GameController } from "./game";
 import { audio } from "./audio";
 import { winkGame } from "./integrations/wink/wink-adapter.js";
+import { waitForGameFonts } from "./utils/fontLoader.js";
+import { installFocusPause } from "./utils/focusPause.js";
 
 Text.defaultResolution = 3;
 Text.defaultAutoResolution = false;
 
 (async () => {
-  // Wait for Google Fonts to be loaded before initializing the app or starting the game
-  await document.fonts.load("700 1em 'Baloo 2'", "Bộ Lạc Đậu Phộng");
-  await document.fonts.ready;
+  await waitForGameFonts([
+    "400 1em 'Be Vietnam Pro'",
+    "500 1em 'Be Vietnam Pro'",
+    "600 1em 'Be Vietnam Pro'",
+    "700 1em 'Be Vietnam Pro'",
+    "800 1em 'Be Vietnam Pro'",
+    "900 1em 'Be Vietnam Pro'",
+    "700 1em 'Baloo 2'",
+    "800 1em 'Baloo 2'",
+  ]);
 
   // 1. Create a new Application instance
   const app = new Application();
@@ -194,6 +203,14 @@ Text.defaultAutoResolution = false;
     game.update(ticker);
   });
 
+  const focusPause = installFocusPause({
+    isRunning: () => Boolean(app.ticker.started),
+    pause: () => app.ticker.stop(),
+    resume: () => app.ticker.start(),
+    pauseAudio: () => audio.pauseForFocus(),
+    resumeAudio: () => audio.resumeFromFocus(),
+  });
+
   // 6. Robust resize function that reads container size
   const handleResize = () => {
     const w = container.clientWidth || window.innerWidth;
@@ -213,16 +230,8 @@ Text.defaultAutoResolution = false;
 
   // ── Wink Bridge lifecycle binding ──
   winkGame.bindLifecycle({
-    onPause: () => {
-      if (app.ticker) app.ticker.stop();
-    },
-    onResume: () => {
-      if (app.ticker) app.ticker.start();
-    },
-    // Stopping the ticker silences nothing. The note that used to sit here said
-    // muting was already synced per frame — it was synced against the player's
-    // own settings, which say nothing about a frame the feed has moved off, and
-    // stopping the ticker removes the per-frame sync anyway.
+    onPause: focusPause.pauseFromHost,
+    onResume: focusPause.resumeFromHost,
     onMute: () => audio.setHostMuted(true),
     onUnmute: () => audio.setHostMuted(false),
   });

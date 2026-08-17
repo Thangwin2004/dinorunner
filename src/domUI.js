@@ -33,7 +33,7 @@ export function injectHTMLPopupStyles() {
       transform: scale(0.85);
       transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.25s ease;
       opacity: 0;
-      font-family: 'Fredoka', 'Baloo 2', 'Be Vietnam Pro', sans-serif;
+      font-family:Be Vietnam Pro, sans-serif;
       box-sizing: border-box;
     }
     .game-popup-card.game-over-stitch-card {
@@ -45,7 +45,7 @@ export function injectHTMLPopupStyles() {
       width: 88%; max-width: 300px;
       text-align: center;
       position: relative;
-      font-family: 'Baloo 2', 'Be Vietnam Pro', sans-serif;
+      font-family:Be Vietnam Pro, sans-serif;
       box-sizing: border-box;
     }
     .game-popup-card.wide {
@@ -121,7 +121,7 @@ export function injectHTMLPopupStyles() {
       color: #FFFFFF;
     }
     .btn-green-3d .stitch-btn-text {
-      font-family: 'Baloo 2', sans-serif;
+      font-family:Be Vietnam Pro, sans-serif;
       font-size: 24px; font-weight: 900;
       color: #FFFFFF;
       text-shadow: 0 2px 0 #1B5E20;
@@ -230,7 +230,7 @@ export function injectHTMLPopupStyles() {
       text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     }
     .game-over-score {
-      font-family: 'Baloo 2', 'Be Vietnam Pro', sans-serif;
+      font-family:Be Vietnam Pro, sans-serif;
       font-size: 68px; font-weight: 900;
       color: #E53935;
       background: linear-gradient(180deg, #FF5252 0%, #D32F2F 100%);
@@ -254,7 +254,7 @@ export function injectHTMLPopupStyles() {
       border: 3px solid #FFFFFF;
       cursor: pointer;
       display: flex; justify-content: center; align-items: center;
-      font-family: 'Baloo 2', sans-serif;
+      font-family:Be Vietnam Pro, sans-serif;
       font-weight: 900;
       font-size: 22px;
       transition: transform 0.12s ease;
@@ -465,7 +465,7 @@ function createToggleRow(label, isEnabled, onToggle) {
   row.style.cssText = `width:100%; height:64px; border-radius:12px; background:#fbfaf5; border:3px solid #fff; display:flex; justify-content:space-between; align-items:center; padding:0 16px; box-sizing:border-box; margin-bottom: 12px;`;
 
   const text = document.createElement("span");
-  text.style.cssText = `font-family:'Fredoka', 'Baloo 2', 'Be Vietnam Pro', sans-serif; font-size:17px; font-weight:bold; color:#47363B; letter-spacing:0.8px; white-space:nowrap;`;
+  text.style.cssText = `font-family:Be Vietnam Pro, sans-serif; font-size:17px; font-weight:bold; color:#47363B; letter-spacing:0.8px; white-space:nowrap;`;
   text.innerText = label;
 
   const toggle = document.createElement("div");
@@ -474,7 +474,7 @@ function createToggleRow(label, isEnabled, onToggle) {
 
   const statusText = document.createElement("span");
   statusText.innerText = isMuted ? "OFF" : "ON";
-  statusText.style.cssText = `color:#fff; font-family:'Impact', 'Arial Black', sans-serif; font-size:16px; position:absolute; width:100%; text-align:center; padding-right:${isMuted ? "0" : "28px"}; padding-left:${isMuted ? "28px" : "0"}; box-sizing:border-box; transition: padding 0.25s; text-shadow: 0 2px 3px rgba(0,0,0,0.4); pointer-events:none;`;
+  statusText.style.cssText = `color:#fff; font-family:Be Vietnam Pro, sans-serif; font-size:16px; position:absolute; width:100%; text-align:center; padding-right:${isMuted ? "0" : "28px"}; padding-left:${isMuted ? "28px" : "0"}; box-sizing:border-box; transition: padding 0.25s; text-shadow: 0 2px 3px rgba(0,0,0,0.4); pointer-events:none;`;
 
   const knob = document.createElement("div");
   knob.style.cssText = `width:32px; height:32px; border-radius:50%; background:#fff; position:absolute; top:2px; left:${isMuted ? "3px" : "45px"}; transition: left 0.25s cubic-bezier(0.3, 1.2, 0.5, 1); box-shadow: 0 3px 6px rgba(0,0,0,0.4); pointer-events:none;`;
@@ -725,7 +725,7 @@ export function showHTMLReviveOffer(game, onRevive, onSkip) {
 
   const yesBtn = document.createElement("button");
   yesBtn.style.cssText =
-    "margin: 0 auto; background: linear-gradient(180deg, #FFE082 0%, #FFB300 50%, #FF8F00 100%); border: 3.5px solid #FFFFFF; border-radius: 28px; padding: 12px 50px; color: #FFFFFF; font-size: 24px; font-weight: 900; font-family: 'Baloo 2', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 3.5px 0 rgba(255,255,255,0.7), inset 0 -4px 0 #E65100, 0 5.5px 0 #E65100, 0 10px 20px rgba(0,0,0,0.3); transition: transform 0.12s ease; text-shadow: 0 2px 0 #BF360C;";
+    "margin: 0 auto; background: linear-gradient(180deg, #FFE082 0%, #FFB300 50%, #FF8F00 100%); border: 3.5px solid #FFFFFF; border-radius: 28px; padding: 12px 50px; color: #FFFFFF; font-size: 24px; font-weight: 900; font-family:Be Vietnam Pro, sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 3.5px 0 rgba(255,255,255,0.7), inset 0 -4px 0 #E65100, 0 5.5px 0 #E65100, 0 10px 20px rgba(0,0,0,0.3); transition: transform 0.12s ease; text-shadow: 0 2px 0 #BF360C;";
 
   const tvIcon = document.createElement("img");
   tvIcon.src = "/assest/iconbtn/images.webp";
@@ -741,7 +741,7 @@ export function showHTMLReviveOffer(game, onRevive, onSkip) {
   const skipText = document.createElement("div");
   skipText.innerText = "Không, cảm ơn";
   skipText.style.cssText =
-    "margin-top:15px;font-family:sans-serif;font-size:16px;color:#888;text-decoration:underline;cursor:pointer;font-weight:bold;";
+    "margin-top:15px;font-family:Be Vietnam Pro, sans-serif;font-size:16px;color:#888;text-decoration:underline;cursor:pointer;font-weight:bold;";
 
   card.appendChild(title);
   card.appendChild(heartIcon);
@@ -866,13 +866,13 @@ export function showHTMLGameOver(game) {
         </filter>
       </defs>
       <!-- Layer 1: Dark Red 3D Base -->
-      <text x="100" y="62" text-anchor="middle" font-family="'Baloo 2', 'Impact', sans-serif" font-weight="900" font-size="68" fill="#5D0000" filter="url(#scoreShadow)">${val}</text>
+      <text x="100" y="62" text-anchor="middle" font-family="'Be Vietnam Pro', sans-serif" font-weight="900" font-size="68" fill="#5D0000" filter="url(#scoreShadow)">${val}</text>
       <!-- Layer 2: Gold Outer Stroke -->
-      <text x="100" y="56" text-anchor="middle" font-family="'Baloo 2', 'Impact', sans-serif" font-weight="900" font-size="68" fill="#FFC107" stroke="#FFC107" stroke-width="9" stroke-linejoin="round">${val}</text>
+      <text x="100" y="56" text-anchor="middle" font-family="'Be Vietnam Pro', sans-serif" font-weight="900" font-size="68" fill="#FFC107" stroke="#FFC107" stroke-width="9" stroke-linejoin="round">${val}</text>
       <!-- Layer 3: Dark Red Outline -->
-      <text x="100" y="56" text-anchor="middle" font-family="'Baloo 2', 'Impact', sans-serif" font-weight="900" font-size="68" fill="#7A0000" stroke="#7A0000" stroke-width="3" stroke-linejoin="round">${val}</text>
+      <text x="100" y="56" text-anchor="middle" font-family="'Be Vietnam Pro', sans-serif" font-weight="900" font-size="68" fill="#7A0000" stroke="#7A0000" stroke-width="3" stroke-linejoin="round">${val}</text>
       <!-- Layer 4: Main Red Gradient Face -->
-      <text x="100" y="56" text-anchor="middle" font-family="'Baloo 2', 'Impact', sans-serif" font-weight="900" font-size="68" fill="url(#scoreRedGradFace)">${val}</text>
+      <text x="100" y="56" text-anchor="middle" font-family="'Be Vietnam Pro', sans-serif" font-weight="900" font-size="68" fill="url(#scoreRedGradFace)">${val}</text>
     </svg>
   `;
   scoreVal.innerHTML = createScoreMarkup(finalScore);

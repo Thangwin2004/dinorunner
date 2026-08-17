@@ -28,6 +28,8 @@ class AudioManager {
     // moves gain — the BGM element is deliberately never paused, see init().
     this.hostMuted = false;
     this.initialized = false;
+    this.wasContextRunningBeforeFocus = false;
+    this.wasBgmPlayingBeforeFocus = false;
 
     // Global mobile audio unlocker
     const unlockAudio = () => {
@@ -221,6 +223,22 @@ class AudioManager {
     if (this.ctx && !this.musicMuted) {
       this.bgmGain.gain.value = 1; // Khôi phục tiếng nhạc nền
     }
+  }
+
+  async pauseForFocus() {
+    this.wasContextRunningBeforeFocus = this.ctx?.state === "running";
+    this.wasBgmPlayingBeforeFocus = Boolean(this.bgm && !this.bgm.paused);
+    if (this.wasBgmPlayingBeforeFocus) this.bgm.pause();
+    if (this.wasContextRunningBeforeFocus) await this.ctx.suspend();
+  }
+
+  async resumeFromFocus() {
+    if (this.wasContextRunningBeforeFocus && this.ctx) await this.ctx.resume();
+    this.wasContextRunningBeforeFocus = false;
+    if (this.wasBgmPlayingBeforeFocus && this.bgm && !this.musicMuted) {
+      await this.bgm.play().catch(() => {});
+    }
+    this.wasBgmPlayingBeforeFocus = false;
   }
 }
 

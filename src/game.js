@@ -248,7 +248,7 @@ export class GameController extends Container {
     const label = new Text({
       text: labelText.toUpperCase(),
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: Math.min(18, height * 0.45),
         fill: "#ffffff",
         fontWeight: "900",
@@ -422,7 +422,7 @@ export class GameController extends Container {
     const txt = new Text({
       text: emoji,
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: radius * 1.0,
         fill: 0xffffff,
         align: "center",
@@ -628,7 +628,7 @@ export class GameController extends Container {
     this.menuSubtitleText = new Text({
       text: "",
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 12,
         fill: "#F9A825",
 
@@ -647,7 +647,7 @@ export class GameController extends Container {
     this.menuHighScoreText = new Text({
       text: `🏆 KỶ LỤC ĐIỂM: ${this.highScore}`,
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 28,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -704,7 +704,7 @@ export class GameController extends Container {
     this.scoreText = new Text({
       text: "ĐIỂM: 0",
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 28,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -732,7 +732,7 @@ export class GameController extends Container {
     this.highScoreText = new Text({
       text: "KỶ LỤC: 0",
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 18,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -828,7 +828,7 @@ export class GameController extends Container {
     const titleText = new Text({
       text: "BẢNG VÀNG",
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 20,
         fontWeight: "900",
         fill: 0xffffff,
@@ -843,7 +843,7 @@ export class GameController extends Container {
 
     // 3. Header Labels
     const headerStyle = new TextStyle({
-      fontFamily: "Baloo 2",
+      fontFamily: "Be Vietnam Pro",
       fontSize: 13,
       fontWeight: "900",
       fill: "#ffffff",
@@ -910,7 +910,7 @@ export class GameController extends Container {
     const label = new Text({
       text: labelText, // No toUpperCase() to show case exactly as passed
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 22,
         fill: "#4E342E",
         fontWeight: "700",
@@ -1037,7 +1037,7 @@ export class GameController extends Container {
     this.settingsTitle = new Text({
       text: "CÀI ĐẶT",
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 22,
         fontWeight: "900",
         fill: 0xffffff,
@@ -1082,7 +1082,7 @@ export class GameController extends Container {
     this.settingsVersionText = new Text({
       text: "Phiên bản: 1.0.0",
       style: {
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 12,
         fill: "#FFECB3",
       },
@@ -1157,7 +1157,7 @@ export class GameController extends Container {
     const titleText = new Text({
       text: "CÀI ĐẶT",
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 22,
         fontWeight: "900",
         fill: 0xffffff,
@@ -1282,7 +1282,7 @@ export class GameController extends Container {
     const title = new Text({
       text: "TRÒ CHƠI KẾT THÚC",
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 20,
         fontWeight: "900",
         fill: 0xffffff,
@@ -1325,7 +1325,7 @@ export class GameController extends Container {
     const bannerText = new Text({
       text: "KỶ LỤC MỚI!",
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 14,
         fill: 0xffffff,
         stroke: { color: 0x8a0000, width: 2, join: "round" },
@@ -1349,7 +1349,7 @@ export class GameController extends Container {
     this.gameOverScoreText = new Text({
       text: "0",
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 44,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -1379,7 +1379,7 @@ export class GameController extends Container {
     this.gameOverMsgText = new Text({
       text: "KỶ LỤC CŨ: 0",
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 16,
         fill: new FillGradient({
           end: { x: 0, y: 1 },
@@ -1587,7 +1587,7 @@ export class GameController extends Container {
       floatText = new Text({
         text: text,
         style: new TextStyle({
-          fontFamily: "Baloo 2",
+          fontFamily: "Be Vietnam Pro",
           fontSize: 24,
           fontWeight: "900",
           fill: 0xffea00, // Gold yellow
@@ -1643,7 +1643,7 @@ export class GameController extends Container {
     this.charTitle = new Text({
       text: "CHỌN NHÂN VẬT",
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 22,
         fontWeight: "900",
         fill: 0xffffff,
@@ -1677,7 +1677,7 @@ export class GameController extends Container {
     this.charPageText = new Text({
       text: "TRANG 1/4",
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 18,
         fontWeight: "900",
         fill: "#F57F17",
@@ -1797,7 +1797,7 @@ export class GameController extends Container {
     this.instructionsTitle = new Text({
       text: "HƯỚNG DẪN CHƠI",
       style: new TextStyle({
-        fontFamily: "Baloo 2",
+        fontFamily: "Be Vietnam Pro",
         fontSize: 22,
         fontWeight: "900",
         fill: 0xffffff,
@@ -1847,7 +1847,7 @@ export class GameController extends Container {
         row.labelText = new Text({
           text: data.label,
           style: new TextStyle({
-            fontFamily: "Baloo 2",
+            fontFamily: "Be Vietnam Pro",
             fontWeight: "800",
             fontSize: 13,
             fill: 0x3e2723, // Warm dark brown
@@ -2823,7 +2823,7 @@ export class GameController extends Container {
       const emptyText = new Text({
         text: "Chưa có thành tích.\nHãy chơi để thiết lập kỷ lục đầu tiên.",
         style: new TextStyle({
-          fontFamily: "Baloo 2",
+          fontFamily: "Be Vietnam Pro",
           fontSize: 16,
           fill: "#5D4037",
           align: "center",
@@ -2874,7 +2874,7 @@ export class GameController extends Container {
       const rankText = new Text({
         text: rankMedals[i] || `${i + 1}`,
         style: new TextStyle({
-          fontFamily: "Baloo 2",
+          fontFamily: "Be Vietnam Pro",
           fontSize: isTop3 ? 22 : 14,
           fill: "#4E342E",
         }),
@@ -2916,7 +2916,7 @@ export class GameController extends Container {
       const nameText = new Text({
         text: entry.name,
         style: new TextStyle({
-          fontFamily: "Baloo 2",
+          fontFamily: "Be Vietnam Pro",
           fontSize: 13,
           fontWeight: "bold",
           fill: entry.isPlayer ? "#FBC02D" : "#4E342E",
@@ -2931,7 +2931,7 @@ export class GameController extends Container {
       const scoreText = new Text({
         text: `${entry.score}`,
         style: new TextStyle({
-          fontFamily: "Baloo 2",
+          fontFamily: "Be Vietnam Pro",
           fontSize: 13,
           fontWeight: "900",
           fill: "#4E342E",
@@ -2962,7 +2962,7 @@ export class GameController extends Container {
       const rankText = new Text({
         text: isTop3 ? ["🥇", "🥈", "🥉"][playerRank - 1] : `${playerRank}`,
         style: new TextStyle({
-          fontFamily: "Baloo 2",
+          fontFamily: "Be Vietnam Pro",
           fontSize: isTop3 ? 22 : 14,
           fill: "#4E342E",
         }),
@@ -3003,7 +3003,7 @@ export class GameController extends Container {
       const nameText = new Text({
         text: `${playerEntry.name} (Bạn)`,
         style: new TextStyle({
-          fontFamily: "Baloo 2",
+          fontFamily: "Be Vietnam Pro",
           fontSize: 13,
           fontWeight: "bold",
           fill: "#FBC02D",
@@ -3017,7 +3017,7 @@ export class GameController extends Container {
       const scoreText = new Text({
         text: `${playerEntry.score}`,
         style: new TextStyle({
-          fontFamily: "Baloo 2",
+          fontFamily: "Be Vietnam Pro",
           fontSize: 13,
           fontWeight: "900",
           fill: "#4E342E",
@@ -3873,7 +3873,7 @@ export class GameController extends Container {
           position: relative;
           transform: scale(0.85);
           transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.25s ease;
-          font-family: 'Be Vietnam Pro', sans-serif;
+          font-family:Be Vietnam Pro, sans-serif;
           box-sizing: border-box;
           opacity: 0;
         }
@@ -3890,7 +3890,7 @@ export class GameController extends Container {
           border-radius: 12px;
           box-shadow: 0 4px 0 #F57F17;
           color: #ffffff;
-          font-family: 'Be Vietnam Pro', sans-serif;
+          font-family:Be Vietnam Pro, sans-serif;
           font-size: 22px;
           font-weight: 800;
           letter-spacing: 1.5px;
@@ -3937,7 +3937,7 @@ export class GameController extends Container {
           height: 62px;
         }
         .game-settings-label {
-          font-family: 'Be Vietnam Pro', sans-serif;
+          font-family:Be Vietnam Pro, sans-serif;
           font-size: 20px;
           font-weight: 700;
           color: #4E342E;
@@ -3968,7 +3968,7 @@ export class GameController extends Container {
           box-shadow: 0 4px 0 #F57F17;
           border-radius: 12px;
           color: #ffffff;
-          font-family: 'Be Vietnam Pro', sans-serif;
+          font-family:Be Vietnam Pro, sans-serif;
           font-size: 16px;
           font-weight: 800;
           padding: 10px 24px;
@@ -3995,7 +3995,7 @@ export class GameController extends Container {
           box-shadow: 0 2px 0 #F57F17;
         }
         .game-settings-version {
-          font-family: 'Be Vietnam Pro', sans-serif;
+          font-family:Be Vietnam Pro, sans-serif;
           font-size: 12px;
           color: #4E342E;
           margin-top: 14px;
@@ -4051,7 +4051,7 @@ export class GameController extends Container {
           border: 1.5px solid #FFF59D;
           border-radius: 6px;
           color: #ffffff;
-          font-family: 'Be Vietnam Pro', sans-serif;
+          font-family:Be Vietnam Pro, sans-serif;
           font-size: 14px;
           font-weight: 900;
           letter-spacing: 2px;
@@ -4062,7 +4062,7 @@ export class GameController extends Container {
           text-shadow: 0 1px 1px rgba(0,0,0,0.5);
         }
         .game-over-score {
-          font-family: 'Baloo 2', 'Be Vietnam Pro', sans-serif;
+          font-family:Be Vietnam Pro, sans-serif;
           font-size: 44px;
           font-weight: 900;
           color: #E65100;
@@ -4072,7 +4072,7 @@ export class GameController extends Container {
           text-shadow: 0 3px 0 #8C2500, 0 6px 12px rgba(0,0,0,0.15);
         }
         .game-over-msg {
-          font-family: 'Be Vietnam Pro', sans-serif;
+          font-family:Be Vietnam Pro, sans-serif;
           font-size: 15px;
           font-weight: 700;
           color: #F57F17;
@@ -4160,7 +4160,7 @@ export class GameController extends Container {
           height: 32px;
           border-radius: 50%;
           box-shadow: 0 5px 0 #F9A825, inset 0 0 0 2px #FFF9C4;
-          font-family: 'Outfit', sans-serif;
+          font-family:Be Vietnam Pro, sans-serif;
           font-size: 14px;
           font-weight: 700;
           color: #F9A825;
@@ -4182,7 +4182,7 @@ export class GameController extends Container {
           flex-grow: 1;
         }
         .game-achievements-name {
-          font-family: 'Be Vietnam Pro', sans-serif;
+          font-family:Be Vietnam Pro, sans-serif;
           font-size: 14px;
           font-weight: 700;
           color: #4E342E;
@@ -4191,7 +4191,7 @@ export class GameController extends Container {
           color: #FBC02D;
         }
         .game-achievements-score {
-          font-family: 'Be Vietnam Pro', sans-serif;
+          font-family:Be Vietnam Pro, sans-serif;
           font-size: 15px;
           font-weight: 800;
           color: #4E342E;
@@ -4277,7 +4277,7 @@ export class GameController extends Container {
           cursor: not-allowed;
         }
         .game-charselect-page-text {
-          font-family: 'Be Vietnam Pro', sans-serif;
+          font-family:Be Vietnam Pro, sans-serif;
           font-size: 16px;
           font-weight: 800;
           color: #F57F17;
@@ -4333,7 +4333,7 @@ export class GameController extends Container {
           border: 2px solid #42A5F5;
         }
         .game-instructions-text {
-          font-family: 'Be Vietnam Pro', sans-serif;
+          font-family:Be Vietnam Pro, sans-serif;
           font-size: 12px;
           font-weight: 800;
           color: #4E342E;

@@ -52,7 +52,7 @@ export function gameAlert(message) {
           text-align: center;
           transform: scale(0.85);
           transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          font-family: 'Be Vietnam Pro', sans-serif;
+          font-family:Be Vietnam Pro, sans-serif;
         }
         .game-alert-text {
           color: #4E342E;
