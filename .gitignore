@@ -27,3 +27,6 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+
+# Release worktrees — a full duplicate checkout. Never tracked.
+.worktrees/

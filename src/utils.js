@@ -17,7 +17,7 @@ export function getEffectiveUser() {
   if (winkGame && winkGame.isAuthenticated) {
     return {
       name: "Thành viên",
-      avatar: "/assest/image/imagenobackgrd/001_avatar_laclac.png",
+      avatar: "/assest/image/imagenobackgrd/001_avatar_laclac.webp",
     };
   }
   return null;
@@ -101,7 +101,7 @@ export function gameAlert(message) {
 
     const button = document.createElement("img");
     button.className = "game-alert-img-btn";
-    button.src = "/assest/iconbtn/yes_btn.png";
+    button.src = "/assest/iconbtn/yes_btn.webp";
     button.alt = "ĐỒNG Ý";
 
     card.appendChild(text);
@@ -154,12 +154,12 @@ export function gameConfirm(message) {
 
     const okButton = document.createElement("img");
     okButton.className = "game-alert-img-btn";
-    okButton.src = "/assest/iconbtn/yes_btn.png";
+    okButton.src = "/assest/iconbtn/yes_btn.webp";
     okButton.alt = "ĐỒNG Ý";
 
     const cancelButton = document.createElement("img");
     cancelButton.className = "game-alert-img-btn";
-    cancelButton.src = "/assest/iconbtn/close_btn.png";
+    cancelButton.src = "/assest/iconbtn/close_btn.webp";
     cancelButton.alt = "HỦY";
 
     btnContainer.appendChild(okButton);
@@ -248,7 +248,7 @@ export function getLeaderboardData() {
   const playerAvatar =
     user?.avatar ||
     window.selectedAvatarUrl ||
-    "/assest/image/imagenobackgrd/001_avatar_laclac.png";
+    "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
 
   return [
     {
