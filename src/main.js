@@ -1,14 +1,22 @@
 import { Application, Text } from "pixi.js";
 import { GameController } from "./game";
 import { winkGame } from "./integrations/wink/wink-adapter.js";
+import { waitForGameFonts } from "./utils/fontLoader.js";
 
 Text.defaultResolution = 3;
 Text.defaultAutoResolution = false;
 
 (async () => {
-  // Wait for Google Fonts to be loaded before initializing the app or starting the game
-  await document.fonts.load("700 1em 'Baloo 2'", "Bộ Lạc Đậu Phộng");
-  await document.fonts.ready;
+  await waitForGameFonts([
+    "400 1em 'Be Vietnam Pro'",
+    "500 1em 'Be Vietnam Pro'",
+    "600 1em 'Be Vietnam Pro'",
+    "700 1em 'Be Vietnam Pro'",
+    "800 1em 'Be Vietnam Pro'",
+    "900 1em 'Be Vietnam Pro'",
+    "700 1em 'Baloo 2'",
+    "800 1em 'Baloo 2'",
+  ]);
 
   // 1. Create a new Application instance
   const app = new Application();
