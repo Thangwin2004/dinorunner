@@ -1,8 +1,8 @@
 import { Application, Text } from "pixi.js";
 import { GameController } from "./game";
+import { audio } from "./audio";
 import { winkGame } from "./integrations/wink/wink-adapter.js";
 import { waitForGameFonts } from "./utils/fontLoader.js";
-import { audio } from "./audio";
 import { installFocusPause } from "./utils/focusPause.js";
 
 Text.defaultResolution = 3;
@@ -232,7 +232,8 @@ Text.defaultAutoResolution = false;
   winkGame.bindLifecycle({
     onPause: focusPause.pauseFromHost,
     onResume: focusPause.resumeFromHost,
-    // audio muting is already synced per-frame by the game, but we could add hooks here if needed
+    onMute: () => audio.setHostMuted(true),
+    onUnmute: () => audio.setHostMuted(false),
   });
 
   winkGame.observe((state) => {
