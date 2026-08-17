@@ -2,6 +2,8 @@ import { Application, Text } from "pixi.js";
 import { GameController } from "./game";
 import { winkGame } from "./integrations/wink/wink-adapter.js";
 import { waitForGameFonts } from "./utils/fontLoader.js";
+import { audio } from "./audio";
+import { installFocusPause } from "./utils/focusPause.js";
 
 Text.defaultResolution = 3;
 Text.defaultAutoResolution = false;
@@ -201,6 +203,14 @@ Text.defaultAutoResolution = false;
     game.update(ticker);
   });
 
+  const focusPause = installFocusPause({
+    isRunning: () => Boolean(app.ticker.started),
+    pause: () => app.ticker.stop(),
+    resume: () => app.ticker.start(),
+    pauseAudio: () => audio.pauseForFocus(),
+    resumeAudio: () => audio.resumeFromFocus(),
+  });
+
   // 6. Robust resize function that reads container size
   const handleResize = () => {
     const w = container.clientWidth || window.innerWidth;
@@ -220,12 +230,8 @@ Text.defaultAutoResolution = false;
 
   // ── Wink Bridge lifecycle binding ──
   winkGame.bindLifecycle({
-    onPause: () => {
-      if (app.ticker) app.ticker.stop();
-    },
-    onResume: () => {
-      if (app.ticker) app.ticker.start();
-    },
+    onPause: focusPause.pauseFromHost,
+    onResume: focusPause.resumeFromHost,
     // audio muting is already synced per-frame by the game, but we could add hooks here if needed
   });
 
