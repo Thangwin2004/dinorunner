@@ -1,5 +1,6 @@
 import { Application, Text } from "pixi.js";
 import { GameController } from "./game";
+import { audio } from "./audio";
 import { winkGame } from "./integrations/wink/wink-adapter.js";
 
 Text.defaultResolution = 3;
@@ -218,7 +219,12 @@ Text.defaultAutoResolution = false;
     onResume: () => {
       if (app.ticker) app.ticker.start();
     },
-    // audio muting is already synced per-frame by the game, but we could add hooks here if needed
+    // Stopping the ticker silences nothing. The note that used to sit here said
+    // muting was already synced per frame — it was synced against the player's
+    // own settings, which say nothing about a frame the feed has moved off, and
+    // stopping the ticker removes the per-frame sync anyway.
+    onMute: () => audio.setHostMuted(true),
+    onUnmute: () => audio.setHostMuted(false),
   });
 
   winkGame.observe((state) => {
