@@ -21,6 +21,12 @@ class AudioManager {
 
     this.musicMuted = false;
     this.sfxMuted = false;
+    // Set by the Wink feed when this frame is not the one being played. Kept
+    // separate from musicMuted/sfxMuted on purpose: coming back to a game must
+    // not undo a player who turned the sound off themselves, and a player
+    // turning the sound on must not make a frozen frame audible. This only ever
+    // moves gain — the BGM element is deliberately never paused, see init().
+    this.hostMuted = false;
     this.initialized = false;
 
     // Global mobile audio unlocker
@@ -29,7 +35,7 @@ class AudioManager {
       if (this.ctx && this.ctx.state === "suspended") {
         this.ctx.resume();
       }
-      if (this.bgm && this.bgm.paused && !this.musicMuted) {
+      if (this.bgm && this.bgm.paused && !this.musicMuted && !this.hostMuted) {
         this.bgm
           .play()
           .then(() => {
@@ -60,8 +66,8 @@ class AudioManager {
         this.sfxGain.connect(this.ctx.destination);
 
         // Mute states
-        this.bgmGain.gain.value = this.musicMuted ? 0 : 1;
-        this.sfxGain.gain.value = this.sfxMuted ? 0 : 1;
+        this.bgmGain.gain.value = this.musicMuted || this.hostMuted ? 0 : 1;
+        this.sfxGain.gain.value = this.sfxMuted || this.hostMuted ? 0 : 1;
 
         // Load SFX Buffers
         this._loadSfxBuffer("hit", "/assest/music/CharHit.mp3");
@@ -106,11 +112,19 @@ class AudioManager {
 
   // Đã gỡ bỏ _createAudio vì không còn dùng tới
 
+  /** Called by the Wink adapter when the feed mutes or unmutes this frame. */
+  setHostMuted(state) {
+    this.hostMuted = Boolean(state);
+    this.syncMuteState();
+  }
+
   syncMuteState() {
+    const musicSilent = this.musicMuted || this.hostMuted;
+    const sfxSilent = this.sfxMuted || this.hostMuted;
     if (this.ctx) {
-      this.sfxGain.gain.value = this.sfxMuted ? 0 : 1;
-      this.bgmGain.gain.value = this.musicMuted ? 0 : 1;
-      if (!this.musicMuted && this.ctx.state === "suspended") {
+      this.sfxGain.gain.value = sfxSilent ? 0 : 1;
+      this.bgmGain.gain.value = musicSilent ? 0 : 1;
+      if (!musicSilent && this.ctx.state === "suspended") {
         this.ctx.resume();
       }
     }
@@ -125,7 +139,7 @@ class AudioManager {
   toggleSfxMute() {
     this.sfxMuted = !this.sfxMuted;
     if (this.ctx) {
-      this.sfxGain.gain.value = this.sfxMuted ? 0 : 1;
+      this.sfxGain.gain.value = this.sfxMuted || this.hostMuted ? 0 : 1;
     }
     return this.sfxMuted;
   }
@@ -134,7 +148,7 @@ class AudioManager {
     const state = this.toggleMusicMute();
     this.sfxMuted = state;
     if (this.ctx) {
-      this.sfxGain.gain.value = this.sfxMuted ? 0 : 1;
+      this.sfxGain.gain.value = this.sfxMuted || this.hostMuted ? 0 : 1;
     }
     return state;
   }
