@@ -39,6 +39,16 @@ server {
         try_files $uri =404;
     }
 
+    # Public game assets keep stable paths, so they must revalidate after each
+    # deployment instead of being treated as immutable for one year.
+    location ^~ /assest/ {
+        add_header Content-Security-Policy "frame-ancestors ${ALLOWED_PARENT_ORIGINS}" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "no-referrer" always;
+        add_header Cache-Control "no-cache, must-revalidate" always;
+        try_files $uri =404;
+    }
+
     location ~* \.(?:css|gif|ico|jpeg|jpg|js|png|svg|wasm|woff2?)$ {
         expires 1y;
         try_files $uri =404;

@@ -437,9 +437,9 @@ export class GameController extends Container {
   async loadAssets() {
     try {
       const [skyTex, hillsTex, roadTex] = await Promise.all([
-        Assets.load("/assest/image/bg_parallax_sky_mountains.png"),
-        Assets.load("/assest/image/bg_parallax_hills_transparent.png"),
-        Assets.load("/assest/image/bg_parallax_road_tile.png"),
+        Assets.load("/assest/image/bg_parallax_sky_mountains.webp"),
+        Assets.load("/assest/image/bg_parallax_hills_transparent.webp"),
+        Assets.load("/assest/image/bg_parallax_road_tile.webp"),
       ]);
 
       if (!this.destroyed) {
