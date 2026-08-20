@@ -217,96 +217,13 @@ export function injectHTMLPopupStyles() {
       font-size: 11px; color: #FFB300; font-weight: bold; margin-top: 15px; letter-spacing: 0.5px;
     }
 
-    .game-paused-action-container {
-      display: flex; justify-content: center; gap: 20px; margin-top: 24px;
-    }
-    .game-paused-btn {
-      width: 52px; height: 52px;
-      background-size: contain; background-repeat: no-repeat; background-position: center;
-      background-color: transparent; border: none; cursor: pointer;
-      transition: transform 0.1s;
-    }
-    .game-paused-btn:hover { transform: scale(1.1); }
-    .game-paused-btn:active { transform: scale(0.9); }
-
-    .game-over-record-banner {
-      background: #FFE6AE;
-      border: 1.5px solid #F2A532;
-      border-radius: 14px; color: #9A4D18; font-weight: 800;
-      font-size: 11px; padding: 4px 12px; display: inline-block;
-      letter-spacing: 0.8px; margin: 4px 0 8px;
-    }
-    .game-over-record-banner[hidden] { display: none; }
+    .game-paused-action-container,
     .game-over-actions {
-      display: flex; justify-content: center; align-items: center; gap: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
       margin-top: 20px;
-    }
-    .game-over-actions .stitch-action-btn-3d {
-      width: 56px; height: 56px;
-      background: linear-gradient(180deg, #FFB743 0%, #F28A20 100%);
-      border: 2.5px solid #FFE0A3;
-      box-shadow: inset 0 2px 0 rgba(255,249,236,0.45), 0 4px 0 #B95716, 0 8px 14px rgba(79,45,22,0.22);
-      color: #FFF9EC;
-    }
-    .game-over-actions .stitch-btn-text {
-      color: #FFF9EC;
-      text-shadow: 0 2px 0 rgba(123,54,14,0.45);
-    }
-    .game-over-actions .stitch-action-btn-3d:focus-visible {
-      outline: 3px solid #5CAEE8;
-      outline-offset: 3px;
-    }
-    .game-over-actions .stitch-action-btn-3d:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-    .game-over-actions .stitch-action-btn-3d:active {
-      transform: translateY(3px);
-      box-shadow: inset 0 1px 0 rgba(255,249,236,0.35), 0 1px 0 #B95716;
-    }
-    @media (hover: hover) {
-      .game-over-actions .stitch-action-btn-3d:hover {
-        transform: translateY(-1px);
-      }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .game-popup-overlay, .game-popup-card, .stitch-action-btn-3d {
-        transition-duration: 0.01ms !important;
-      }
-    }
-    .stitch-action-btn {
-      width: 56px; height: 56px;
-      border-radius: 50%;
-      border: 3px solid #FFFFFF;
-      cursor: pointer;
-      display: flex; justify-content: center; align-items: center;
-      font-family:Be Vietnam Pro, sans-serif;
-      font-weight: 900;
-      font-size: 22px;
-      transition: transform 0.12s ease;
-      user-select: none;
-      box-sizing: border-box;
-    }
-    .stitch-action-btn:hover { transform: scale(1.12); }
-    .stitch-action-btn:active { transform: scale(0.92) translateY(2px); }
-    .stitch-btn-x2 {
-      background: linear-gradient(180deg, #81C784 0%, #388E3C 100%);
-      box-shadow: 0 4.5px 0 #1B5E20, 0 6px 14px rgba(0,0,0,0.3);
-      color: #FFFFFF;
-      text-shadow: 0 2px 0 #1B5E20;
-    }
-    .stitch-btn-restart {
-      background: linear-gradient(180deg, #FFE082 0%, #FFA000 100%);
-      box-shadow: 0 4.5px 0 #E65100, 0 6px 14px rgba(0,0,0,0.3);
-      color: #FFFFFF;
-      text-shadow: 0 2px 0 #BF360C;
-    }
-    .stitch-btn-home {
-      background: linear-gradient(180deg, #64B5F6 0%, #1976D2 100%);
-      box-shadow: 0 4.5px 0 #0D47A1, 0 6px 14px rgba(0,0,0,0.3);
-      color: #FFFFFF;
-      text-shadow: 0 2px 0 #0D47A1;
     }
     .game-over-btn {
       width: 52px; height: 52px;
@@ -904,11 +821,33 @@ export function showHTMLGameOver(game) {
   scoreVal.innerHTML = createScoreMarkup(finalScore);
   card.appendChild(scoreVal);
 
-  // 4. Actions: Double Score (x2), Restart, Home
+  // 4. Actions: Home, Replay, Double Score (x2)
   const actionContainer = document.createElement("div");
   actionContainer.className = "game-over-actions";
 
-  // Double Score (x2)
+  // Home (Blue - Left)
+  const homeBtn = document.createElement("button");
+  homeBtn.className = "stitch-action-btn-3d btn-blue-3d";
+  homeBtn.setAttribute("aria-label", "Trang chủ");
+  homeBtn.innerHTML = `<svg viewBox="0 0 24 24" width="28" height="28" fill="#FFFFFF" style="filter: drop-shadow(0 2px 0 #004080);"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>`;
+  homeBtn.addEventListener("click", () => {
+    audio.playClick();
+    game.switchState("MAIN_MENU");
+  });
+  actionContainer.appendChild(homeBtn);
+
+  // Replay (Yellow - Center)
+  const replayBtn = document.createElement("button");
+  replayBtn.className = "stitch-action-btn-3d btn-yellow-3d";
+  replayBtn.setAttribute("aria-label", "Chơi lại");
+  replayBtn.innerHTML = `<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 0 #B73A00);"><path d="M21.5 2v6h-6M2.5 22v-6h6"/><path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M22 12.5a10 10 0 0 1-18.8 4.3L2.5 16"/></svg>`;
+  replayBtn.addEventListener("click", () => {
+    audio.playClick();
+    game.switchState("PLAYING");
+  });
+  actionContainer.appendChild(replayBtn);
+
+  // Double Score (Green x2 - Right)
   if (!game.hasDoubledThisRun) {
     const doubleBtn = document.createElement("button");
     doubleBtn.className = "stitch-action-btn-3d btn-green-3d";
@@ -942,28 +881,6 @@ export function showHTMLGameOver(game) {
     });
     actionContainer.appendChild(doubleBtn);
   }
-
-  // Replay
-  const replayBtn = document.createElement("button");
-  replayBtn.className = "stitch-action-btn-3d btn-yellow-3d";
-  replayBtn.setAttribute("aria-label", "Chơi lại");
-  replayBtn.innerHTML = `<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 0 #B73A00);"><path d="M21.5 2v6h-6M2.5 22v-6h6"/><path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M22 12.5a10 10 0 0 1-18.8 4.3L2.5 16"/></svg>`;
-  replayBtn.addEventListener("click", () => {
-    audio.playClick();
-    game.switchState("PLAYING");
-  });
-  actionContainer.appendChild(replayBtn);
-
-  // Home
-  const homeBtn = document.createElement("button");
-  homeBtn.className = "stitch-action-btn-3d btn-blue-3d";
-  homeBtn.setAttribute("aria-label", "Trang chủ");
-  homeBtn.innerHTML = `<svg viewBox="0 0 24 24" width="28" height="28" fill="#FFFFFF" style="filter: drop-shadow(0 2px 0 #004080);"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>`;
-  homeBtn.addEventListener("click", () => {
-    audio.playClick();
-    game.switchState("MAIN_MENU");
-  });
-  actionContainer.appendChild(homeBtn);
 
   card.appendChild(actionContainer);
   overlay.appendChild(card);
