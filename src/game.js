@@ -516,21 +516,45 @@ export class GameController extends Container {
       // Initialize 2D Cartoon Runner Character
       this.playerSprite = new Container();
 
-      const savedAvatar =
+      let savedAvatar =
         window.localStorage.getItem("selected_avatar_url") ||
         "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
+
+      if (typeof savedAvatar === "string") {
+        savedAvatar = savedAvatar.replace(/\.png$/i, ".webp");
+        if (
+          savedAvatar.startsWith("http://") ||
+          savedAvatar.startsWith("https://")
+        ) {
+          try {
+            savedAvatar = new window.URL(savedAvatar).pathname;
+          } catch {
+            savedAvatar = "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
+          }
+        }
+        if (!savedAvatar.startsWith("/assest/image/imagenobackgrd/")) {
+          savedAvatar = "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
+        }
+      } else {
+        savedAvatar = "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
+      }
+
       window.selectedAvatarUrl = savedAvatar;
-      await Assets.load(savedAvatar);
+      window.localStorage.setItem("selected_avatar_url", savedAvatar);
 
-      // Dark Oval Ground Shadow
-      this.playerShadow = new Graphics();
-      this.playerShadow
-        .ellipse(0, 0, 22, 6)
-        .fill({ color: 0x000000, alpha: 0.35 });
-      this.playerSprite.addChild(this.playerShadow);
-
-      // Initialize Modular Skeletal Avatar
-      const avatarTex = Assets.get(savedAvatar);
+      let avatarTex;
+      try {
+        avatarTex = await Assets.load(savedAvatar);
+      } catch (loadErr) {
+        console.warn(
+          `Failed to load avatar ${savedAvatar}, falling back to default:`,
+          loadErr,
+        );
+        savedAvatar = "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
+        window.selectedAvatarUrl = savedAvatar;
+        window.localStorage.setItem("selected_avatar_url", savedAvatar);
+        avatarTex = await Assets.load(savedAvatar);
+      }
       this.playerBody = this.createSkeletalPart(avatarTex, "body", savedAvatar);
       this.playerHead = this.createSkeletalPart(avatarTex, "head", savedAvatar);
       this.leftArm = this.createSkeletalPart(avatarTex, "arm", savedAvatar);
@@ -2071,9 +2095,13 @@ export class GameController extends Container {
     if (menuOverlay) {
       menuOverlay.style.display = newState === "MAIN_MENU" ? "flex" : "none";
       if (newState === "MAIN_MENU") {
-        const activeAvatar =
+        const rawAvatar =
           window.localStorage.getItem("selected_avatar_url") ||
           "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
+        const activeAvatar =
+          typeof rawAvatar === "string"
+            ? rawAvatar.replace(/\.png$/i, ".webp")
+            : "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
         const menuAvatarImg = document.getElementById("menu-avatar-img");
         if (menuAvatarImg) {
           menuAvatarImg.src = activeAvatar;
@@ -2429,13 +2457,15 @@ export class GameController extends Container {
       }
 
       // Update shield overlay
-      if (this.shieldTime > 0) {
-        this.shieldTime -= elapsed;
-        this.playerShieldGraphics.visible = true;
-        const pulseScale = 1.0 + Math.sin(this.gameTime * 15) * 0.125;
-        this.playerShieldGraphics.scale.set(pulseScale);
-      } else {
-        this.playerShieldGraphics.visible = false;
+      if (this.playerShieldGraphics) {
+        if (this.shieldTime > 0) {
+          this.shieldTime -= elapsed;
+          this.playerShieldGraphics.visible = true;
+          const pulseScale = 1.0 + Math.sin(this.gameTime * 15) * 0.125;
+          this.playerShieldGraphics.scale.set(pulseScale);
+        } else {
+          this.playerShieldGraphics.visible = false;
+        }
       }
 
       // Adjust player scale based on jumping/ducking (squash vertically for ducking)
@@ -3267,9 +3297,13 @@ export class GameController extends Container {
       this.menuMascotFrame.scale.set(scale);
 
       // Make sure the mascot sprite texture is updated with the current avatar on load/change
-      const activeAvatar =
+      const rawAvatar =
         window.localStorage.getItem("selected_avatar_url") ||
         "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
+      const activeAvatar =
+        typeof rawAvatar === "string"
+          ? rawAvatar.replace(/\.png$/i, ".webp")
+          : "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
       Assets.load(activeAvatar)
         .then((tex) => {
           if (!this.menuMascotSprite.destroyed) {
