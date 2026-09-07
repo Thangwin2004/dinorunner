@@ -243,6 +243,65 @@ export function injectHTMLPopupStyles() {
     .game-settings-version {
       font-size: 11px; color: #FFB300; font-weight: bold; margin-top: 15px; letter-spacing: 0.5px;
     }
+    .game-settings-language-row {
+      width: 100%;
+      height: 64px;
+      border-radius: 12px;
+      background: #fbfaf5;
+      border: 3px solid #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      box-sizing: border-box;
+      margin-bottom: 12px;
+    }
+    .game-settings-language-row .game-settings-label,
+    .game-settings-label {
+      font-family: 'Be Vietnam Pro', sans-serif;
+      font-size: 17px;
+      font-weight: bold;
+      color: #47363b;
+      letter-spacing: 0.8px;
+      white-space: nowrap;
+    }
+    .game-settings-language-select {
+      width: 132px;
+      height: 44px;
+      flex: 0 0 132px;
+      padding: 0 32px 0 16px;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 2px solid #72d58f;
+      border-radius: 22px;
+      color: #1b365d;
+      background-color: #fbfaf5;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M2 2l5 5 5-5' fill='none' stroke='%2325a653' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+        linear-gradient(180deg, #fffef9 0%, #edf7ef 100%);
+      background-repeat: no-repeat;
+      background-position:
+        right 12px center,
+        center;
+      background-size:
+        14px 9px,
+        100% 100%;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      text-shadow: none;
+      cursor: pointer;
+      outline: none;
+      box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.9),
+        0 3px 0 #2b9b50,
+        0 6px 10px rgba(36, 24, 42, 0.14);
+      transition:
+        filter 0.12s ease,
+        box-shadow 0.12s ease;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
 
     .game-paused-action-container,
     .game-over-actions {
@@ -470,6 +529,7 @@ function createToggleRow(label, isEnabled, onToggle) {
 
   row.appendChild(text);
   row.appendChild(toggle);
+  row.labelElement = text;
   return row;
 }
 
@@ -525,39 +585,44 @@ export function showHTMLSettings(game) {
   );
   rowContainer.appendChild(sfxRow);
 
-  // Language row
-  const langRow = document.createElement("div");
-  langRow.className = "game-settings-row";
-  const langLabel = document.createElement("span");
-  langLabel.className = "game-settings-label";
-  langLabel.innerText = "🌐 " + i18n.t("settings.language");
-  const langSelect = document.createElement("select");
-  langSelect.className = "game-settings-language-select";
+  // Language row (marth3 style)
+  const createLanguageRow = () => {
+    const row = document.createElement("div");
+    row.className = "game-settings-language-row";
 
-  const optVi = document.createElement("option");
-  optVi.value = "vi";
-  optVi.innerText = "🇻🇳 " + i18n.t("settings.vietnamese");
+    const label = document.createElement("span");
+    label.className = "game-settings-label";
+    label.innerText = i18n.t("settings.language");
 
-  const optEn = document.createElement("option");
-  optEn.value = "en";
-  optEn.innerText = "🇬🇧 " + i18n.t("settings.english");
+    const select = document.createElement("select");
+    select.className = "game-settings-language-select";
+    select.setAttribute("aria-label", i18n.t("settings.language"));
+    select.innerHTML = `
+      <option value="en">${i18n.t("settings.english")}</option>
+      <option value="vi">${i18n.t("settings.vietnamese")}</option>
+    `;
+    select.value = i18n.language;
 
-  langSelect.appendChild(optVi);
-  langSelect.appendChild(optEn);
-  langSelect.value = i18n.currentLanguage;
+    select.addEventListener("change", () => {
+      audio.playClick();
+      i18n.setLanguage(select.value);
+      title.innerText = i18n.t("settings.title");
+      musicRow.labelElement.innerText = "🎵 " + i18n.t("settings.music");
+      sfxRow.labelElement.innerText = "🔊 " + i18n.t("settings.sfx");
+      label.innerText = i18n.t("settings.language");
+      select.setAttribute("aria-label", i18n.t("settings.language"));
+      select.innerHTML = `
+        <option value="en">${i18n.t("settings.english")}</option>
+        <option value="vi">${i18n.t("settings.vietnamese")}</option>
+      `;
+      select.value = i18n.language;
+      versionText.innerText = i18n.t("settings.version");
+    });
 
-  langSelect.addEventListener("change", (e) => {
-    audio.playClick();
-    i18n.setLanguage(e.target.value);
-    if (game && typeof game.syncLanguage === "function") {
-      game.syncLanguage();
-    }
-    hideHTMLSettings();
-    showHTMLSettings(game);
-  });
-  langRow.appendChild(langLabel);
-  langRow.appendChild(langSelect);
-  rowContainer.appendChild(langRow);
+    row.append(label, select);
+    return row;
+  };
+  rowContainer.appendChild(createLanguageRow());
 
   card.appendChild(rowContainer);
 
@@ -643,8 +708,6 @@ export function showHTMLPaused(game) {
   );
   rowContainer.appendChild(sfxRow);
 
-  card.appendChild(rowContainer);
-
   // Action buttons container: Home, Replay, Resume
   const actionContainer = document.createElement("div");
   actionContainer.className = "game-paused-action-container";
@@ -664,11 +727,10 @@ export function showHTMLPaused(game) {
   const replayBtn = document.createElement("button");
   replayBtn.className = "stitch-action-btn-3d btn-yellow-3d";
   replayBtn.setAttribute("aria-label", i18n.t("pause.replay"));
-  replayBtn.innerHTML = `<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 0 #B73A00);"><path d="M21.5 2v6h-6M2.5 22v-6h6"/><path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M22 12.5a10 10 0 0 1-18.8 4.3L2.5 16"/></svg>`;
+  replayBtn.innerHTML = `<svg viewBox="0 0 24 24" width="28" height="28" fill="#FFFFFF" style="filter: drop-shadow(0 2px 0 #9E6B00);"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6 0 2.97-2.17 5.43-5 5.91v2.02c3.95-.49 7-3.85 7-7.93 0-4.42-3.58-8-8-8zm-6 8c0-1.65.67-3.15 1.76-4.24L6.34 7.34C4.9 8.78 4 10.79 4 13c0 4.08 3.05 7.44 7 7.93v-2.02c-2.83-.48-5-2.94-5-5.91z"/></svg>`;
   replayBtn.addEventListener("click", () => {
     audio.playClick();
-    game.gameState = "PLAYING";
-    game.switchState("PLAYING");
+    game.initGame();
   });
   actionContainer.appendChild(replayBtn);
 
@@ -676,13 +738,55 @@ export function showHTMLPaused(game) {
   const resumeBtn = document.createElement("button");
   resumeBtn.className = "stitch-action-btn-3d btn-green-3d";
   resumeBtn.setAttribute("aria-label", i18n.t("pause.resume"));
-  resumeBtn.innerHTML = `<svg viewBox="0 0 24 24" width="30" height="30" fill="#FFFFFF" style="filter: drop-shadow(0 2px 0 #1B5E20);"><path d="M8 5v14l11-7z"/></svg>`;
+  resumeBtn.innerHTML = `<svg viewBox="0 0 24 24" width="28" height="28" fill="#FFFFFF" style="filter: drop-shadow(0 2px 0 #1B5E20);"><path d="M8 5v14l11-7z"/></svg>`;
   resumeBtn.addEventListener("click", () => {
     audio.playClick();
     game.switchState("PLAYING");
   });
   actionContainer.appendChild(resumeBtn);
 
+  // Language row in pause screen (marth3 style)
+  const createPauseLanguageRow = () => {
+    const row = document.createElement("div");
+    row.className = "game-settings-language-row";
+
+    const label = document.createElement("span");
+    label.className = "game-settings-label";
+    label.innerText = i18n.t("settings.language");
+
+    const select = document.createElement("select");
+    select.className = "game-settings-language-select";
+    select.setAttribute("aria-label", i18n.t("settings.language"));
+    select.innerHTML = `
+      <option value="en">${i18n.t("settings.english")}</option>
+      <option value="vi">${i18n.t("settings.vietnamese")}</option>
+    `;
+    select.value = i18n.language;
+
+    select.addEventListener("change", () => {
+      audio.playClick();
+      i18n.setLanguage(select.value);
+      title.innerText = i18n.t("pause.title");
+      musicRow.labelElement.innerText = "🎵 " + i18n.t("settings.music");
+      sfxRow.labelElement.innerText = "🔊 " + i18n.t("settings.sfx");
+      label.innerText = i18n.t("settings.language");
+      select.setAttribute("aria-label", i18n.t("settings.language"));
+      select.innerHTML = `
+        <option value="en">${i18n.t("settings.english")}</option>
+        <option value="vi">${i18n.t("settings.vietnamese")}</option>
+      `;
+      select.value = i18n.language;
+      homeBtn.setAttribute("aria-label", i18n.t("pause.home"));
+      replayBtn.setAttribute("aria-label", i18n.t("pause.replay"));
+      resumeBtn.setAttribute("aria-label", i18n.t("pause.resume"));
+    });
+
+    row.append(label, select);
+    return row;
+  };
+  rowContainer.appendChild(createPauseLanguageRow());
+
+  card.appendChild(rowContainer);
   card.appendChild(actionContainer);
 
   overlay.appendChild(card);

@@ -3980,6 +3980,70 @@ export class GameController extends Container {
           align-items: center;
           gap: 8px;
         }
+        .game-settings-language-row {
+          width: 100%;
+          height: 64px;
+          padding: 0 16px;
+          box-sizing: border-box;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          border: 3px solid #fff;
+          border-radius: 12px;
+          background: #fbfaf5;
+          margin-bottom: 12px;
+        }
+        .game-settings-language-row .game-settings-label,
+        .game-settings-language-row span {
+          color: #47363b;
+          font-size: 17px;
+          letter-spacing: 0.8px;
+          font-weight: bold;
+        }
+        .game-settings-language-select {
+          width: 136px;
+          height: 42px;
+          flex: 0 0 136px;
+          padding: 0 32px 0 16px;
+          appearance: none;
+          -webkit-appearance: none;
+          border: 2px solid #72d58f;
+          border-radius: 21px;
+          color: #1b365d;
+          background-color: #fbfaf5;
+          background-image:
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M2 2l5 5 5-5' fill='none' stroke='%2325a653' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+            linear-gradient(180deg, #fffef9 0%, #edf7ef 100%);
+          background-repeat: no-repeat;
+          background-position:
+            right 12px center,
+            center;
+          background-size:
+            14px 9px,
+            100% 100%;
+          font-family: 'Be Vietnam Pro', sans-serif;
+          font-size: 14px;
+          font-weight: 800;
+          text-shadow: none;
+          cursor: pointer;
+          outline: none;
+          box-shadow:
+            inset 0 2px 0 rgba(255, 255, 255, 0.9),
+            0 3px 0 #2b9b50,
+            0 6px 10px rgba(36, 24, 42, 0.14);
+          transition:
+            filter 0.12s ease,
+            border-color 0.12s ease,
+            box-shadow 0.1s ease;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .game-settings-language-select option {
+          color: #1b365d;
+          background: #fbfaf5;
+          font-weight: 700;
+          text-shadow: none;
+        }
         .game-settings-toggle-btn {
           width: 68px;
           height: 42px;

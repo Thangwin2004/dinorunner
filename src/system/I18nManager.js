@@ -275,6 +275,10 @@ class I18nManager {
     this.applyDocumentLanguage();
   }
 
+  get currentLanguage() {
+    return this.language;
+  }
+
   applyDocumentLanguage() {
     if (globalThis.document?.documentElement) {
       document.documentElement.lang = this.language;
