@@ -200,24 +200,6 @@ export function injectHTMLPopupStyles() {
     .game-settings-label {
       font-size: 17px; font-weight: bold; color: #4E342E;
     }
-    .game-settings-language-select {
-      font-family: 'Be Vietnam Pro', sans-serif;
-      font-size: 14px;
-      font-weight: 800;
-      color: #5D4037;
-      background: #FFF8E1;
-      border: 2.5px solid #FFB300;
-      border-radius: 12px;
-      padding: 6px 14px;
-      outline: none;
-      cursor: pointer;
-      box-shadow: 0 3px 0 #FFA000;
-      transition: transform 0.1s ease;
-    }
-    .game-settings-language-select:active {
-      transform: translateY(2px);
-      box-shadow: 0 1px 0 #FFA000;
-    }
     .game-settings-toggle-btn {
       width: 64px; height: 40px;
       background-size: contain; background-repeat: no-repeat; background-position: center;
@@ -266,22 +248,22 @@ export function injectHTMLPopupStyles() {
       white-space: nowrap;
     }
     .game-settings-language-select {
-      width: 132px;
-      height: 44px;
-      flex: 0 0 132px;
-      padding: 0 32px 0 16px;
+      width: 126px;
+      height: 42px;
+      flex: 0 0 126px;
+      padding: 0 28px 0 14px;
       appearance: none;
       -webkit-appearance: none;
-      border: 2px solid #72d58f;
-      border-radius: 22px;
-      color: #1b365d;
-      background-color: #fbfaf5;
+      border: 3px solid #ffffff;
+      border-radius: 21px;
+      color: #145a27;
+      background-color: #ffffff;
       background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M2 2l5 5 5-5' fill='none' stroke='%2325a653' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
-        linear-gradient(180deg, #fffef9 0%, #edf7ef 100%);
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M2 2l5 5 5-5' fill='none' stroke='%23145a27' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+        linear-gradient(180deg, #ffffff 0%, #edf7ef 100%);
       background-repeat: no-repeat;
       background-position:
-        right 12px center,
+        right 10px center,
         center;
       background-size:
         14px 9px,
@@ -294,13 +276,31 @@ export function injectHTMLPopupStyles() {
       outline: none;
       box-shadow:
         inset 0 2px 0 rgba(255, 255, 255, 0.9),
-        0 3px 0 #2b9b50,
-        0 6px 10px rgba(36, 24, 42, 0.14);
+        0 4px 0 #1b8a43,
+        0 6px 8px rgba(36, 24, 42, 0.14);
       transition:
         filter 0.12s ease,
-        box-shadow 0.12s ease;
-      overflow: hidden;
+        transform 0.1s ease,
+        box-shadow 0.1s ease;
       -webkit-tap-highlight-color: transparent;
+    }
+    .game-settings-language-select:hover {
+      filter: brightness(1.04);
+    }
+    .game-settings-language-select:active {
+      transform: translateY(2px);
+      box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.9),
+        0 2px 0 #1b8a43,
+        0 3px 5px rgba(36, 24, 42, 0.14);
+    }
+    .game-settings-language-select:focus,
+    .game-settings-language-select:focus-visible {
+      outline: none;
+      box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.9),
+        0 4px 0 #1b8a43,
+        0 6px 8px rgba(36, 24, 42, 0.14);
     }
 
     .game-paused-action-container,
@@ -592,7 +592,7 @@ export function showHTMLSettings(game) {
 
     const label = document.createElement("span");
     label.className = "game-settings-label";
-    label.innerText = i18n.t("settings.language");
+    label.innerText = "🌐 " + i18n.t("settings.language");
 
     const select = document.createElement("select");
     select.className = "game-settings-language-select";
@@ -609,7 +609,7 @@ export function showHTMLSettings(game) {
       title.innerText = i18n.t("settings.title");
       musicRow.labelElement.innerText = "🎵 " + i18n.t("settings.music");
       sfxRow.labelElement.innerText = "🔊 " + i18n.t("settings.sfx");
-      label.innerText = i18n.t("settings.language");
+      label.innerText = "🌐 " + i18n.t("settings.language");
       select.setAttribute("aria-label", i18n.t("settings.language"));
       versionText.innerText = i18n.t("settings.version");
     });
@@ -747,7 +747,7 @@ export function showHTMLPaused(game) {
 
     const label = document.createElement("span");
     label.className = "game-settings-label";
-    label.innerText = i18n.t("settings.language");
+    label.innerText = "🌐 " + i18n.t("settings.language");
 
     const select = document.createElement("select");
     select.className = "game-settings-language-select";
@@ -764,7 +764,7 @@ export function showHTMLPaused(game) {
       title.innerText = i18n.t("pause.title");
       musicRow.labelElement.innerText = "🎵 " + i18n.t("settings.music");
       sfxRow.labelElement.innerText = "🔊 " + i18n.t("settings.sfx");
-      label.innerText = i18n.t("settings.language");
+      label.innerText = "🌐 " + i18n.t("settings.language");
       select.setAttribute("aria-label", i18n.t("settings.language"));
       homeBtn.setAttribute("aria-label", i18n.t("pause.home"));
       replayBtn.setAttribute("aria-label", i18n.t("pause.replay"));

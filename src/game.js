@@ -4053,22 +4053,22 @@ export class GameController extends Container {
           font-weight: bold;
         }
         .game-settings-language-select {
-          width: 136px;
+          width: 126px;
           height: 42px;
-          flex: 0 0 136px;
-          padding: 0 32px 0 16px;
+          flex: 0 0 126px;
+          padding: 0 28px 0 14px;
           appearance: none;
           -webkit-appearance: none;
-          border: 2px solid #72d58f;
+          border: 3px solid #ffffff;
           border-radius: 21px;
-          color: #1b365d;
-          background-color: #fbfaf5;
+          color: #145a27;
+          background-color: #ffffff;
           background-image:
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M2 2l5 5 5-5' fill='none' stroke='%2325a653' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
-            linear-gradient(180deg, #fffef9 0%, #edf7ef 100%);
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M2 2l5 5 5-5' fill='none' stroke='%23145a27' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+            linear-gradient(180deg, #ffffff 0%, #edf7ef 100%);
           background-repeat: no-repeat;
           background-position:
-            right 12px center,
+            right 10px center,
             center;
           background-size:
             14px 9px,
@@ -4081,19 +4081,37 @@ export class GameController extends Container {
           outline: none;
           box-shadow:
             inset 0 2px 0 rgba(255, 255, 255, 0.9),
-            0 3px 0 #2b9b50,
-            0 6px 10px rgba(36, 24, 42, 0.14);
+            0 4px 0 #1b8a43,
+            0 6px 8px rgba(36, 24, 42, 0.14);
           transition:
             filter 0.12s ease,
-            border-color 0.12s ease,
+            transform 0.1s ease,
             box-shadow 0.1s ease;
           -webkit-tap-highlight-color: transparent;
         }
         .game-settings-language-select option {
-          color: #1b365d;
-          background: #fbfaf5;
+          color: #145a27;
+          background: #ffffff;
           font-weight: 700;
           text-shadow: none;
+        }
+        .game-settings-language-select:hover {
+          filter: brightness(1.04);
+        }
+        .game-settings-language-select:active {
+          transform: translateY(2px);
+          box-shadow:
+            inset 0 2px 0 rgba(255, 255, 255, 0.9),
+            0 2px 0 #1b8a43,
+            0 3px 5px rgba(36, 24, 42, 0.14);
+        }
+        .game-settings-language-select:focus,
+        .game-settings-language-select:focus-visible {
+          outline: none;
+          box-shadow:
+            inset 0 2px 0 rgba(255, 255, 255, 0.9),
+            0 4px 0 #1b8a43,
+            0 6px 8px rgba(36, 24, 42, 0.14);
         }
         .game-settings-toggle-btn {
           width: 68px;
