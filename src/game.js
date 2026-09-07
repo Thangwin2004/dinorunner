@@ -20,6 +20,7 @@ import {
   palettes,
   getColorStyle,
 } from "./utils";
+import { i18n } from "./system/I18nManager.js";
 
 import { winkGame } from "./integrations/wink/wink-adapter.js";
 import { AVATAR_BOUNDS, LEFT_FACING_AVATARS } from "./avatarData";
@@ -152,6 +153,10 @@ export class GameController extends Container {
     // Create UIs
     this.setupUI();
     this.initDOMOverlays();
+
+    // Subscribe to language changes
+    i18n.subscribe(() => this.syncLanguage());
+    this.syncLanguage();
 
     // Set initial state
     this.switchState("MAIN_MENU");
@@ -295,6 +300,11 @@ export class GameController extends Container {
     btn.on("pointerupoutside", () => {
       gsap.to(content, { y: 0, duration: 0.1 });
     });
+
+    btn.label = label;
+    btn.setLabelText = (newText) => {
+      label.text = newText.toUpperCase();
+    };
 
     return btn;
   }
@@ -473,10 +483,10 @@ export class GameController extends Container {
 
       // Preload obstacles and collectibles (multi-asset expansion)
       const assetPaths = [
-        "/assest/image/obstacles/stone.png",
-        "/assest/image/obstacles/crate.png",
-        "/assest/image/obstacles/rock-monster.png",
-        "/assest/image/obstacles/spikes.png",
+        "/assest/image/obstacles/stone.webp",
+        "/assest/image/obstacles/crate.webp",
+        "/assest/image/obstacles/rock-monster.webp",
+        "/assest/image/obstacles/spikes.webp",
         "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.webp",
         "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.webp",
         "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).webp",
@@ -494,7 +504,7 @@ export class GameController extends Container {
         Promise.all(
           Array.from({ length: animationFrameCounts[action] }, (_, index) =>
             Assets.load(
-              `/assest/image/player_pet/${action}/${action}-${String(index + 1).padStart(2, "0")}.png`,
+              `/assest/image/player_pet/${action}/${action}-${String(index + 1).padStart(2, "0")}.webp`,
             ),
           ),
         );
@@ -2080,7 +2090,7 @@ export class GameController extends Container {
       if (newState === "MAIN_MENU") {
         const menuAvatarImg = document.getElementById("menu-avatar-img");
         if (menuAvatarImg) {
-          menuAvatarImg.src = "/assest/image/player_pet/run/run-01.png";
+          menuAvatarImg.src = "/assest/image/player_pet/run/run-01.webp";
         }
       }
     }
@@ -2494,11 +2504,11 @@ export class GameController extends Container {
       // Ground Set A: compact, unmistakable natural hazards.
       const choices = [
         {
-          path: "/assest/image/obstacles/stone.png",
+          path: "/assest/image/obstacles/stone.webp",
           h: 48,
         },
         {
-          path: "/assest/image/obstacles/crate.png",
+          path: "/assest/image/obstacles/crate.webp",
           h: 66,
         },
       ];
@@ -2526,11 +2536,11 @@ export class GameController extends Container {
       // Ground Set B: high-contrast danger silhouettes, also ground-aligned.
       const choices = [
         {
-          path: "/assest/image/obstacles/rock-monster.png",
+          path: "/assest/image/obstacles/rock-monster.webp",
           h: 70,
         },
         {
-          path: "/assest/image/obstacles/spikes.png",
+          path: "/assest/image/obstacles/spikes.webp",
           h: 42,
         },
       ];
@@ -3237,7 +3247,7 @@ export class GameController extends Container {
       this.menuMascotFrame.scale.set(scale);
 
       // The menu and gameplay intentionally share one recognizable runner.
-      Assets.load("/assest/image/player_pet/run/run-01.png")
+      Assets.load("/assest/image/player_pet/run/run-01.webp")
         .then((tex) => {
           if (!this.menuMascotSprite.destroyed) {
             this.menuMascotSprite.texture = tex;
@@ -3794,7 +3804,8 @@ export class GameController extends Container {
       domScoreVal.innerText = `${currentScore}`;
     } else {
       const domScore = document.getElementById("hud-score");
-      if (domScore) domScore.innerText = `ĐIỂM: ${currentScore}`;
+      if (domScore)
+        domScore.innerText = i18n.t("hud.score", { score: currentScore });
     }
 
     const domHighScoreVal = document.getElementById("hud-highscore-val");
@@ -3802,17 +3813,69 @@ export class GameController extends Container {
       domHighScoreVal.innerText = `${this.highScore}`;
     } else {
       const domHighScore = document.getElementById("hud-highscore");
-      if (domHighScore) domHighScore.innerText = `KỶ LỤC: ${this.highScore}`;
+      if (domHighScore)
+        domHighScore.innerText = i18n.t("hud.best", { score: this.highScore });
     }
 
     const menuHighScoreVal = document.getElementById("menu-highscore-text");
     if (menuHighScoreVal) {
-      menuHighScoreVal.innerText = `KỶ LỤC ĐIỂM: ${this.highScore}`;
+      menuHighScoreVal.innerText = i18n.t("menu.highScore", {
+        score: this.highScore,
+      });
     } else {
       const menuHighScoreText = document.getElementById("menu-highscore");
       if (menuHighScoreText) {
-        menuHighScoreText.innerText = `🏆 KỶ LỤC ĐIỂM: ${this.highScore}`;
+        menuHighScoreText.innerText = i18n.t("menu.highScore", {
+          score: this.highScore,
+        });
       }
+    }
+  }
+
+  syncLanguage() {
+    if (this.menuHighScoreText) {
+      this.menuHighScoreText.text = i18n.t("menu.highScore", {
+        score: this.highScore,
+      });
+    }
+    if (this.playBtn && typeof this.playBtn.setLabelText === "function") {
+      this.playBtn.setLabelText(i18n.t("menu.play"));
+    }
+    if (this.scoreText) {
+      this.scoreText.text = i18n.t("hud.score", {
+        score: Math.floor(this.score || 0),
+      });
+    }
+    if (this.highScoreText) {
+      this.highScoreText.text = i18n.t("hud.best", {
+        score: this.highScore || 0,
+      });
+    }
+    this.syncDOMScoreAndHighScore();
+
+    const menuPlayBtn = document.getElementById("menu-play-btn");
+    if (menuPlayBtn) {
+      menuPlayBtn.innerText = i18n.t("menu.play");
+    }
+
+    const achievementsBtn = document.getElementById("menu-btn-achievements");
+    if (achievementsBtn) {
+      achievementsBtn.setAttribute("aria-label", i18n.t("menu.leaderboard"));
+    }
+
+    const instructionsBtn = document.getElementById("menu-btn-instructions");
+    if (instructionsBtn) {
+      instructionsBtn.setAttribute("aria-label", i18n.t("menu.instructions"));
+    }
+
+    const settingsBtn = document.getElementById("menu-btn-settings");
+    if (settingsBtn) {
+      settingsBtn.setAttribute("aria-label", i18n.t("menu.settings"));
+    }
+
+    const hudPauseBtn = document.getElementById("hud-pause-btn");
+    if (hudPauseBtn) {
+      hudPauseBtn.setAttribute("aria-label", i18n.t("pause.title"));
     }
   }
 

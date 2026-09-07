@@ -24,6 +24,7 @@ import {
   submitScore,
   subscribe,
 } from "./wink-bridge.js";
+import { i18n } from "../../system/I18nManager.js";
 
 function newRoundId() {
   const cryptoRef = globalThis.crypto;
@@ -46,6 +47,7 @@ export class WinkGameIntegration {
 
   constructor() {
     this.observe((state) => {
+      i18n.syncFromWink(state);
       if (state?.phase === "ready_authenticated" && !this.#cachedPersonalBest) {
         this.getPersonalBest().catch(() => {});
       }

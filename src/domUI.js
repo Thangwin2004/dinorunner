@@ -10,6 +10,7 @@ import {
 } from "./utils";
 import { winkGame } from "./integrations/wink/wink-adapter.js";
 import { getAvatarColors } from "./avatar";
+import { i18n } from "./system/I18nManager.js";
 
 export function injectHTMLPopupStyles() {
   if (document.getElementById("game-popup-styles")) return;
@@ -198,6 +199,24 @@ export function injectHTMLPopupStyles() {
     }
     .game-settings-label {
       font-size: 17px; font-weight: bold; color: #4E342E;
+    }
+    .game-settings-language-select {
+      font-family: 'Be Vietnam Pro', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      color: #5D4037;
+      background: #FFF8E1;
+      border: 2.5px solid #FFB300;
+      border-radius: 12px;
+      padding: 6px 14px;
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 3px 0 #FFA000;
+      transition: transform 0.1s ease;
+    }
+    .game-settings-language-select:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #FFA000;
     }
     .game-settings-toggle-btn {
       width: 64px; height: 40px;
@@ -469,7 +488,7 @@ export function showHTMLSettings(game) {
   // Title
   const title = document.createElement("div");
   title.className = "game-popup-title";
-  title.innerText = "CÀI ĐẶT";
+  title.innerText = i18n.t("settings.title");
   card.appendChild(title);
 
   // Close button
@@ -485,25 +504,67 @@ export function showHTMLSettings(game) {
   rowContainer.className = "game-settings-row-container";
 
   // Music row
-  const musicRow = createToggleRow("🎵 Nhạc nền", !audio.musicMuted, () => {
-    audio.toggleMusicMute();
-    return !audio.musicMuted;
-  });
+  const musicRow = createToggleRow(
+    "🎵 " + i18n.t("settings.music"),
+    !audio.musicMuted,
+    () => {
+      audio.toggleMusicMute();
+      return !audio.musicMuted;
+    },
+  );
   rowContainer.appendChild(musicRow);
 
   // SFX row
-  const sfxRow = createToggleRow("🔊 Hiệu ứng", !audio.sfxMuted, () => {
-    audio.toggleSfxMute();
-    return !audio.sfxMuted;
-  });
+  const sfxRow = createToggleRow(
+    "🔊 " + i18n.t("settings.sfx"),
+    !audio.sfxMuted,
+    () => {
+      audio.toggleSfxMute();
+      return !audio.sfxMuted;
+    },
+  );
   rowContainer.appendChild(sfxRow);
+
+  // Language row
+  const langRow = document.createElement("div");
+  langRow.className = "game-settings-row";
+  const langLabel = document.createElement("span");
+  langLabel.className = "game-settings-label";
+  langLabel.innerText = "🌐 " + i18n.t("settings.language");
+  const langSelect = document.createElement("select");
+  langSelect.className = "game-settings-language-select";
+
+  const optVi = document.createElement("option");
+  optVi.value = "vi";
+  optVi.innerText = "🇻🇳 " + i18n.t("settings.vietnamese");
+
+  const optEn = document.createElement("option");
+  optEn.value = "en";
+  optEn.innerText = "🇬🇧 " + i18n.t("settings.english");
+
+  langSelect.appendChild(optVi);
+  langSelect.appendChild(optEn);
+  langSelect.value = i18n.currentLanguage;
+
+  langSelect.addEventListener("change", (e) => {
+    audio.playClick();
+    i18n.setLanguage(e.target.value);
+    if (game && typeof game.syncLanguage === "function") {
+      game.syncLanguage();
+    }
+    hideHTMLSettings();
+    showHTMLSettings(game);
+  });
+  langRow.appendChild(langLabel);
+  langRow.appendChild(langSelect);
+  rowContainer.appendChild(langRow);
 
   card.appendChild(rowContainer);
 
   // Version Text
   const versionText = document.createElement("div");
   versionText.className = "game-settings-version";
-  versionText.innerText = "Phiên bản: 1.0.0";
+  versionText.innerText = i18n.t("settings.version");
   card.appendChild(versionText);
 
   overlay.appendChild(card);
@@ -545,7 +606,7 @@ export function showHTMLPaused(game) {
 
   const title = document.createElement("div");
   title.className = "game-popup-title";
-  title.innerText = "CÀI ĐẶT";
+  title.innerText = i18n.t("pause.title");
   card.appendChild(title);
 
   // Close button (resumes play)
@@ -561,17 +622,25 @@ export function showHTMLPaused(game) {
   rowContainer.className = "game-settings-row-container";
 
   // Music row
-  const musicRow = createToggleRow("🎵 Nhạc nền", !audio.musicMuted, () => {
-    audio.toggleMusicMute();
-    return !audio.musicMuted;
-  });
+  const musicRow = createToggleRow(
+    "🎵 " + i18n.t("settings.music"),
+    !audio.musicMuted,
+    () => {
+      audio.toggleMusicMute();
+      return !audio.musicMuted;
+    },
+  );
   rowContainer.appendChild(musicRow);
 
   // SFX row
-  const sfxRow = createToggleRow("🔊 Hiệu ứng", !audio.sfxMuted, () => {
-    audio.toggleSfxMute();
-    return !audio.sfxMuted;
-  });
+  const sfxRow = createToggleRow(
+    "🔊 " + i18n.t("settings.sfx"),
+    !audio.sfxMuted,
+    () => {
+      audio.toggleSfxMute();
+      return !audio.sfxMuted;
+    },
+  );
   rowContainer.appendChild(sfxRow);
 
   card.appendChild(rowContainer);
@@ -583,7 +652,7 @@ export function showHTMLPaused(game) {
   // Home
   const homeBtn = document.createElement("button");
   homeBtn.className = "stitch-action-btn-3d btn-blue-3d";
-  homeBtn.setAttribute("aria-label", "Trang chủ");
+  homeBtn.setAttribute("aria-label", i18n.t("pause.home"));
   homeBtn.innerHTML = `<svg viewBox="0 0 24 24" width="28" height="28" fill="#FFFFFF" style="filter: drop-shadow(0 2px 0 #004080);"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>`;
   homeBtn.addEventListener("click", () => {
     audio.playClick();
@@ -594,7 +663,7 @@ export function showHTMLPaused(game) {
   // Replay
   const replayBtn = document.createElement("button");
   replayBtn.className = "stitch-action-btn-3d btn-yellow-3d";
-  replayBtn.setAttribute("aria-label", "Chơi lại");
+  replayBtn.setAttribute("aria-label", i18n.t("pause.replay"));
   replayBtn.innerHTML = `<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 0 #B73A00);"><path d="M21.5 2v6h-6M2.5 22v-6h6"/><path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M22 12.5a10 10 0 0 1-18.8 4.3L2.5 16"/></svg>`;
   replayBtn.addEventListener("click", () => {
     audio.playClick();
@@ -606,7 +675,7 @@ export function showHTMLPaused(game) {
   // Resume
   const resumeBtn = document.createElement("button");
   resumeBtn.className = "stitch-action-btn-3d btn-green-3d";
-  resumeBtn.setAttribute("aria-label", "Tiếp tục");
+  resumeBtn.setAttribute("aria-label", i18n.t("pause.resume"));
   resumeBtn.innerHTML = `<svg viewBox="0 0 24 24" width="30" height="30" fill="#FFFFFF" style="filter: drop-shadow(0 2px 0 #1B5E20);"><path d="M8 5v14l11-7z"/></svg>`;
   resumeBtn.addEventListener("click", () => {
     audio.playClick();
@@ -658,7 +727,7 @@ export function showHTMLReviveOffer(game, onRevive, onSkip) {
 
   const title = document.createElement("div");
   title.className = "game-popup-title";
-  title.innerText = "HỒI SINH";
+  title.innerText = i18n.t("revive.title");
 
   const heartIcon = document.createElement("div");
   heartIcon.innerText = "💖";
@@ -684,14 +753,14 @@ export function showHTMLReviveOffer(game, onRevive, onSkip) {
   tvIcon.style.cssText = "height:30px;width:auto;margin-right:15px;";
 
   const yesText = document.createElement("span");
-  yesText.innerText = "CÓ";
+  yesText.innerText = i18n.t("revive.yes");
   yesText.style.textShadow = "0 2px 4px rgba(0,0,0,0.3)";
 
   yesBtn.appendChild(tvIcon);
   yesBtn.appendChild(yesText);
 
   const skipText = document.createElement("div");
-  skipText.innerText = "Không, cảm ơn";
+  skipText.innerText = i18n.t("revive.skip");
   skipText.style.cssText =
     "margin-top:15px;font-family:Be Vietnam Pro, sans-serif;font-size:16px;color:#888;text-decoration:underline;cursor:pointer;font-weight:bold;";
 
@@ -751,7 +820,7 @@ export function showHTMLGameOver(game) {
   // Ribbon Header
   const title = document.createElement("div");
   title.className = "game-popup-title stitch-title-ribbon";
-  title.innerHTML = `<div class="stitch-ribbon-gloss"></div><span>KẾT THÚC</span>`;
+  title.innerHTML = `<div class="stitch-ribbon-gloss"></div><span>${i18n.t("gameover.title")}</span>`;
   card.appendChild(title);
 
   // 1. 3D Golden Toy Star SVG Emblem (Juicy & Vibrant)
@@ -795,7 +864,7 @@ export function showHTMLGameOver(game) {
   // 2. New Record Banner (If applicable)
   const recordBanner = document.createElement("div");
   recordBanner.className = "game-over-record-banner";
-  recordBanner.innerText = "KỶ LỤC MỚI!";
+  recordBanner.innerText = i18n.t("gameover.newRecord");
   recordBanner.hidden = !game.isNewRecordThisRun;
   card.appendChild(recordBanner);
 
@@ -836,7 +905,7 @@ export function showHTMLGameOver(game) {
   // Home (Blue - Left)
   const homeBtn = document.createElement("button");
   homeBtn.className = "stitch-action-btn-3d btn-blue-3d";
-  homeBtn.setAttribute("aria-label", "Trang chủ");
+  homeBtn.setAttribute("aria-label", i18n.t("pause.home"));
   homeBtn.innerHTML = `<svg viewBox="0 0 24 24" width="28" height="28" fill="#FFFFFF" style="filter: drop-shadow(0 2px 0 #004080);"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>`;
   homeBtn.addEventListener("click", () => {
     audio.playClick();
@@ -847,7 +916,7 @@ export function showHTMLGameOver(game) {
   // Replay (Yellow - Center)
   const replayBtn = document.createElement("button");
   replayBtn.className = "stitch-action-btn-3d btn-yellow-3d";
-  replayBtn.setAttribute("aria-label", "Chơi lại");
+  replayBtn.setAttribute("aria-label", i18n.t("pause.replay"));
   replayBtn.innerHTML = `<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 0 #B73A00);"><path d="M21.5 2v6h-6M2.5 22v-6h6"/><path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M22 12.5a10 10 0 0 1-18.8 4.3L2.5 16"/></svg>`;
   replayBtn.addEventListener("click", () => {
     audio.playClick();
@@ -859,7 +928,7 @@ export function showHTMLGameOver(game) {
   if (!game.hasDoubledThisRun) {
     const doubleBtn = document.createElement("button");
     doubleBtn.className = "stitch-action-btn-3d btn-green-3d";
-    doubleBtn.setAttribute("aria-label", "X2 Điểm");
+    doubleBtn.setAttribute("aria-label", i18n.t("gameover.doubleScore"));
     doubleBtn.innerHTML = `<span class="stitch-btn-text">x2</span>`;
     doubleBtn.addEventListener("click", async () => {
       audio.playClick();
@@ -930,7 +999,7 @@ export function showHTMLAchievements(game) {
 
   const title = document.createElement("div");
   title.className = "game-popup-title";
-  title.innerText = "BẢNG VÀNG";
+  title.innerText = i18n.t("leaderboard.title");
   card.appendChild(title);
 
   // Close button
@@ -957,8 +1026,7 @@ export function showHTMLAchievements(game) {
       const emptyText = document.createElement("div");
       emptyText.style.cssText =
         "padding:24px;text-align:center;font-weight:700;color:#5D4037;";
-      emptyText.innerText =
-        "Chưa có thành tích. Hãy chơi để thiết lập kỷ lục đầu tiên.";
+      emptyText.innerHTML = i18n.t("leaderboard.empty");
       listContainer.appendChild(emptyText);
       return;
     }
@@ -1016,8 +1084,8 @@ export function showHTMLAchievements(game) {
       (user
         ? user.name
         : winkGame?.isAuthenticated
-          ? "Thành viên"
-          : "Bạn (Khách)");
+          ? i18n.t("leaderboard.defaultMember")
+          : i18n.t("leaderboard.youGuest"));
     const pAvatar =
       user?.avatar ||
       window.selectedAvatarUrl ||
@@ -1026,6 +1094,7 @@ export function showHTMLAchievements(game) {
     const rankMedals = ["🥇", "🥈", "🥉"];
     const rankDisplay =
       rankNum > 0 ? rankMedals[rankNum - 1] || `#${rankNum}` : "—";
+    const youSuffix = i18n.currentLanguage === "en" ? "(You)" : "(Bạn)";
 
     footer.innerHTML = `
       <span class="game-achievements-rank">${rankDisplay}</span>
@@ -1033,7 +1102,7 @@ export function showHTMLAchievements(game) {
         <div class="game-achievements-avatar-container">
           <img class="game-achievements-avatar" src="${pAvatar}" />
         </div>
-        <span class="game-achievements-name player">${pName} (Bạn)</span>
+        <span class="game-achievements-name player">${pName} ${youSuffix}</span>
       </div>
       <span class="game-achievements-score">${pScore}</span>
     `;
@@ -1098,7 +1167,7 @@ export function showHTMLCharSelect(game) {
 
     const title = document.createElement("div");
     title.className = "game-popup-title";
-    title.innerText = "CHỌN NHÂN VẬT";
+    title.innerText = i18n.t("charSelect.title");
     card.appendChild(title);
 
     const closeBtn = document.createElement("button");
@@ -1274,77 +1343,77 @@ export function showHTMLInstructions(game) {
 
   const title = document.createElement("div");
   title.className = "game-popup-title";
-  title.innerText = "HƯỚNG DẪN CHƠI";
+  title.innerText = i18n.t("instructions.title");
   card.appendChild(title);
 
   const allItems = [
     {
-      label: "Lốp xe",
+      label: i18n.t("instructions.tire"),
       img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.webp",
-      tag: "Nhảy né",
+      tag: i18n.t("instructions.tagJump"),
       type: "danger",
       tagClass: "jump",
     },
     {
-      label: "Hàng rào",
+      label: i18n.t("instructions.fence"),
       img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.webp",
-      tag: "Nhảy né",
+      tag: i18n.t("instructions.tagJump"),
       type: "danger",
       tagClass: "jump",
     },
     {
-      label: "Bàn nhựa",
+      label: i18n.t("instructions.table"),
       img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.webp",
-      tag: "Nhảy né",
+      tag: i18n.t("instructions.tagJump"),
       type: "danger",
       tagClass: "jump",
     },
     {
-      label: "Bù nhìn",
+      label: i18n.t("instructions.scarecrow"),
       img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.webp",
-      tag: "Nhảy né",
+      tag: i18n.t("instructions.tagJump"),
       type: "danger",
       tagClass: "jump",
     },
     {
-      label: "Dép tổ ong",
+      label: i18n.t("instructions.slipper"),
       img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.webp",
-      tag: "Cúi né",
+      tag: i18n.t("instructions.tagDuck"),
       type: "danger",
       tagClass: "duck",
     },
     {
-      label: "Ghế đỏ bay",
+      label: i18n.t("instructions.chair"),
       img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.webp",
-      tag: "Cúi né",
+      tag: i18n.t("instructions.tagDuck"),
       type: "danger",
       tagClass: "duck",
     },
     {
-      label: "Bánh Chưng",
+      label: i18n.t("instructions.banhChung"),
       img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).webp",
-      tag: "+Điểm",
+      tag: i18n.t("instructions.tagBonus"),
       type: "collect",
       tagClass: "bonus",
     },
     {
-      label: "Bánh Mì",
+      label: i18n.t("instructions.banhMi"),
       img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.webp",
-      tag: "+Điểm",
+      tag: i18n.t("instructions.tagBonus"),
       type: "collect",
       tagClass: "bonus",
     },
     {
-      label: "Nước Ngọt",
+      label: i18n.t("instructions.drink"),
       img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.webp",
-      tag: "+Điểm",
+      tag: i18n.t("instructions.tagBonus"),
       type: "collect",
       tagClass: "bonus",
     },
     {
-      label: "Khiên Bất Tử",
+      label: i18n.t("instructions.shield"),
       isShield: true,
-      tag: "2 giây",
+      tag: i18n.t("instructions.tagShield"),
       type: "shield",
       tagClass: "power",
     },
@@ -1391,7 +1460,7 @@ export function showHTMLInstructions(game) {
   const understandBtn = document.createElement("button");
   understandBtn.className = "game-settings-reset-btn";
   understandBtn.style.marginTop = "20px";
-  understandBtn.innerText = "ĐÃ HIỂU";
+  understandBtn.innerText = i18n.t("instructions.gotIt");
   understandBtn.addEventListener("click", () => {
     audio.playClick();
     game.switchState("MAIN_MENU");
