@@ -31,18 +31,24 @@ export function injectHTMLPopupStyles() {
       transition: opacity 0.25s ease;
     }
     .game-popup-card {
-      background: #FFF8E1;
-      border: 5px solid #F9A825;
-      box-shadow: inset 0 0 0 2.5px #FFF59D, 0 6px 0 #F57F17, 0 12px 25px rgba(0, 0, 0, 0.35);
+      background: #fdfbf7;
+      border: 5px solid #ffca28;
+      box-shadow:
+        inset 0 0 0 2.5px #ffe082,
+        0 6px 0 #ffa000,
+        0 12px 25px rgba(0, 0, 0, 0.35);
       border-radius: 20px;
-      padding: 32px 24px 24px 24px;
-      width: 85%; max-width: 320px;
+      padding: 36px 24px 20px 24px;
+      width: 90%;
+      max-width: 420px;
       text-align: center;
       position: relative;
       transform: scale(0.85);
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+      transition:
+        transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        opacity 0.25s ease;
       opacity: 0;
-      font-family:Be Vietnam Pro, sans-serif;
+      font-family: 'Be Vietnam Pro', sans-serif;
       box-sizing: border-box;
     }
     .game-popup-card.game-over-stitch-card {
@@ -63,19 +69,22 @@ export function injectHTMLPopupStyles() {
     }
     .game-popup-title {
       position: absolute;
-      top: -24px; left: 50%;
+      top: -24px;
+      left: 50%;
       transform: translateX(-50%);
-      background: linear-gradient(to bottom, #FFE500, #FF9900);
-      border: 3px solid #FFF8B3;
-      box-shadow: 0 4px 0 #8A4500, 0 6px 10px rgba(0,0,0,0.25);
-      border-radius: 12px;
-      color: #fff;
+      background: linear-gradient(180deg, #ffb300 0%, #ff8f00 100%);
+      border: 2.5px solid #fff8e1;
+      border-radius: 14px;
+      box-shadow: 0 4px 0 #e65100;
+      color: #ffffff;
+      font-family: 'Be Vietnam Pro', sans-serif;
       font-size: 20px;
-      font-weight: 900;
-      padding: 6px 28px;
-      text-shadow: 0 2px 3px rgba(0,0,0,0.3);
-      letter-spacing: 2px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      padding: 6px 36px;
+      text-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
       white-space: nowrap;
+      text-transform: uppercase;
     }
     .game-popup-title.stitch-title-ribbon {
       top: -26px; left: 50%;
@@ -162,43 +171,73 @@ export function injectHTMLPopupStyles() {
     }
     .game-popup-close-btn {
       position: absolute;
-      top: -15px; right: -15px;
-      width: 36px; height: 36px;
+      top: -14px;
+      right: -14px;
+      width: 40px;
+      height: 40px;
+      border: 2.5px solid #fff;
       border-radius: 50%;
-      background: #E53935;
-      border: 3.5px solid #FFF;
-      box-shadow: 0 3px 0 #B71C1C, 0 4px 8px rgba(0,0,0,0.3);
+      background: linear-gradient(180deg, #ff8278, #ea3f42);
+      box-shadow:
+        0 3px 0 #b9232b,
+        0 6px 10px rgba(36, 24, 42, 0.2);
       cursor: pointer;
-      display: flex; justify-content: center; align-items: center;
-      transition: transform 0.1s ease;
+      transition: transform 0.15s ease;
+      z-index: 100100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
     }
-    .game-popup-close-btn::before, .game-popup-close-btn::after {
+    .game-popup-close-btn::before,
+    .game-popup-close-btn::after {
       content: '';
       position: absolute;
-      width: 16px; height: 3.5px;
-      background: white;
+      top: 50%;
+      left: 50%;
+      width: 16px;
+      height: 3px;
       border-radius: 2px;
+      background: #fff;
+      transform: translate(-50%, -50%) rotate(45deg);
     }
-    .game-popup-close-btn::before { transform: rotate(45deg); }
-    .game-popup-close-btn::after { transform: rotate(-45deg); }
-    .game-popup-close-btn:hover { transform: scale(1.1); }
-    .game-popup-close-btn:active { transform: scale(0.9); }
+    .game-popup-close-btn::after {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+    .game-popup-close-btn:hover {
+      transform: scale(1.1);
+    }
+    .game-popup-close-btn:active {
+      transform: translateY(2px) scale(0.95);
+      box-shadow: 0 1px 0 #b9232b;
+    }
 
     .game-settings-row-container {
-      display: flex; flex-direction: column; gap: 12px;
-      margin-top: 15px;
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
     }
     .game-settings-row {
-      width: 100%; height: 56px;
-      border-radius: 12px;
-      background: #FFF;
-      border: 2.5px solid #DDEAFF;
-      display: flex; justify-content: space-between; align-items: center;
+      width: 100%;
+      height: 64px;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 2.5px solid #ffe082;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       padding: 0 16px;
       box-sizing: border-box;
+      margin-bottom: 12px;
     }
     .game-settings-label {
-      font-size: 17px; font-weight: bold; color: #4E342E;
+      font-size: 17px;
+      font-weight: bold;
+      color: #47363b;
+      letter-spacing: 0.8px;
     }
     .game-settings-toggle-btn {
       width: 64px; height: 40px;
@@ -223,19 +262,25 @@ export function injectHTMLPopupStyles() {
     .game-settings-reset-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #BF360C, 0 3px 4px rgba(0,0,0,0.2); }
     .game-settings-reset-icon { height: 20px; width: auto; }
     .game-settings-version {
-      font-size: 11px; color: #FFB300; font-weight: bold; margin-top: 15px; letter-spacing: 0.5px;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      font-size: 12px;
+      color: #8d6e63;
+      margin-top: 14px;
+      font-weight: 600;
     }
     .game-settings-language-row {
       width: 100%;
       height: 64px;
-      border-radius: 12px;
-      background: #fbfaf5;
-      border: 3px solid #fff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       padding: 0 16px;
       box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border: 2.5px solid #ffe082;
+      border-radius: 14px;
+      background: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
       margin-bottom: 12px;
     }
     .game-settings-language-row .game-settings-label,
@@ -248,22 +293,22 @@ export function injectHTMLPopupStyles() {
       white-space: nowrap;
     }
     .game-settings-language-select {
-      width: 126px;
+      width: 136px;
       height: 42px;
-      flex: 0 0 126px;
-      padding: 0 28px 0 14px;
+      flex: 0 0 136px;
+      padding: 0 32px 0 16px;
       appearance: none;
       -webkit-appearance: none;
-      border: 3px solid #ffffff;
+      border: 2px solid #72d58f;
       border-radius: 21px;
       color: #145a27;
-      background-color: #ffffff;
+      background-color: #fbfaf5;
       background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M2 2l5 5 5-5' fill='none' stroke='%23145a27' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
-        linear-gradient(180deg, #ffffff 0%, #edf7ef 100%);
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M2 2l5 5 5-5' fill='none' stroke='%2325a653' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+        linear-gradient(180deg, #fffef9 0%, #edf7ef 100%);
       background-repeat: no-repeat;
       background-position:
-        right 10px center,
+        right 12px center,
         center;
       background-size:
         14px 9px,
@@ -276,13 +321,19 @@ export function injectHTMLPopupStyles() {
       outline: none;
       box-shadow:
         inset 0 2px 0 rgba(255, 255, 255, 0.9),
-        0 4px 0 #1b8a43,
-        0 6px 8px rgba(36, 24, 42, 0.14);
+        0 3px 0 #2b9b50,
+        0 6px 10px rgba(36, 24, 42, 0.12);
       transition:
         filter 0.12s ease,
-        transform 0.1s ease,
+        border-color 0.12s ease,
         box-shadow 0.1s ease;
       -webkit-tap-highlight-color: transparent;
+    }
+    .game-settings-language-select option {
+      color: #145a27;
+      background: #ffffff;
+      font-weight: 700;
+      text-shadow: none;
     }
     .game-settings-language-select:hover {
       filter: brightness(1.04);
@@ -291,16 +342,13 @@ export function injectHTMLPopupStyles() {
       transform: translateY(2px);
       box-shadow:
         inset 0 2px 0 rgba(255, 255, 255, 0.9),
-        0 2px 0 #1b8a43,
-        0 3px 5px rgba(36, 24, 42, 0.14);
+        0 1px 0 #2b9b50,
+        0 3px 5px rgba(36, 24, 42, 0.12);
     }
     .game-settings-language-select:focus,
     .game-settings-language-select:focus-visible {
       outline: none;
-      box-shadow:
-        inset 0 2px 0 rgba(255, 255, 255, 0.9),
-        0 4px 0 #1b8a43,
-        0 6px 8px rgba(36, 24, 42, 0.14);
+      border-color: #25a653;
     }
 
     .game-paused-action-container,
@@ -492,19 +540,21 @@ export function injectHTMLPopupStyles() {
 
 function createToggleRow(label, isEnabled, onToggle) {
   const row = document.createElement("div");
-  row.style.cssText = `width:100%; height:64px; border-radius:12px; background:#fbfaf5; border:3px solid #fff; display:flex; justify-content:space-between; align-items:center; padding:0 16px; box-sizing:border-box; margin-bottom: 12px;`;
+  row.style.cssText =
+    "width:100%; height:64px; border-radius:14px; background:#ffffff; border:2.5px solid #ffe082; box-shadow:0 2px 4px rgba(0,0,0,0.04); display:flex; justify-content:space-between; align-items:center; padding:0 16px; box-sizing:border-box; margin-bottom:12px;";
 
   const text = document.createElement("span");
-  text.style.cssText = `font-family:Be Vietnam Pro, sans-serif; font-size:17px; font-weight:bold; color:#47363B; letter-spacing:0.8px; white-space:nowrap;`;
+  text.style.cssText =
+    "font-family:'Be Vietnam Pro', sans-serif; font-size:17px; font-weight:bold; color:#47363b; letter-spacing:0.8px; white-space:nowrap;";
   text.innerText = label;
 
   const toggle = document.createElement("div");
   const isMuted = !isEnabled;
-  toggle.style.cssText = `width:86px; height:42px; border-radius:21px; background:${isMuted ? "#E8E3D8" : "#81C784"}; border:3px solid #fff; box-shadow: inset 0 3px 6px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.1); cursor:pointer; position:relative; transition: background 0.25s, transform 0.1s; flex-shrink:0; display:flex; align-items:center;`;
+  toggle.style.cssText = `width:86px; height:42px; border-radius:21px; background:${isMuted ? "#e8e3d8" : "linear-gradient(180deg,#7eea94,#25b957)"}; border:3px solid #fff; box-shadow: inset 0 2px 0 rgba(255,255,255,.4), 0 4px 0 ${isMuted ? "#7d7972" : "#14873b"}, 0 6px 10px rgba(0,0,0,0.15); cursor:pointer; position:relative; transition: background 0.25s, transform 0.1s; flex-shrink:0; display:flex; align-items:center;`;
 
   const statusText = document.createElement("span");
   statusText.innerText = isMuted ? "OFF" : "ON";
-  statusText.style.cssText = `color:#fff; font-family:Be Vietnam Pro, sans-serif; font-size:16px; position:absolute; width:100%; text-align:center; padding-right:${isMuted ? "0" : "28px"}; padding-left:${isMuted ? "28px" : "0"}; box-sizing:border-box; transition: padding 0.25s; text-shadow: 0 2px 3px rgba(0,0,0,0.4); pointer-events:none;`;
+  statusText.style.cssText = `color:#fff; font-family:'Be Vietnam Pro', sans-serif; font-size:16px; position:absolute; width:100%; text-align:center; padding-right:${isMuted ? "0" : "28px"}; padding-left:${isMuted ? "28px" : "0"}; box-sizing:border-box; transition: padding 0.25s; text-shadow: 0 2px 3px rgba(0,0,0,0.4); pointer-events:none;`;
 
   const knob = document.createElement("div");
   knob.style.cssText = `width:32px; height:32px; border-radius:50%; background:#fff; position:absolute; top:2px; left:${isMuted ? "3px" : "45px"}; transition: left 0.25s cubic-bezier(0.3, 1.2, 0.5, 1); box-shadow: 0 3px 6px rgba(0,0,0,0.4); pointer-events:none;`;
@@ -516,7 +566,10 @@ function createToggleRow(label, isEnabled, onToggle) {
     audio.playClick();
     const newState = onToggle(); // Returns state after toggle
     const nowMuted = !newState;
-    toggle.style.background = nowMuted ? "#E8E3D8" : "#81C784";
+    toggle.style.background = nowMuted
+      ? "#e8e3d8"
+      : "linear-gradient(180deg,#7eea94,#25b957)";
+    toggle.style.boxShadow = `inset 0 2px 0 rgba(255,255,255,.4), 0 4px 0 ${nowMuted ? "#7d7972" : "#14873b"}, 0 6px 10px rgba(0,0,0,0.15)`;
     knob.style.left = nowMuted ? "3px" : "45px";
     statusText.innerText = nowMuted ? "OFF" : "ON";
     statusText.style.paddingRight = nowMuted ? "0" : "28px";
@@ -611,6 +664,11 @@ export function showHTMLSettings(game) {
       sfxRow.labelElement.innerText = "🔊 " + i18n.t("settings.sfx");
       label.innerText = "🌐 " + i18n.t("settings.language");
       select.setAttribute("aria-label", i18n.t("settings.language"));
+      select.innerHTML = `
+        <option value="en">${i18n.t("settings.english")}</option>
+        <option value="vi">${i18n.t("settings.vietnamese")}</option>
+      `;
+      select.value = i18n.language;
       versionText.innerText = i18n.t("settings.version");
     });
 
@@ -739,42 +797,6 @@ export function showHTMLPaused(game) {
     game.switchState("PLAYING");
   });
   actionContainer.appendChild(resumeBtn);
-
-  // Language row in pause screen (marth3 style)
-  const createPauseLanguageRow = () => {
-    const row = document.createElement("div");
-    row.className = "game-settings-language-row";
-
-    const label = document.createElement("span");
-    label.className = "game-settings-label";
-    label.innerText = "🌐 " + i18n.t("settings.language");
-
-    const select = document.createElement("select");
-    select.className = "game-settings-language-select";
-    select.setAttribute("aria-label", i18n.t("settings.language"));
-    select.innerHTML = `
-      <option value="en">${i18n.t("settings.english")}</option>
-      <option value="vi">${i18n.t("settings.vietnamese")}</option>
-    `;
-    select.value = i18n.language;
-
-    select.addEventListener("change", () => {
-      audio.playClick();
-      i18n.setLanguage(select.value);
-      title.innerText = i18n.t("pause.title");
-      musicRow.labelElement.innerText = "🎵 " + i18n.t("settings.music");
-      sfxRow.labelElement.innerText = "🔊 " + i18n.t("settings.sfx");
-      label.innerText = "🌐 " + i18n.t("settings.language");
-      select.setAttribute("aria-label", i18n.t("settings.language"));
-      homeBtn.setAttribute("aria-label", i18n.t("pause.home"));
-      replayBtn.setAttribute("aria-label", i18n.t("pause.replay"));
-      resumeBtn.setAttribute("aria-label", i18n.t("pause.resume"));
-    });
-
-    row.append(label, select);
-    return row;
-  };
-  rowContainer.appendChild(createPauseLanguageRow());
 
   card.appendChild(rowContainer);
   card.appendChild(actionContainer);

@@ -246,14 +246,6 @@ function readUrlLanguage() {
   }
 }
 
-function readBrowserLanguage() {
-  const candidates = [
-    ...(globalThis.navigator?.languages || []),
-    globalThis.navigator?.language,
-  ];
-  return candidates.map(normalizeLanguage).find(Boolean) || "en";
-}
-
 function readWinkLanguage(state) {
   return normalizeLanguage(
     state?.locale ||
@@ -266,11 +258,7 @@ function readWinkLanguage(state) {
 class I18nManager {
   constructor() {
     this.hasLocalOverride = Boolean(readStoredLanguage());
-    this.language =
-      readStoredLanguage() ||
-      readUrlLanguage() ||
-      readBrowserLanguage() ||
-      "en";
+    this.language = readStoredLanguage() || readUrlLanguage() || "en";
     this.listeners = new Set();
     this.applyDocumentLanguage();
   }

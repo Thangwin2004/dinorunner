@@ -11,7 +11,7 @@
     href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="/src/style.css" />
-  <title>Cáo Nhỏ Phiêu Lưu Ký</title>
+  <title>Little Fox Adventure - Dino Runner</title>
 </head>
 
 <body>
@@ -32,16 +32,16 @@
       <div class="hud-left-container">
         <div id="hud-score" class="hud-clean-text-line score-clean">
           <span class="hud-badge-icon">🎯</span>
-          <span class="hud-badge-label">ĐIỂM:</span>
+          <span class="hud-badge-label">SCORE:</span>
           <span id="hud-score-val" class="hud-badge-val">0</span>
         </div>
         <div id="hud-highscore" class="hud-clean-text-line highscore-clean">
           <span class="hud-badge-icon">🏆</span>
-          <span class="hud-badge-label">KỶ LỤC:</span>
+          <span class="hud-badge-label">BEST:</span>
           <span id="hud-highscore-val" class="hud-badge-val">0</span>
         </div>
       </div>
-      <button id="hud-pause-btn" aria-label="Tạm dừng">
+      <button id="hud-pause-btn" aria-label="Pause">
         <div class="hud-pause-icon"></div>
       </button>
     </div>
@@ -86,38 +86,38 @@
         </svg>
 
         <!-- CC0 biped dog runner avatar (full body) -->
-        <img id="menu-avatar-img" src="/assest/image/player_pet/run/run-01.webp" alt="Cáo nhỏ phiêu lưu" 
+        <img id="menu-avatar-img" src="/assest/image/player_pet/run/run-01.webp" alt="Little Fox Adventure" 
              style="position: absolute; top: 44px; left: 50%; transform: translateX(-50%); width: 98px; height: 98px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4)); pointer-events: none;" />
       </div>
 
       <!-- Carved Wood Title Signboard -->
       <div id="menu-title-wood-sign">
         <div class="title-wood-board">
-          <div class="title-line-1">CÁO NHỎ</div>
-          <div class="title-line-2">PHIÊU LƯU KÝ</div>
+          <div class="title-line-1">LITTLE FOX</div>
+          <div class="title-line-2">ADVENTURE</div>
         </div>
       </div>
 
       <!-- Highscore Clean Line -->
       <div id="menu-highscore" class="menu-highscore-clean">
         <span class="menu-highscore-icon">🏆</span>
-        <span id="menu-highscore-text">KỶ LỤC ĐIỂM: 0</span>
+        <span id="menu-highscore-text">BEST: 0</span>
       </div>
 
       <!-- Glowing Green Energy Aura Play Button -->
       <div class="menu-play-btn-wrapper">
         <div class="play-glow-ring play-ring-1"></div>
         <div class="play-glow-ring play-ring-2"></div>
-        <button id="menu-play-btn">CHƠI NGAY</button>
+        <button id="menu-play-btn">PLAY NOW</button>
       </div>
       <div id="menu-bottom-buttons">
-        <button class="menu-bottom-btn menu-btn-cyan" id="menu-btn-achievements" aria-label="Bảng Vàng">
+        <button class="menu-bottom-btn menu-btn-cyan" id="menu-btn-achievements" aria-label="Leaderboard">
           <svg viewBox="0 0 24 24" width="28" height="28" fill="#FFFFFF" style="filter: drop-shadow(0 2px 0 #01579B);"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V18H8v2h8v-2h-3v-2.1a5.01 5.01 0 0 0 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>
         </button>
-        <button class="menu-bottom-btn menu-btn-purple" id="menu-btn-instructions" aria-label="Hướng Dẫn">
+        <button class="menu-bottom-btn menu-btn-purple" id="menu-btn-instructions" aria-label="How to Play">
           <span style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 32px; font-weight: 900; color: #FFFFFF; text-shadow: 0 2.5px 0 #4A148C; line-height: 1;">?</span>
         </button>
-        <button class="menu-bottom-btn menu-btn-blue" id="menu-btn-settings" aria-label="Cài Đặt">
+        <button class="menu-bottom-btn menu-btn-blue" id="menu-btn-settings" aria-label="Settings">
           <svg viewBox="0 0 24 24" width="28" height="28" fill="#FFFFFF" style="filter: drop-shadow(0 2px 0 #0D47A1);"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
         </button>
       </div>

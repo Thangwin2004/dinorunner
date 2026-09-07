@@ -1,5 +1,6 @@
 import { audio } from "./audio";
 import { winkGame } from "./integrations/wink/wink-adapter.js";
+import { i18n } from "./system/I18nManager.js";
 
 export const LOCAL_STORAGE_KEY = "bolacdauphong_dino_stats";
 
@@ -23,7 +24,7 @@ export function getEffectiveUser() {
 
   if (winkGame && winkGame.isAuthenticated) {
     return {
-      name: "Thành viên",
+      name: i18n.t("leaderboard.defaultMember"),
       avatar: "/assest/image/imagenobackgrd/001_avatar_laclac.webp",
     };
   }
@@ -109,7 +110,7 @@ export function gameAlert(message) {
     const button = document.createElement("img");
     button.className = "game-alert-img-btn";
     button.src = "/assest/iconbtn/yes_btn.webp";
-    button.alt = "ĐỒNG Ý";
+    button.alt = i18n.t("actions.confirm");
 
     card.appendChild(text);
     card.appendChild(button);
@@ -162,12 +163,12 @@ export function gameConfirm(message) {
     const okButton = document.createElement("img");
     okButton.className = "game-alert-img-btn";
     okButton.src = "/assest/iconbtn/yes_btn.webp";
-    okButton.alt = "ĐỒNG Ý";
+    okButton.alt = i18n.t("actions.confirm");
 
     const cancelButton = document.createElement("img");
     cancelButton.className = "game-alert-img-btn";
     cancelButton.src = "/assest/iconbtn/close_btn.webp";
-    cancelButton.alt = "HỦY";
+    cancelButton.alt = i18n.t("actions.cancel");
 
     btnContainer.appendChild(okButton);
     btnContainer.appendChild(cancelButton);
@@ -252,8 +253,8 @@ export function getLeaderboardData() {
   const playerName = user
     ? user.name
     : winkGame?.isAuthenticated
-      ? "Thành viên"
-      : "Bạn (Khách)";
+      ? i18n.t("leaderboard.defaultMember")
+      : i18n.t("leaderboard.youGuest");
   const playerAvatar =
     user?.avatar ||
     window.selectedAvatarUrl ||
@@ -287,7 +288,9 @@ export async function fetchLeaderboardData() {
         name:
           item.displayName ||
           item.name ||
-          `Thành viên #${item.rank || idx + 1}`,
+          i18n.t("leaderboard.defaultMemberNumber", {
+            rank: item.rank || idx + 1,
+          }),
         score: item.score || 0,
         avatar:
           item.avatarUrl ||
@@ -333,14 +336,24 @@ export const getColorStyle = (colorValue, label = "") => {
   const lbl = String(label).toUpperCase();
   if (
     lbl.includes("PLAY") ||
+    lbl.includes("REPLAY") ||
+    lbl.includes("START") ||
+    lbl.includes("NEXT") ||
+    lbl.includes("DOUBLE") ||
+    lbl.includes("GOT IT") ||
     lbl.includes("BẮT ĐẦU") ||
     lbl.includes("CHƠI LẠI") ||
     lbl.includes("NÚT CHƠI") ||
     lbl.includes("CỬA TIẾP") ||
-    lbl.includes("NHÂN ĐÔI")
+    lbl.includes("NHÂN ĐÔI") ||
+    lbl.includes("ĐÃ HIỂU")
   )
     return "green";
   if (
+    lbl.includes("CONTINUE") ||
+    lbl.includes("REVIVE") ||
+    lbl.includes("CHARACTER") ||
+    lbl.includes("SELECT") ||
     lbl.includes("TIẾP TỤC") ||
     lbl.includes("HỒI SINH") ||
     lbl.includes("TIẾP") ||
@@ -349,14 +362,23 @@ export const getColorStyle = (colorValue, label = "") => {
   )
     return "yellow";
   if (
-    lbl.includes("QUAY LẠI") ||
     lbl.includes("BACK") ||
+    lbl.includes("HOME") ||
+    lbl.includes("CONFIRM") ||
+    lbl.includes("LEADERBOARD") ||
+    lbl.includes("QUAY LẠI") ||
     lbl.includes("TRANG CHỦ") ||
     lbl.includes("ĐỒNG Ý") ||
     lbl.includes("BẢNG VÀNG")
   )
     return "blue";
-  if (lbl.includes("XÓA") || lbl.includes("RESET") || lbl.includes("HỦY"))
+  if (
+    lbl.includes("DELETE") ||
+    lbl.includes("RESET") ||
+    lbl.includes("CANCEL") ||
+    lbl.includes("XÓA") ||
+    lbl.includes("HỦY")
+  )
     return "red";
   if (lbl.includes("GOOGLE")) return "yellow";
   return "yellow";

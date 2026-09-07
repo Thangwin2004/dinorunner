@@ -610,7 +610,7 @@ export class GameController extends Container {
     });
 
     this.menuTitleText = new Text({
-      text: "CÁO NHỎ PHIÊU LƯU KÝ",
+      text: i18n.t("game.title").replace("\n", " "),
       style: new TextStyle({
         fontFamily: "Baloo 2",
         fontSize: 42,
@@ -658,9 +658,9 @@ export class GameController extends Container {
     this.menuSubtitleText.anchor.set(0.5);
     this.mainMenuContainer.addChild(this.menuSubtitleText);
 
-    // 🏆 KỶ LỤC ĐIỂM
+    // 🏆 HIGH SCORE
     this.menuHighScoreText = new Text({
-      text: `🏆 KỶ LỤC ĐIỂM: ${this.highScore}`,
+      text: `🏆 ${i18n.t("menu.highScore", { score: this.highScore })}`,
       style: new TextStyle({
         fontFamily: "Be Vietnam Pro",
         fontSize: 28,
@@ -687,7 +687,7 @@ export class GameController extends Container {
     this.menuHighScoreText.anchor.set(0.5);
     this.mainMenuContainer.addChild(this.menuHighScoreText);
 
-    this.playBtn = this.create3DButton("CHƠI NGAY", 220, 44, () => {
+    this.playBtn = this.create3DButton(i18n.t("menu.play"), 220, 44, () => {
       this.switchState("PLAYING");
     });
     this.mainMenuContainer.addChild(this.playBtn);
@@ -717,7 +717,7 @@ export class GameController extends Container {
     // 2. GAMEPLAY SCREEN
     // ==========================================
     this.scoreText = new Text({
-      text: "ĐIỂM: 0",
+      text: i18n.t("hud.score", { score: 0 }),
       style: new TextStyle({
         fontFamily: "Be Vietnam Pro",
         fontSize: 28,
@@ -745,7 +745,7 @@ export class GameController extends Container {
     this.gamePlayContainer.addChild(this.scoreText);
 
     this.highScoreText = new Text({
-      text: "KỶ LỤC: 0",
+      text: i18n.t("hud.best", { score: 0 }),
       style: new TextStyle({
         fontFamily: "Be Vietnam Pro",
         fontSize: 18,
@@ -841,7 +841,7 @@ export class GameController extends Container {
     this.leaderboardCard.addChild(ribbon);
 
     const titleText = new Text({
-      text: "BẢNG VÀNG",
+      text: i18n.t("leaderboard.title"),
       style: new TextStyle({
         fontFamily: "Be Vietnam Pro",
         fontSize: 20,
@@ -865,7 +865,7 @@ export class GameController extends Container {
       stroke: { color: "#F9A825", width: 3, join: "round" },
     });
     const lblRank = new Text({
-      text: "HẠNG",
+      text: i18n.t("leaderboard.rankHeader"),
       style: headerStyle,
       roundPixels: true,
     });
@@ -874,7 +874,7 @@ export class GameController extends Container {
     this.leaderboardCard.addChild(lblRank);
 
     const lblMember = new Text({
-      text: "THÀNH VIÊN",
+      text: i18n.t("leaderboard.playerHeader"),
       style: headerStyle,
       roundPixels: true,
     });
@@ -883,7 +883,7 @@ export class GameController extends Container {
     this.leaderboardCard.addChild(lblMember);
 
     const lblScore = new Text({
-      text: "KỶ LỤC",
+      text: i18n.t("leaderboard.scoreHeader"),
       style: headerStyle,
       roundPixels: true,
     });
@@ -1050,7 +1050,7 @@ export class GameController extends Container {
     this.settingsCard.addChild(this.settingsRibbon);
 
     this.settingsTitle = new Text({
-      text: "CÀI ĐẶT",
+      text: i18n.t("settings.title"),
       style: new TextStyle({
         fontFamily: "Be Vietnam Pro",
         fontSize: 22,
@@ -1072,7 +1072,7 @@ export class GameController extends Container {
 
     // Music row
     this.mainMusicRow = this.createToggleRow(
-      "🎵 Nhạc nền",
+      "🎵 " + i18n.t("settings.music"),
       -75,
       () => audio.musicMuted,
       () => {
@@ -1084,7 +1084,7 @@ export class GameController extends Container {
 
     // SFX row
     this.mainSfxRow = this.createToggleRow(
-      "🔊 Hiệu ứng",
+      "🔊 " + i18n.t("settings.sfx"),
       0,
       () => audio.sfxMuted,
       () => {
@@ -1095,7 +1095,7 @@ export class GameController extends Container {
     this.settingsCard.addChild(this.mainSfxRow);
 
     this.settingsVersionText = new Text({
-      text: "Phiên bản: 1.0.0",
+      text: i18n.t("settings.version"),
       style: {
         fontFamily: "Be Vietnam Pro",
         fontSize: 12,
@@ -1170,7 +1170,7 @@ export class GameController extends Container {
 
     // Title text inside ribbon
     const titleText = new Text({
-      text: "CÀI ĐẶT",
+      text: i18n.t("pause.title"),
       style: new TextStyle({
         fontFamily: "Be Vietnam Pro",
         fontSize: 22,
@@ -1183,10 +1183,11 @@ export class GameController extends Container {
     titleText.anchor.set(0.5);
     titleText.position.set(0, ribbonY);
     this.pauseCard.addChild(titleText);
+    this.pauseTitle = titleText;
 
     // Music row
     this.pauseMusicRow = this.createToggleRow(
-      "🎵 Nhạc nền",
+      "🎵 " + i18n.t("settings.music"),
       -70,
       () => audio.musicMuted,
       () => {
@@ -1198,7 +1199,7 @@ export class GameController extends Container {
 
     // SFX row
     this.pauseSfxRow = this.createToggleRow(
-      "🔊 Hiệu ứng",
+      "🔊 " + i18n.t("settings.sfx"),
       5,
       () => audio.sfxMuted,
       () => {
@@ -1295,7 +1296,7 @@ export class GameController extends Container {
     this.gameOverCard.addChild(ribbon);
 
     const title = new Text({
-      text: "TRÒ CHƠI KẾT THÚC",
+      text: i18n.t("gameover.title"),
       style: new TextStyle({
         fontFamily: "Be Vietnam Pro",
         fontSize: 20,
@@ -1309,6 +1310,7 @@ export class GameController extends Container {
     title.anchor.set(0.5);
     title.position.set(0, ribbonY);
     this.gameOverCard.addChild(title);
+    this.gameOverTitle = title;
 
     // Golden Emblem Graphic
     this.emblemG = new Graphics()
@@ -1338,7 +1340,7 @@ export class GameController extends Container {
     this.gameOverCard.addChild(this.newRecordBanner);
 
     const bannerText = new Text({
-      text: "KỶ LỤC MỚI!",
+      text: i18n.t("gameover.newRecord"),
       style: new TextStyle({
         fontFamily: "Be Vietnam Pro",
         fontSize: 14,
@@ -1392,7 +1394,7 @@ export class GameController extends Container {
 
     // Message / Highscore Comparison Text
     this.gameOverMsgText = new Text({
-      text: "KỶ LỤC CŨ: 0",
+      text: i18n.t("hud.best", { score: 0 }),
       style: new TextStyle({
         fontFamily: "Be Vietnam Pro",
         fontSize: 16,
@@ -1457,8 +1459,8 @@ export class GameController extends Container {
         saveStats(stats);
 
         this.gameOverScoreText.text = `${newScore} (X2!)`;
-        this.highScoreText.text = `KỶ LỤC: ${this.highScore}`;
-        this.gameOverMsgText.text = "KỶ LỤC MỚI! HẠNG #1";
+        this.highScoreText.text = i18n.t("hud.best", { score: this.highScore });
+        this.gameOverMsgText.text = i18n.t("gameover.newRecord");
         this.doubleBtn.visible = false;
       }
     });
@@ -1658,7 +1660,7 @@ export class GameController extends Container {
     this.charSelectCard.addChild(this.charRibbon);
 
     this.charTitle = new Text({
-      text: "CHỌN NHÂN VẬT",
+      text: i18n.t("charSelect.title"),
       style: new TextStyle({
         fontFamily: "Be Vietnam Pro",
         fontSize: 22,
@@ -1691,8 +1693,9 @@ export class GameController extends Container {
     });
     this.charSelectCard.addChild(this.charPrevBtn);
 
+    const initialPageWord = i18n.currentLanguage === "en" ? "PAGE" : "TRANG";
     this.charPageText = new Text({
-      text: "TRANG 1/4",
+      text: `${initialPageWord} 1/4`,
       style: new TextStyle({
         fontFamily: "Be Vietnam Pro",
         fontSize: 18,
@@ -1812,7 +1815,7 @@ export class GameController extends Container {
     this.instructionsCard.addChild(this.instructionsRibbon);
 
     this.instructionsTitle = new Text({
-      text: "HƯỚNG DẪN CHƠI",
+      text: i18n.t("instructions.title"),
       style: new TextStyle({
         fontFamily: "Be Vietnam Pro",
         fontSize: 22,
@@ -1827,21 +1830,61 @@ export class GameController extends Container {
     this.instructionsCard.addChild(this.instructionsTitle);
 
     // Column 1: Tránh Né (Left column)
-    const leftItems = [
-      { label: "Lốp xe (Nhảy né)", sprite: "prop_lopxe" },
-      { label: "Hàng rào (Nhảy né)", sprite: "prop_hangrao" },
-      { label: "Bàn nhựa (Nhảy né)", sprite: "prop_bluetable" },
-      { label: "Bù nhìn (Nhảy né)", sprite: "prop_bunhin" },
-      { label: "Dép tổ ong (Cúi né)", sprite: "prop_deptoong" },
-      { label: "Ghế đỏ bay (Cúi né)", sprite: "prop_redchair" },
+    this.instructionsLeftItemsData = [
+      {
+        key: "instructions.tire",
+        tagKey: "instructions.tagJump",
+        sprite: "prop_lopxe",
+      },
+      {
+        key: "instructions.fence",
+        tagKey: "instructions.tagJump",
+        sprite: "prop_hangrao",
+      },
+      {
+        key: "instructions.table",
+        tagKey: "instructions.tagJump",
+        sprite: "prop_bluetable",
+      },
+      {
+        key: "instructions.scarecrow",
+        tagKey: "instructions.tagJump",
+        sprite: "prop_bunhin",
+      },
+      {
+        key: "instructions.slipper",
+        tagKey: "instructions.tagDuck",
+        sprite: "prop_deptoong",
+      },
+      {
+        key: "instructions.chair",
+        tagKey: "instructions.tagDuck",
+        sprite: "prop_redchair",
+      },
     ];
 
     // Column 2: Vật phẩm & Khiên (Right column)
-    const rightItems = [
-      { label: "Bánh Chưng (+Điểm)", sprite: "prop_banhchung" },
-      { label: "Bánh Mì (+Điểm)", sprite: "prop_banhmi" },
-      { label: "Nước Ngọt (+Điểm)", sprite: "prop_reddrink" },
-      { label: "Khiên Bất Tử (2 giây)", sprite: "shield" },
+    this.instructionsRightItemsData = [
+      {
+        key: "instructions.banhChung",
+        tagKey: "instructions.tagBonus",
+        sprite: "prop_banhchung",
+      },
+      {
+        key: "instructions.banhMi",
+        tagKey: "instructions.tagBonus",
+        sprite: "prop_banhmi",
+      },
+      {
+        key: "instructions.drink",
+        tagKey: "instructions.tagBonus",
+        sprite: "prop_reddrink",
+      },
+      {
+        key: "instructions.shield",
+        tagKey: "instructions.tagShield",
+        sprite: "shield",
+      },
     ];
 
     const createGridRows = (itemsData) => {
@@ -1849,6 +1892,7 @@ export class GameController extends Container {
         const row = new Container();
         this.instructionsCard.addChild(row);
 
+        row.itemData = data;
         row.iconBg = new Graphics();
         row.addChild(row.iconBg);
 
@@ -1862,7 +1906,7 @@ export class GameController extends Container {
         }
 
         row.labelText = new Text({
-          text: data.label,
+          text: `${i18n.t(data.key)} (${i18n.t(data.tagKey)})`,
           style: new TextStyle({
             fontFamily: "Be Vietnam Pro",
             fontWeight: "800",
@@ -1878,12 +1922,12 @@ export class GameController extends Container {
       });
     };
 
-    this.leftRows = createGridRows(leftItems);
-    this.rightRows = createGridRows(rightItems);
+    this.leftRows = createGridRows(this.instructionsLeftItemsData);
+    this.rightRows = createGridRows(this.instructionsRightItemsData);
 
     // Bottom Action button: "ĐÃ HIỂU"
     this.instructionsUnderstandBtn = this.create3DButton(
-      "ĐÃ HIỂU",
+      i18n.t("instructions.gotIt"),
       160,
       38,
       () => {
@@ -1959,7 +2003,8 @@ export class GameController extends Container {
       });
     }
 
-    this.charPageText.text = `TRANG ${this.charSelectPage + 1}/4`;
+    const pageWord = i18n.currentLanguage === "en" ? "PAGE" : "TRANG";
+    this.charPageText.text = `${pageWord} ${this.charSelectPage + 1}/4`;
 
     const cols = this._charCols || 4;
     const isMobile3Col = cols === 3;
@@ -2290,13 +2335,14 @@ export class GameController extends Container {
     const currentIntScore = Math.floor(this.score);
     if (currentIntScore !== this.lastIntScore) {
       this.lastIntScore = currentIntScore;
-      this.scoreText.text = `ĐIỂM: ${currentIntScore}`;
+      this.scoreText.text = i18n.t("hud.score", { score: currentIntScore });
       const domScoreVal = document.getElementById("hud-score-val");
       if (domScoreVal) {
         domScoreVal.innerText = `${currentIntScore}`;
       } else {
         const domScore = document.getElementById("hud-score");
-        if (domScore) domScore.innerText = `ĐIỂM: ${currentIntScore}`;
+        if (domScore)
+          domScore.innerText = i18n.t("hud.score", { score: currentIntScore });
       }
     }
 
@@ -2757,7 +2803,7 @@ export class GameController extends Container {
     saveStats(stats);
 
     if (isNewRecord) {
-      this.gameOverMsgText.text = "👑 KỶ LỤC MỚI CỦA CÁO NHỎ! 👑";
+      this.gameOverMsgText.text = i18n.t("gameover.newRecord");
       this.gameOverMsgText.style.fill = 0xffea00;
       this.gameOverMsgText.visible = true;
     } else {
@@ -2782,7 +2828,7 @@ export class GameController extends Container {
 
     if (data.length === 0) {
       const emptyText = new Text({
-        text: "Chưa có thành tích.\nHãy chơi để thiết lập kỷ lục đầu tiên.",
+        text: i18n.t("leaderboard.empty").replace(/<br\s*\/?>/gi, "\n"),
         style: new TextStyle({
           fontFamily: "Be Vietnam Pro",
           fontSize: 16,
@@ -2961,8 +3007,9 @@ export class GameController extends Container {
           console.warn("Failed to load footer avatar:", playerEntry.avatar, e),
         );
 
+      const youSuffix = i18n.currentLanguage === "en" ? "(You)" : "(Bạn)";
       const nameText = new Text({
-        text: `${playerEntry.name} (Bạn)`,
+        text: `${playerEntry.name} ${youSuffix}`,
         style: new TextStyle({
           fontFamily: "Be Vietnam Pro",
           fontSize: 13,
@@ -3788,7 +3835,7 @@ export class GameController extends Container {
   updateUserUI() {
     // Load stats for current user
     this.highScore = getStats().highScore;
-    this.highScoreText.text = `KỶ LỤC: ${this.highScore}`;
+    this.highScoreText.text = i18n.t("hud.best", { score: this.highScore });
     this.syncDOMScoreAndHighScore();
 
     // Re-draw achievements list if open
@@ -3834,13 +3881,13 @@ export class GameController extends Container {
 
   syncLanguage() {
     // 1. DOM Main Menu Title Signboard
-    const titleParts = (i18n.t("game.title") || "CÁO NHỎ\nPHIÊU LƯU KÝ").split(
+    const titleParts = (i18n.t("game.title") || "LITTLE FOX\nADVENTURE").split(
       "\n",
     );
     const line1 = document.querySelector(".title-line-1");
-    if (line1) line1.textContent = titleParts[0] || "CÁO NHỎ";
+    if (line1) line1.textContent = titleParts[0] || "LITTLE FOX";
     const line2 = document.querySelector(".title-line-2");
-    if (line2) line2.textContent = titleParts[1] || "PHIÊU LƯU KÝ";
+    if (line2) line2.textContent = titleParts[1] || "ADVENTURE";
 
     // 2. DOM HUD labels
     const hudScoreLabel = document.querySelector("#hud-score .hud-badge-label");
@@ -3892,8 +3939,26 @@ export class GameController extends Container {
     ) {
       this.instructionsUnderstandBtn.setLabelText(i18n.t("instructions.gotIt"));
     }
+    if (this.leftRows) {
+      this.leftRows.forEach((row) => {
+        if (row.labelText && row.itemData) {
+          row.labelText.text = `${i18n.t(row.itemData.key)} (${i18n.t(row.itemData.tagKey)})`;
+        }
+      });
+    }
+    if (this.rightRows) {
+      this.rightRows.forEach((row) => {
+        if (row.labelText && row.itemData) {
+          row.labelText.text = `${i18n.t(row.itemData.key)} (${i18n.t(row.itemData.tagKey)})`;
+        }
+      });
+    }
     if (this.charTitle && !this.charTitle.destroyed) {
       this.charTitle.text = i18n.t("charSelect.title");
+    }
+    if (this.charPageText && !this.charPageText.destroyed) {
+      const pageWord = i18n.currentLanguage === "en" ? "PAGE" : "TRANG";
+      this.charPageText.text = `${pageWord} ${this.charSelectPage + 1}/4`;
     }
     if (this.gameOverTitle && !this.gameOverTitle.destroyed) {
       this.gameOverTitle.text = i18n.t("gameover.title");
@@ -4012,24 +4077,26 @@ export class GameController extends Container {
           width: 100%;
         }
         .game-settings-row {
+          width: 100%;
+          height: 64px;
+          border-radius: 14px;
           background: #ffffff;
-          border: 3.5px solid #FFF9C4;
-          border-radius: 15px;
-          padding: 10px 18px;
+          border: 2.5px solid #ffe082;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
           display: flex;
           justify-content: space-between;
           align-items: center;
+          padding: 0 16px;
           box-sizing: border-box;
-          height: 62px;
+          margin-bottom: 12px;
         }
         .game-settings-label {
-          font-family:Be Vietnam Pro, sans-serif;
-          font-size: 20px;
-          font-weight: 700;
-          color: #4E342E;
-          display: flex;
-          align-items: center;
-          gap: 8px;
+          font-family: 'Be Vietnam Pro', sans-serif;
+          font-size: 17px;
+          font-weight: bold;
+          color: #47363b;
+          letter-spacing: 0.8px;
+          white-space: nowrap;
         }
         .game-settings-language-row {
           width: 100%;
@@ -4040,35 +4107,38 @@ export class GameController extends Container {
           align-items: center;
           justify-content: space-between;
           gap: 16px;
-          border: 3px solid #fff;
-          border-radius: 12px;
-          background: #fbfaf5;
+          border: 2.5px solid #ffe082;
+          border-radius: 14px;
+          background: #ffffff;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
           margin-bottom: 12px;
         }
         .game-settings-language-row .game-settings-label,
         .game-settings-language-row span {
           color: #47363b;
+          font-family: 'Be Vietnam Pro', sans-serif;
           font-size: 17px;
           letter-spacing: 0.8px;
           font-weight: bold;
+          white-space: nowrap;
         }
         .game-settings-language-select {
-          width: 126px;
+          width: 136px;
           height: 42px;
-          flex: 0 0 126px;
-          padding: 0 28px 0 14px;
+          flex: 0 0 136px;
+          padding: 0 32px 0 16px;
           appearance: none;
           -webkit-appearance: none;
-          border: 3px solid #ffffff;
+          border: 2px solid #72d58f;
           border-radius: 21px;
           color: #145a27;
-          background-color: #ffffff;
+          background-color: #fbfaf5;
           background-image:
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M2 2l5 5 5-5' fill='none' stroke='%23145a27' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
-            linear-gradient(180deg, #ffffff 0%, #edf7ef 100%);
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M2 2l5 5 5-5' fill='none' stroke='%2325a653' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+            linear-gradient(180deg, #fffef9 0%, #edf7ef 100%);
           background-repeat: no-repeat;
           background-position:
-            right 10px center,
+            right 12px center,
             center;
           background-size:
             14px 9px,
@@ -4081,11 +4151,11 @@ export class GameController extends Container {
           outline: none;
           box-shadow:
             inset 0 2px 0 rgba(255, 255, 255, 0.9),
-            0 4px 0 #1b8a43,
-            0 6px 8px rgba(36, 24, 42, 0.14);
+            0 3px 0 #2b9b50,
+            0 6px 10px rgba(36, 24, 42, 0.12);
           transition:
             filter 0.12s ease,
-            transform 0.1s ease,
+            border-color 0.12s ease,
             box-shadow 0.1s ease;
           -webkit-tap-highlight-color: transparent;
         }
@@ -4102,16 +4172,13 @@ export class GameController extends Container {
           transform: translateY(2px);
           box-shadow:
             inset 0 2px 0 rgba(255, 255, 255, 0.9),
-            0 2px 0 #1b8a43,
-            0 3px 5px rgba(36, 24, 42, 0.14);
+            0 1px 0 #2b9b50,
+            0 3px 5px rgba(36, 24, 42, 0.12);
         }
         .game-settings-language-select:focus,
         .game-settings-language-select:focus-visible {
           outline: none;
-          box-shadow:
-            inset 0 2px 0 rgba(255, 255, 255, 0.9),
-            0 4px 0 #1b8a43,
-            0 6px 8px rgba(36, 24, 42, 0.14);
+          border-color: #25a653;
         }
         .game-settings-toggle-btn {
           width: 68px;
