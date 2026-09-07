@@ -3,8 +3,8 @@ const SUPPORTED_LANGUAGES = Object.freeze(["en", "vi"]);
 
 const messages = {
   en: {
-    "game.title": "PEANUT\nDINO RUNNER",
-    "game.documentTitle": "Peanut Tribe Dino Runner",
+    "game.title": "LITTLE FOX\nADVENTURE",
+    "game.documentTitle": "Little Fox Adventure - Dino Runner",
     "loading.progress": "LOADING {progress}%",
 
     "menu.play": "PLAY NOW",
@@ -111,8 +111,8 @@ const messages = {
     "actions.skip": "No, thanks",
   },
   vi: {
-    "game.title": "BƠ LẠC\nTHIẾT CƯỚC",
-    "game.documentTitle": "Bơ Lạc Thiết Cước - Dino Runner",
+    "game.title": "CÁO NHỎ\nPHIÊU LƯU KÝ",
+    "game.documentTitle": "Cáo Nhỏ Phiêu Lưu Ký",
     "loading.progress": "ĐANG TẢI {progress}%",
 
     "menu.play": "CHƠI NGAY",

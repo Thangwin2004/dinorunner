@@ -610,7 +610,7 @@ export class GameController extends Container {
     });
 
     this.menuTitleText = new Text({
-      text: "BỘ LẠC PHIÊU LƯU KÝ",
+      text: "CÁO NHỎ PHIÊU LƯU KÝ",
       style: new TextStyle({
         fontFamily: "Baloo 2",
         fontSize: 42,
@@ -2757,7 +2757,7 @@ export class GameController extends Container {
     saveStats(stats);
 
     if (isNewRecord) {
-      this.gameOverMsgText.text = "👑 KỶ LỤC MỚI CỦA BỘ LẠC! 👑";
+      this.gameOverMsgText.text = "👑 KỶ LỤC MỚI CỦA CÁO NHỎ! 👑";
       this.gameOverMsgText.style.fill = 0xffea00;
       this.gameOverMsgText.visible = true;
     } else {
@@ -3834,13 +3834,13 @@ export class GameController extends Container {
 
   syncLanguage() {
     // 1. DOM Main Menu Title Signboard
-    const titleParts = (i18n.t("game.title") || "BƠ LẠC\nTHIẾT CƯỚC").split(
+    const titleParts = (i18n.t("game.title") || "CÁO NHỎ\nPHIÊU LƯU KÝ").split(
       "\n",
     );
     const line1 = document.querySelector(".title-line-1");
-    if (line1) line1.textContent = titleParts[0] || "BƠ LẠC";
+    if (line1) line1.textContent = titleParts[0] || "CÁO NHỎ";
     const line2 = document.querySelector(".title-line-2");
-    if (line2) line2.textContent = titleParts[1] || "THIẾT CƯỚC";
+    if (line2) line2.textContent = titleParts[1] || "PHIÊU LƯU KÝ";
 
     // 2. DOM HUD labels
     const hudScoreLabel = document.querySelector("#hud-score .hud-badge-label");
