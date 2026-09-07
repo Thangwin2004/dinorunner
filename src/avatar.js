@@ -235,6 +235,177 @@ export function createFull2DSprite(tex, url, targetHeight = 110) {
   return sp;
 }
 
+// A purpose-built runner rig. Each limb is a stable vector object rather than
+// a cropped avatar image, so gameplay can animate an actual run/jump/slide.
+export function createRunnerRig() {
+  const rig = new Container();
+  const outline = 0x16413d;
+  const skin = 0x35c98c;
+  const belly = 0xbef2c6;
+  const spine = 0x138c68;
+
+  const makeLimb = (color, width, height) => {
+    const limb = new Container();
+    limb.addChild(
+      new Graphics()
+        .roundRect(-width / 2, 0, width, height, width / 2)
+        .fill(color)
+        .stroke({ color: outline, width: 3 }),
+    );
+    limb.addChild(
+      new Graphics()
+        .ellipse(width * 0.25, height - 2, width * 0.78, width * 0.43)
+        .fill(color)
+        .stroke({ color: outline, width: 3 }),
+    );
+    return limb;
+  };
+
+  rig.tail = new Container();
+  rig.backArm = makeLimb(0x259d75, 11, 21);
+  rig.backLeg = makeLimb(spine, 18, 37);
+  rig.body = new Container();
+  rig.frontLeg = makeLimb(skin, 18, 37);
+  rig.frontArm = makeLimb(skin, 11, 21);
+  rig.head = new Container();
+
+  rig.backArm.position.set(13, -55);
+  rig.backLeg.position.set(-10, -28);
+  rig.frontLeg.position.set(11, -28);
+  rig.frontArm.position.set(28, -54);
+  rig.tail.position.set(-31, -47);
+
+  rig.tail.addChild(
+    new Graphics()
+      .moveTo(0, 0)
+      .quadraticCurveTo(-35, 2, -58, 24)
+      .quadraticCurveTo(-28, 23, -4, 13)
+      .closePath()
+      .fill(spine)
+      .stroke({ color: outline, width: 4, join: "round" }),
+  );
+
+  rig.body.addChild(
+    new Graphics()
+      .ellipse(0, -47, 39, 23)
+      .fill(skin)
+      .stroke({ color: outline, width: 4 }),
+  );
+  rig.body.addChild(new Graphics().ellipse(11, -43, 22, 15).fill(belly));
+  rig.body.addChild(
+    new Graphics()
+      .poly([-23, -61, -14, -78, -4, -62], true)
+      .poly([-5, -64, 5, -82, 14, -63], true)
+      .poly([15, -61, 24, -75, 31, -56], true)
+      .fill(spine)
+      .stroke({ color: outline, width: 2.5, join: "round" }),
+  );
+
+  // A clean side profile gives an immediate, friendly forward direction.
+  rig.head.addChild(
+    new Graphics()
+      .ellipse(5, 0, 31, 27)
+      .fill(skin)
+      .stroke({ color: outline, width: 4 }),
+  );
+  rig.head.addChild(
+    new Graphics()
+      .ellipse(29, 7, 19, 14)
+      .fill(belly)
+      .stroke({ color: outline, width: 3 }),
+  );
+  rig.head.addChild(
+    new Graphics()
+      .circle(14, -8, 10)
+      .fill(0xffffff)
+      .stroke({ color: outline, width: 2.5 }),
+  );
+  rig.head.addChild(new Graphics().circle(16, -7, 4.4).fill(outline));
+  rig.head.addChild(new Graphics().circle(38, 4, 2.5).fill(outline));
+  rig.head.addChild(
+    new Graphics()
+      .arc(24, 13, 10, 0.15, Math.PI - 0.2)
+      .stroke({ color: outline, width: 2.5, cap: "round" }),
+  );
+  rig.head.addChild(
+    new Graphics()
+      .poly([-18, -17, -8, -33, 1, -20], true)
+      .fill(spine)
+      .stroke({ color: outline, width: 2.5, join: "round" }),
+  );
+  rig.head.position.set(29, -71);
+
+  rig.addChild(
+    rig.tail,
+    rig.backArm,
+    rig.backLeg,
+    rig.body,
+    rig.frontLeg,
+    rig.head,
+    rig.frontArm,
+  );
+  return rig;
+}
+
+export function animateRunnerRig(rig, phase, action = "run") {
+  if (!rig) return;
+  rig.position.set(0, 0);
+  rig.rotation = 0;
+  rig.scale.set(1);
+  rig.body.position.set(0, 0);
+  rig.body.rotation = 0;
+  rig.head.position.set(29, -71);
+  rig.head.rotation = 0;
+  rig.tail.position.set(-31, -47);
+  rig.tail.rotation = 0;
+  rig.backArm.position.set(13, -55);
+  rig.frontArm.position.set(28, -54);
+  rig.backLeg.position.set(-10, -28);
+  rig.frontLeg.position.set(11, -28);
+  rig.backArm.rotation = 0;
+  rig.frontArm.rotation = 0;
+  rig.backLeg.rotation = 0;
+  rig.frontLeg.rotation = 0;
+
+  const swing = Math.sin(phase);
+  const bounce = Math.abs(swing);
+  if (action === "jump") {
+    rig.rotation = -0.1;
+    rig.position.set(0, -4);
+    rig.scale.set(1.06, 0.96);
+    rig.backArm.rotation = -2.25;
+    rig.frontArm.rotation = -1.72;
+    rig.backLeg.rotation = -0.95;
+    rig.frontLeg.rotation = -0.48;
+    rig.head.rotation = 0.06;
+    rig.tail.rotation = 0.28;
+    return;
+  }
+  if (action === "slide") {
+    // Low duck for passing under obstacles. Keep one coherent silhouette and
+    // avoid rotating individual body parts into a broken, flattened pose.
+    rig.position.set(4, 1);
+    rig.scale.set(1.06, 0.7);
+    rig.head.rotation = -0.07;
+    rig.backArm.rotation = 0.42;
+    rig.frontArm.rotation = 0.5;
+    rig.backLeg.rotation = -0.18;
+    rig.frontLeg.rotation = 0.18;
+    rig.tail.rotation = -0.12;
+    return;
+  }
+
+  rig.rotation = 0;
+  rig.position.set(0, bounce * 3);
+  rig.scale.set(1 + bounce * 0.025, 1 - bounce * 0.045);
+  rig.backArm.rotation = -swing * 0.78;
+  rig.frontArm.rotation = swing * 0.78;
+  rig.backLeg.rotation = swing * 0.83;
+  rig.frontLeg.rotation = -swing * 0.83;
+  rig.body.rotation = swing * 0.045;
+  rig.head.rotation = -swing * 0.035;
+}
+
 export function updateSkeletalRigTexture(tex, url, rig) {
   if (rig.fullCharSprite) {
     rig.fullCharSprite.texture = tex;

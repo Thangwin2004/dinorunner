@@ -56,20 +56,45 @@ export function getCapabilities() {
 /**
  * Read the scoped game leaderboard.
  * @param {{ limit?: number, offset?: number }} [options]
- * @returns {Promise<{ entries: Array, total: number }>}
+ * @returns {Promise<{ entries: Array, total: number, me?: object|null }>}
  */
 export function getLeaderboard(options) {
   return Promise.resolve()
     .then(() => {
       const bridge = getWinkBridge();
       if (!bridge || !bridge.getCapabilities?.()?.getLeaderboard) {
-        return { entries: [], total: 0 };
+        return { entries: [], total: 0, me: null };
       }
       return bridge.getLeaderboard(options);
     })
     .catch((err) => {
       console.warn("[WinkBridge] getLeaderboard error:", err?.message || err);
-      return { entries: [], total: 0 };
+      return { entries: [], total: 0, me: null };
+    });
+}
+
+/**
+ * Read the personal best of the current player.
+ * @returns {Promise<{ me: object | null }>}
+ */
+export function getPersonalBest() {
+  return Promise.resolve()
+    .then(() => {
+      const bridge = getWinkBridge();
+      if (!bridge) return { me: null };
+      if (typeof bridge.getPersonalBest === "function") {
+        return bridge.getPersonalBest();
+      }
+      if (typeof bridge.getLeaderboard === "function") {
+        return bridge
+          .getLeaderboard({ limit: 1 })
+          .then((res) => ({ me: res?.me ?? null }));
+      }
+      return { me: null };
+    })
+    .catch((err) => {
+      console.warn("[WinkBridge] getPersonalBest error:", err?.message || err);
+      return { me: null };
     });
 }
 

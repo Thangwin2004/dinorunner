@@ -5,6 +5,7 @@ import {
   TextStyle,
   FillGradient,
   Sprite,
+  AnimatedSprite,
   TilingSprite,
   Assets,
 } from "pixi.js";
@@ -21,7 +22,6 @@ import {
 } from "./utils";
 
 import { winkGame } from "./integrations/wink/wink-adapter.js";
-
 import { AVATAR_BOUNDS, LEFT_FACING_AVATARS } from "./avatarData";
 
 import {
@@ -52,6 +52,10 @@ import {
   hideHTMLInstructions,
 } from "./domUI";
 
+const GROUND_RATIO = 0.84;
+const FOREGROUND_HILLS_HEIGHT_RATIO = 0.72;
+const SWIPE_DUCK_DURATION = 0.72;
+
 export class GameController extends Container {
   constructor(app) {
     super();
@@ -71,6 +75,8 @@ export class GameController extends Container {
     this.playerVy = 0;
     this.isJumping = false;
     this.isDucking = false;
+    this.duckInputHeld = false;
+    this.duckMinTime = 0;
 
     // Game objects
     this.obstacles = [];
@@ -102,7 +108,8 @@ export class GameController extends Container {
     this.bgOverlay = new Graphics();
     this.addChild(this.bgOverlay);
 
-    // Parallax Mountain Layers (Vietnamese Mountains)
+    // Legacy fallback graphics are kept empty; the lightweight texture layers
+    // below are used on every supported device.
     this.distantMountains = new Graphics();
     this.midMountains = new Graphics();
     this.closeMountains = new Graphics();
@@ -110,18 +117,7 @@ export class GameController extends Container {
     this.addChild(this.midMountains);
     this.addChild(this.closeMountains);
 
-    // Floating Clouds
     this.clouds = [];
-    for (let i = 0; i < 4; i++) {
-      const cloud = new Graphics();
-      this.addChild(cloud);
-      this.clouds.push(cloud);
-      cloud.x = Math.random() * 800;
-      cloud.y = 50 + Math.random() * 150;
-      cloud.speed = 0.1 + Math.random() * 0.15;
-      cloud.w = 90 + Math.random() * 30;
-      cloud.h = 40 + Math.random() * 15;
-    }
 
     // Screen containers
     this.mainMenuContainer = new Container();
@@ -147,10 +143,8 @@ export class GameController extends Container {
 
     // Sprite assets references
     this.playerSprite = null;
-    this.laclacTexture = null;
-    this.daulanTexture = null;
-    this.echxanhTexture = null;
-    this.duckTexture = null;
+    this.playerAnimations = null;
+    this.currentPlayerAnimation = null;
 
     // Start loading assets
     this.loadAssets();
@@ -161,6 +155,10 @@ export class GameController extends Container {
 
     // Set initial state
     this.switchState("MAIN_MENU");
+  }
+
+  getGroundLevel(screenHeight = this.app.screen.height || 600) {
+    return screenHeight * GROUND_RATIO;
   }
 
   create3DButton(text, width, height, onClick) {
@@ -436,76 +434,54 @@ export class GameController extends Container {
 
   async loadAssets() {
     try {
-      const [skyTex, hillsTex, roadTex] = await Promise.all([
+      const [skyTex, hillsTex] = await Promise.all([
         Assets.load("/assest/image/bg_parallax_sky_mountains.webp"),
         Assets.load("/assest/image/bg_parallax_hills_transparent.webp"),
-        Assets.load("/assest/image/bg_parallax_road_tile.webp"),
       ]);
 
       if (!this.destroyed) {
         const sw = this.app.screen.width || 800;
         const sh = this.app.screen.height || 600;
 
-        // Layer 0 (Back): Sky + clouds + mountains — top 55%
+        // Two composited textures are enough for the full scene. Keeping the
+        // dirt road as cached vector geometry avoids a third scrolling texture.
         if (skyTex) {
           this.parallaxSkySprite = new TilingSprite({
             texture: skyTex,
             width: sw,
-            height: sh * 0.55,
+            height: this.getGroundLevel(sh),
           });
           this.parallaxSkySprite.y = 0;
           this.parallaxContainer.addChild(this.parallaxSkySprite);
         }
 
-        // Layer 1 (Mid): Hills + trees — from 20% to 82%
+        // Foreground hills complete the scene without extra cloud Graphics.
         if (hillsTex) {
+          const groundLevel = this.getGroundLevel(sh);
+          const hillsHeight = groundLevel * FOREGROUND_HILLS_HEIGHT_RATIO;
           this.parallaxHillsSprite = new TilingSprite({
             texture: hillsTex,
             width: sw,
-            height: sh * 0.62,
+            height: hillsHeight,
           });
-          this.parallaxHillsSprite.y = sh * 0.2;
+          this.parallaxHillsSprite.y = groundLevel - hillsHeight;
           this.parallaxContainer.addChild(this.parallaxHillsSprite);
-        }
-
-        // Layer 2 (Front): Dirt road — from 78% to 100%
-        if (roadTex) {
-          this.groundRoadSprite = new TilingSprite({
-            texture: roadTex,
-            width: sw,
-            height: sh * 0.22,
-          });
-          this.groundRoadSprite.y = sh * 0.78;
-          this.parallaxContainer.addChild(this.groundRoadSprite);
         }
 
         this.resize();
       }
 
-      this.laclacTexture = await Assets.load(
-        "/assest/image/imagenobackgrd/001_avatar_laclac.webp",
-      );
-      this.daulanTexture = await Assets.load(
-        "/assest/image/imagenobackgrd/015_avatar_dauLan.webp",
-      );
-      this.echxanhTexture = await Assets.load(
-        "/assest/image/imagenobackgrd/010_avatar_echxanh1.webp",
-      );
-      this.duckTexture = await Assets.load(
-        "/assest/image/imagenobackgrd/003_avatar_duck.webp",
-      );
-
       // Preload obstacles and collectibles (multi-asset expansion)
       const assetPaths = [
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.webp",
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.webp",
+        "/assest/image/obstacles/stone.png",
+        "/assest/image/obstacles/crate.png",
+        "/assest/image/obstacles/rock-monster.png",
+        "/assest/image/obstacles/spikes.png",
         "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/redchair.webp",
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).webp",
         "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/DepToOng.webp",
+        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/BanhChungBanhTet (1).webp",
         "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/banhmi.webp",
         "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.webp",
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.webp",
-        "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.webp",
       ];
       for (const path of assetPaths) {
         await Assets.load(path);
@@ -513,64 +489,56 @@ export class GameController extends Container {
 
       if (this.destroyed) return;
 
-      // Initialize 2D Cartoon Runner Character
+      const animationFrameCounts = { run: 8, jump: 8, slide: 10 };
+      const loadAnimation = (action) =>
+        Promise.all(
+          Array.from({ length: animationFrameCounts[action] }, (_, index) =>
+            Assets.load(
+              `/assest/image/player_pet/${action}/${action}-${String(index + 1).padStart(2, "0")}.png`,
+            ),
+          ),
+        );
+      const [runFrames, jumpFrames, slideFrames] = await Promise.all([
+        loadAnimation("run"),
+        loadAnimation("jump"),
+        loadAnimation("slide"),
+      ]);
+
+      // Each action keeps the original art scale and a bottom-center anchor.
+      // The source canvases differ by pose, so never assign width/height here:
+      // doing so would make the character visibly grow when sliding.
       this.playerSprite = new Container();
 
-      let savedAvatar =
-        window.localStorage.getItem("selected_avatar_url") ||
-        "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
+      this.playerShadow = new Graphics()
+        .ellipse(0, 0, 72, 14)
+        .fill({ color: 0x3f2a22, alpha: 0.3 });
+      this.playerShadow.position.set(0, 2);
+      this.playerSprite.addChild(this.playerShadow);
 
-      if (typeof savedAvatar === "string") {
-        savedAvatar = savedAvatar.replace(/\.png$/i, ".webp");
-        if (
-          savedAvatar.startsWith("http://") ||
-          savedAvatar.startsWith("https://")
-        ) {
-          try {
-            savedAvatar = new window.URL(savedAvatar).pathname;
-          } catch {
-            savedAvatar = "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
-          }
-        }
-        if (!savedAvatar.startsWith("/assest/image/imagenobackgrd/")) {
-          savedAvatar = "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
-        }
-      } else {
-        savedAvatar = "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
-      }
+      const createAnimation = (frames, animationSpeed, loop = true) => {
+        const animation = new AnimatedSprite(frames);
+        animation.anchor.set(0.5, 1);
+        animation.animationSpeed = animationSpeed;
+        animation.loop = loop;
+        animation.visible = false;
+        return animation;
+      };
 
-      window.selectedAvatarUrl = savedAvatar;
-      window.localStorage.setItem("selected_avatar_url", savedAvatar);
-
-      let avatarTex;
-      try {
-        avatarTex = await Assets.load(savedAvatar);
-      } catch (loadErr) {
-        console.warn(
-          `Failed to load avatar ${savedAvatar}, falling back to default:`,
-          loadErr,
-        );
-        savedAvatar = "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
-        window.selectedAvatarUrl = savedAvatar;
-        window.localStorage.setItem("selected_avatar_url", savedAvatar);
-        avatarTex = await Assets.load(savedAvatar);
-      }
-      this.playerBody = this.createSkeletalPart(avatarTex, "body", savedAvatar);
-      this.playerHead = this.createSkeletalPart(avatarTex, "head", savedAvatar);
-      this.leftArm = this.createSkeletalPart(avatarTex, "arm", savedAvatar);
-      this.rightArm = this.createSkeletalPart(avatarTex, "arm", savedAvatar);
-      this.leftLeg = this.createSkeletalPart(avatarTex, "leg", savedAvatar);
-      this.rightLeg = this.createSkeletalPart(avatarTex, "leg", savedAvatar);
-
-      // Z-Order layering
-      this.playerSprite.addChild(this.leftArm);
-      this.playerSprite.addChild(this.leftLeg);
-      this.playerSprite.addChild(this.playerBody);
-      this.playerSprite.addChild(this.rightLeg);
-      this.playerSprite.addChild(this.playerHead);
-      this.playerSprite.addChild(this.rightArm);
+      this.playerAnimations = {
+        // The authored cycles stay readable at 6–7 fps instead of flickering.
+        run: createAnimation(runFrames, 0.11),
+        jump: createAnimation(jumpFrames, 0.16, false),
+        slide: createAnimation(slideFrames, 0.1),
+      };
+      Object.values(this.playerAnimations).forEach((animation) => {
+        this.playerSprite.addChild(animation);
+      });
+      this.setPlayerAnimation("run");
 
       this.playerShieldGraphics = new Graphics();
+      this.playerShieldGraphics
+        .circle(0, -122, 145)
+        .stroke({ width: 3, color: 0x81d4fa, alpha: 0.82 });
       this.playerSprite.addChild(this.playerShieldGraphics);
 
       this.gamePlayContainer.addChild(this.playerSprite);
@@ -579,6 +547,19 @@ export class GameController extends Container {
     } catch (e) {
       console.error("Error loading assets:", e);
     }
+  }
+
+  setPlayerAnimation(action) {
+    const nextAnimation = this.playerAnimations?.[action];
+    if (!nextAnimation || this.currentPlayerAnimation === action) return;
+
+    Object.values(this.playerAnimations).forEach((animation) => {
+      animation.visible = animation === nextAnimation;
+      if (animation !== nextAnimation) animation.stop();
+    });
+
+    nextAnimation.gotoAndPlay(0);
+    this.currentPlayerAnimation = action;
   }
 
   setupUI() {
@@ -1491,11 +1472,13 @@ export class GameController extends Container {
     audio.stopGameOver();
     this.isJumping = false;
     this.isDucking = false;
+    this.duckInputHeld = false;
+    this.duckMinTime = 0;
     this.playerVy = 0;
 
     // Position player firmly on the ground level
     const sh = this.app.screen.height || 600;
-    this.playerY = sh * 0.78;
+    this.playerY = this.getGroundLevel(sh);
 
     // Clean obstacles near the player to prevent instant death
     this.obstacles.forEach((obs) => {
@@ -1518,7 +1501,7 @@ export class GameController extends Container {
     const sw = this.app.screen.width;
     const sh = this.app.screen.height;
     const scale = Math.min(1.0, sw / 450, sh / 650);
-    const groundLevel = sh * 0.78;
+    const groundLevel = this.getGroundLevel(sh);
 
     this.dustPool = this.dustPool || [];
     let dust;
@@ -2095,16 +2078,9 @@ export class GameController extends Container {
     if (menuOverlay) {
       menuOverlay.style.display = newState === "MAIN_MENU" ? "flex" : "none";
       if (newState === "MAIN_MENU") {
-        const rawAvatar =
-          window.localStorage.getItem("selected_avatar_url") ||
-          "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
-        const activeAvatar =
-          typeof rawAvatar === "string"
-            ? rawAvatar.replace(/\.png$/i, ".webp")
-            : "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
         const menuAvatarImg = document.getElementById("menu-avatar-img");
         if (menuAvatarImg) {
-          menuAvatarImg.src = activeAvatar;
+          menuAvatarImg.src = "/assest/image/player_pet/run/run-01.png";
         }
       }
     }
@@ -2225,10 +2201,16 @@ export class GameController extends Container {
     this.playerVy = 0;
     this.isJumping = false;
     this.isDucking = false;
+    this.duckInputHeld = false;
+    this.duckMinTime = 0;
     this.lastMilestoneScore = 0;
 
+    // Begin every new round from the first authored run frame.
+    this.currentPlayerAnimation = null;
+    this.setPlayerAnimation("run");
+
     const sh = this.app.screen.height || 600;
-    this.playerY = sh * 0.78;
+    this.playerY = this.getGroundLevel(sh);
 
     // ── Wink: start a new round ──
     this._winkRound = winkGame.startRound();
@@ -2248,7 +2230,6 @@ export class GameController extends Container {
 
   update(ticker) {
     const elapsed = ticker.deltaTime;
-    const sw = this.app.screen.width;
 
     // Determine scrolling speed: full speed in-game, ambient speed on Main Menu, frozen (0) on popups/modals
     let activeScrollSpeed = 0;
@@ -2260,41 +2241,17 @@ export class GameController extends Container {
       activeScrollSpeed = 0; // Freeze background when popup/modal is open
     }
 
-    // Background clouds drift (only drift when not in popups/modals)
-    if (activeScrollSpeed > 0) {
-      this.clouds.forEach((cloud) => {
-        cloud.x -= cloud.speed * elapsed;
-        if (cloud.x + cloud.w < 0) {
-          cloud.x = sw + 50;
-          cloud.y = 50 + Math.random() * 150;
-        }
-      });
-    }
-
-    // Multi-Layer Parallax Background Endless Horizontal Scrolling
+    // Two texture layers provide enough depth while keeping draw calls and
+    // texture memory low on mobile devices.
     if (activeScrollSpeed > 0) {
       if (this.parallaxSkySprite && this.parallaxSkySprite.tilePosition) {
         this.parallaxSkySprite.tilePosition.x -=
-          activeScrollSpeed * elapsed * 0.08;
+          activeScrollSpeed * elapsed * 0.035;
       }
       if (this.parallaxHillsSprite && this.parallaxHillsSprite.tilePosition) {
         this.parallaxHillsSprite.tilePosition.x -=
-          activeScrollSpeed * elapsed * 0.35;
+          activeScrollSpeed * elapsed * 0.22;
       }
-      if (this.groundRoadSprite && this.groundRoadSprite.tilePosition) {
-        this.groundRoadSprite.tilePosition.x -=
-          activeScrollSpeed * elapsed * 1.0;
-      }
-    }
-
-    if (this.gameState === "PLAYING") {
-      this.distX = (this.distX || 0) + 0.05 * elapsed;
-      this.midX = (this.midX || 0) + 0.2 * elapsed;
-      this.closeX = (this.closeX || 0) + 0.6 * elapsed;
-
-      this.distantMountains.x = -(this.distX % sw);
-      this.midMountains.x = -(this.midX % sw);
-      this.closeMountains.x = -(this.closeX % sw);
     }
 
     if (this.gameState === "PLAYING" && !this.isAdShowing) {
@@ -2304,6 +2261,15 @@ export class GameController extends Container {
 
   updateGameplay(elapsed) {
     this.gameTime += elapsed / 60; // elapsed is around 1 per frame (60fps)
+
+    // A mobile swipe is a gesture, not a held pointer. Keep the slide active
+    // long enough to clear one flying obstacle after the finger is released.
+    if (this.duckMinTime > 0) {
+      this.duckMinTime = Math.max(0, this.duckMinTime - elapsed / 60);
+    }
+    if (!this.duckInputHeld && this.duckMinTime <= 0) {
+      this.isDucking = false;
+    }
 
     // Gradual speed ramping
     this.speed = 6 + this.gameTime * 0.15;
@@ -2338,7 +2304,7 @@ export class GameController extends Container {
     const sw = this.app.screen.width;
     const sh = this.app.screen.height;
     const scale = Math.min(1.0, sw / 450, sh / 650);
-    const groundLevel = sh * 0.78;
+    const groundLevel = this.getGroundLevel(sh);
 
     if (this.isJumping) {
       this.playerVy += this.gravity * elapsed;
@@ -2354,13 +2320,11 @@ export class GameController extends Container {
       this.playerVy = 0;
     }
 
-    // Position player and animate 2D character (AnimatedSprite)
+    // Position player and select the authored 2D frame animation.
     if (this.playerSprite) {
       this.playerSprite.position.set(sw * 0.2, this.playerY);
 
       if (this.isJumping) {
-        // Skeletal jump pose is handled by updatePlayerLeg below
-
         const jumpHeight = Math.max(0, groundLevel - this.playerY);
         const shadowFactor = Math.max(0.2, 1 - jumpHeight / 180);
         if (this.playerShadow) {
@@ -2368,8 +2332,6 @@ export class GameController extends Container {
           this.playerShadow.alpha = 0.35 * shadowFactor;
         }
       } else if (this.isDucking) {
-        // Skeletal duck pose is handled below
-
         if (this.playerShadow) {
           this.playerShadow.scale.set(1.4, 0.8);
           this.playerShadow.alpha = 0.45;
@@ -2383,7 +2345,10 @@ export class GameController extends Container {
         }
       } else if (this.gameState === "PLAYING") {
         if (this.playerShadow) {
-          this.playerShadow.scale.set(1 + Math.sin(this.runTime * 2) * 0.15, 1);
+          this.playerShadow.scale.set(
+            1 + Math.sin(this.gameTime * 8) * 0.08,
+            1,
+          );
           this.playerShadow.alpha = 0.35;
         }
 
@@ -2395,65 +2360,13 @@ export class GameController extends Container {
         }
       }
 
-      // Update Skeletal Parts
-      if (this.playerHead && this.gameState === "PLAYING") {
-        this.runTime = (this.runTime || 0) + elapsed * this.speed * 0.05;
-
-        if (this.isJumping) {
-          this.playerHead.position.set(0, -72);
-          this.playerHead.rotation = 0;
-          this.updatePlayerBody(this.playerBody, -46);
-          this.updatePlayerLeg(this.leftLeg, -10, -32, 0, true, false);
-          this.updatePlayerLeg(this.rightLeg, 10, -32, 0, true, false);
-          this.updatePlayerArm(this.leftArm, -16, -46, 0, true, false);
-          this.updatePlayerArm(this.rightArm, 16, -46, 0, true, false);
-        } else if (this.isDucking) {
-          this.playerHead.position.set(0, -58);
-          this.playerHead.rotation = 0;
-          this.updatePlayerBody(this.playerBody, -36);
-          this.updatePlayerLeg(this.leftLeg, -10, -22, 0, false, true);
-          this.updatePlayerLeg(this.rightLeg, 10, -22, 0, false, true);
-          this.updatePlayerArm(this.leftArm, -16, -36, 0, false, true);
-          this.updatePlayerArm(this.rightArm, 16, -36, 0, false, true);
-        } else {
-          const bob = Math.abs(Math.sin(this.runTime)) * 3;
-          this.playerHead.position.set(0, -72 + bob);
-          this.playerHead.rotation = Math.sin(this.runTime) * 0.03;
-          this.updatePlayerBody(this.playerBody, -46 + bob * 0.5);
-          this.playerBody.rotation = 0.12; // Lean forward to create feeling of running
-          this.updatePlayerLeg(
-            this.leftLeg,
-            -6,
-            -32,
-            this.runTime,
-            false,
-            false,
-          );
-          this.updatePlayerLeg(
-            this.rightLeg,
-            6,
-            -32,
-            this.runTime + Math.PI,
-            false,
-            false,
-          );
-          this.updatePlayerArm(
-            this.leftArm,
-            -10,
-            -46,
-            this.runTime,
-            false,
-            false,
-          );
-          this.updatePlayerArm(
-            this.rightArm,
-            10,
-            -46,
-            this.runTime + Math.PI,
-            false,
-            false,
-          );
-        }
+      if (this.playerAnimations && this.gameState === "PLAYING") {
+        const action = this.isJumping
+          ? "jump"
+          : this.isDucking
+            ? "slide"
+            : "run";
+        this.setPlayerAnimation(action);
       }
 
       // Update shield overlay
@@ -2468,12 +2381,8 @@ export class GameController extends Container {
         }
       }
 
-      // Adjust player scale based on jumping/ducking (squash vertically for ducking)
-      if (this.isDucking) {
-        this.playerSprite.scale.set(scale * 0.95, scale * 0.45);
-      } else {
-        this.playerSprite.scale.set(scale * 0.95);
-      }
+      // One constant scale for all states prevents run/slide size popping.
+      this.playerSprite.scale.set(scale * 0.48);
     }
 
     // Spawn obstacles
@@ -2558,8 +2467,8 @@ export class GameController extends Container {
   spawnObstacle() {
     const sw = this.app.screen.width;
     const sh = this.app.screen.height;
-    const scale = Math.max(0.85, Math.min(1.2, sw / 450));
-    const groundLevel = sh * 0.78;
+    const scale = Math.min(1.0, sw / 450, sh / 650);
+    const groundLevel = this.getGroundLevel(sh);
 
     // Obstacle/Item types: 0 (Ground set A), 1 (Ground set B), 2 (Flying), 3 (Collectible)
     let type = Math.floor(Math.random() * 4);
@@ -2577,22 +2486,20 @@ export class GameController extends Container {
     let width = 60 * scale;
     let height = 60 * scale;
     let baseY = groundLevel;
+    let groundOffset = 0;
+    let displayHeight = 60;
     let isSlipper = false;
 
     if (type === 0) {
-      // Ground Set A: Tires and fences (Placed firmly on road)
+      // Ground Set A: compact, unmistakable natural hazards.
       const choices = [
         {
-          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.webp",
-          w: 100,
-          h: 100,
-          yOffset: 18, // Compensate for 10% bottom transparent PNG margin
+          path: "/assest/image/obstacles/stone.png",
+          h: 48,
         },
         {
-          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.webp",
-          w: 130,
-          h: 95,
-          yOffset: 14,
+          path: "/assest/image/obstacles/crate.png",
+          h: 66,
         },
       ];
       const selected = choices[Math.floor(Math.random() * choices.length)];
@@ -2606,27 +2513,25 @@ export class GameController extends Container {
       }
 
       sprite.texture = Sprite.from(selected.path).texture;
-      sprite.width = selected.w * scale;
-      sprite.height = selected.h * scale;
+      displayHeight = selected.h;
+      const artScale = (displayHeight * scale) / sprite.texture.height;
+      sprite.scale.set(artScale);
       sprite.anchor.set(0.5, 1);
-      sprite.y = selected.yOffset * scale;
+      sprite.position.set(0, 0);
+      sprite.rotation = 0;
 
-      width = selected.w * scale;
-      height = selected.h * scale;
+      width = sprite.texture.width * artScale;
+      height = sprite.texture.height * artScale;
     } else if (type === 1) {
-      // Ground Set B: Blue tables and scarecrows (Placed firmly on road)
+      // Ground Set B: high-contrast danger silhouettes, also ground-aligned.
       const choices = [
         {
-          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.webp",
-          w: 110,
-          h: 95,
-          yOffset: 18, // Compensate for 10% bottom transparent PNG margin
+          path: "/assest/image/obstacles/rock-monster.png",
+          h: 70,
         },
         {
-          path: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.webp",
-          w: 80,
-          h: 110,
-          yOffset: 8,
+          path: "/assest/image/obstacles/spikes.png",
+          h: 42,
         },
       ];
       const selected = choices[Math.floor(Math.random() * choices.length)];
@@ -2640,13 +2545,15 @@ export class GameController extends Container {
       }
 
       sprite.texture = Sprite.from(selected.path).texture;
-      sprite.width = selected.w * scale;
-      sprite.height = selected.h * scale;
+      displayHeight = selected.h;
+      const artScale = (displayHeight * scale) / sprite.texture.height;
+      sprite.scale.set(artScale);
       sprite.anchor.set(0.5, 1);
-      sprite.y = selected.yOffset * scale;
+      sprite.position.set(0, 0);
+      sprite.rotation = 0;
 
-      width = selected.w * scale;
-      height = selected.h * scale;
+      width = sprite.texture.width * artScale;
+      height = sprite.texture.height * artScale;
     } else if (type === 2) {
       // Flying Obstacles: Throwing chairs and slippers (Enlarged)
       const choices = [
@@ -2666,7 +2573,12 @@ export class GameController extends Container {
       const selected = choices[Math.floor(Math.random() * choices.length)];
 
       const isHighSlipper = Math.random() > 0.5;
-      spawnY = groundLevel - (isHighSlipper ? 140 : 90) * scale;
+      // The lower lane still hits a standing player, but now leaves a clear
+      // visual gap over the authored slide pose on every responsive scale.
+      groundOffset = -(isHighSlipper ? 155 : 105);
+      spawnY = groundLevel + groundOffset * scale;
+      baseY = spawnY;
+      displayHeight = selected.h;
       width = selected.w * scale;
       height = selected.h * scale;
 
@@ -2723,11 +2635,10 @@ export class GameController extends Container {
       ];
       const selected = choices[Math.floor(Math.random() * choices.length)];
 
-      spawnY =
-        Math.random() > 0.5
-          ? groundLevel - 24 * scale
-          : groundLevel - 80 * scale;
+      groundOffset = -(Math.random() > 0.5 ? 24 : 80);
+      spawnY = groundLevel + groundOffset * scale;
       baseY = spawnY;
+      displayHeight = selected.h;
       width = selected.w * scale;
       height = selected.h * scale;
 
@@ -2770,6 +2681,8 @@ export class GameController extends Container {
       width: width,
       height: height,
       baseY: baseY,
+      groundOffset: groundOffset,
+      displayHeight: displayHeight,
       bobTimer: Math.random() * Math.PI,
       isSlipper: isSlipper,
     });
@@ -2778,15 +2691,23 @@ export class GameController extends Container {
   checkCollision(obs) {
     if (!this.playerSprite) return false;
 
-    const pBounds = this.playerSprite.getBounds();
-    const oBounds = obs.sprite.getBounds();
+    // Chairs and slippers are the dedicated slide-under obstacle. Avoid a
+    // borderline AABB overlap from their rotating transparent canvas once the
+    // player has successfully entered the duck/slide state.
+    if (obs.type === 2 && this.isDucking) return false;
 
-    // Pad collision boundaries (forgiving collision feel)
-    // Reduce player width by 20% on each side, height by 10%
-    const px1 = pBounds.x + pBounds.width * 0.2;
-    const px2 = pBounds.x + pBounds.width * 0.8;
-    const py1 = pBounds.y + pBounds.height * 0.1;
-    const py2 = pBounds.y + pBounds.height * 0.95;
+    // Use a gameplay hitbox around the body, excluding hair and outstretched
+    // limbs so the collision remains fair to the illustrated silhouette.
+    const playerPos = this.playerSprite.getGlobalPosition();
+    const playerScale = Math.abs(this.playerSprite.worldTransform.a) || 1;
+    const hitWidth = (this.isDucking ? 174 : 96) * playerScale;
+    const hitHeight = (this.isDucking ? 104 : 190) * playerScale;
+    const hitCenterX = playerPos.x + (this.isDucking ? 16 : 10) * playerScale;
+    const px1 = hitCenterX - hitWidth / 2;
+    const px2 = hitCenterX + hitWidth / 2;
+    const py1 = playerPos.y - hitHeight;
+    const py2 = playerPos.y - 4 * playerScale;
+    const oBounds = obs.sprite.getBounds();
 
     // Reduce obstacle width/height by 15%
     const ox1 = oBounds.x + oBounds.width * 0.15;
@@ -3063,23 +2984,19 @@ export class GameController extends Container {
   resize() {
     const sw = this.app.screen.width;
     const sh = this.app.screen.height;
-    const groundLevel = sh * 0.78;
+    const groundLevel = this.getGroundLevel(sh);
     const modalScale = Math.min(1.0, (sw - 32) / 460, (sh - 40) / 600);
 
-    if (
-      this.parallaxSkySprite ||
-      this.parallaxHillsSprite ||
-      this.groundRoadSprite
-    ) {
+    if (this.parallaxSkySprite || this.parallaxHillsSprite) {
+      this.bgOverlay.cacheAsTexture(false);
       this.bgOverlay.clear();
       this.distantMountains.clear();
       this.midMountains.clear();
       this.closeMountains.clear();
-      this.clouds.forEach((cloud) => cloud.clear());
 
-      // Layer 0: Sky — top 55%
+      // Layer 0: Sky and distant mountains.
       if (this.parallaxSkySprite) {
-        const skyH = sh * 0.55;
+        const skyH = groundLevel;
         this.parallaxSkySprite.visible = true;
         this.parallaxSkySprite.width = sw;
         this.parallaxSkySprite.height = skyH;
@@ -3089,29 +3006,31 @@ export class GameController extends Container {
         this.parallaxSkySprite.tileScale.set(s, s);
       }
 
-      // Layer 1: Hills — from 20% to 82%
+      // Layer 1: low-detail foreground hills.
       if (this.parallaxHillsSprite) {
-        const h = sh * 0.62;
+        const h = groundLevel * FOREGROUND_HILLS_HEIGHT_RATIO;
         this.parallaxHillsSprite.visible = true;
         this.parallaxHillsSprite.width = sw;
         this.parallaxHillsSprite.height = h;
-        this.parallaxHillsSprite.y = sh * 0.2;
+        this.parallaxHillsSprite.y = groundLevel - h;
         const texH = this.parallaxHillsSprite.texture?.height || 1024;
         const s = h / texH;
         this.parallaxHillsSprite.tileScale.set(s, s);
       }
 
-      // Layer 2: Road — from 78% to 100%
-      if (this.groundRoadSprite) {
-        const h = sh * 0.22;
-        this.groundRoadSprite.visible = true;
-        this.groundRoadSprite.width = sw;
-        this.groundRoadSprite.height = h;
-        this.groundRoadSprite.y = sh * 0.78;
-        const texH = this.groundRoadSprite.texture?.height || 1024;
-        const s = h / texH;
-        this.groundRoadSprite.tileScale.set(s, s);
-      }
+      // Cached road: it never changes between resizes, so it costs no per-frame
+      // geometry rebuilding and replaces the former third texture layer.
+      this.bgOverlay
+        .rect(0, groundLevel, sw, sh - groundLevel)
+        .fill({ color: 0x8c5a3c });
+      this.bgOverlay.rect(0, groundLevel, sw, 9).fill({ color: 0x5a9b48 });
+      this.bgOverlay
+        .rect(0, groundLevel + 12, sw, 3)
+        .fill({ color: 0xb9784e, alpha: 0.5 });
+      this.bgOverlay
+        .rect(0, groundLevel + 38, sw, 2)
+        .fill({ color: 0x70432f, alpha: 0.26 });
+      this.bgOverlay.cacheAsTexture(true);
     } else {
       // Redraw and scale fluffy white cartoon clouds (fallback)
       this.clouds.forEach((cloud) => {
@@ -3289,6 +3208,27 @@ export class GameController extends Container {
       this.playerY = groundLevel;
     }
 
+    // Existing actors also snap back to the same baseline after a responsive
+    // resize; previously only newly spawned obstacles used the new screen Y.
+    this.obstacles.forEach((obstacle) => {
+      obstacle.baseY = groundLevel + (obstacle.groundOffset || 0) * scale;
+      obstacle.sprite.y =
+        obstacle.type === 3
+          ? obstacle.baseY + Math.sin(obstacle.bobTimer || 0) * 12 * scale
+          : obstacle.baseY;
+
+      if (obstacle.type === 0 || obstacle.type === 1) {
+        const art = obstacle.sprite.children[0];
+        if (art?.texture?.height && obstacle.displayHeight) {
+          const artScale =
+            (obstacle.displayHeight * scale) / art.texture.height;
+          art.scale.set(artScale);
+          obstacle.width = art.texture.width * artScale;
+          obstacle.height = art.texture.height * artScale;
+        }
+      }
+    });
+
     // ==========================================
     // Resize MAIN MENU
     // ==========================================
@@ -3296,18 +3236,13 @@ export class GameController extends Container {
       this.menuMascotFrame.position.set(sw / 2, sh * 0.18);
       this.menuMascotFrame.scale.set(scale);
 
-      // Make sure the mascot sprite texture is updated with the current avatar on load/change
-      const rawAvatar =
-        window.localStorage.getItem("selected_avatar_url") ||
-        "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
-      const activeAvatar =
-        typeof rawAvatar === "string"
-          ? rawAvatar.replace(/\.png$/i, ".webp")
-          : "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
-      Assets.load(activeAvatar)
+      // The menu and gameplay intentionally share one recognizable runner.
+      Assets.load("/assest/image/player_pet/run/run-01.png")
         .then((tex) => {
           if (!this.menuMascotSprite.destroyed) {
             this.menuMascotSprite.texture = tex;
+            const mascotScale = Math.min(112 / tex.width, 112 / tex.height);
+            this.menuMascotSprite.scale.set(mascotScale);
           }
         })
         .catch(() => {});
@@ -3698,6 +3633,7 @@ export class GameController extends Container {
       if (e.key === "ArrowDown") {
         e.preventDefault();
         if (!this.isDucking) audio.playSlide();
+        this.duckInputHeld = true;
         this.isDucking = true;
       }
     });
@@ -3707,7 +3643,8 @@ export class GameController extends Container {
 
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        this.isDucking = false;
+        this.duckInputHeld = false;
+        if (this.duckMinTime <= 0) this.isDucking = false;
       }
     });
 
@@ -3732,6 +3669,7 @@ export class GameController extends Container {
           // Swipe down: Duck
           if (!this.isDucking) audio.playSlide();
           this.isDucking = true;
+          this.duckMinTime = SWIPE_DUCK_DURATION;
           this.isSwiping = false;
         } else if (dy < -30) {
           // Swipe up: Jump
@@ -3747,13 +3685,13 @@ export class GameController extends Container {
           // Tap without swiping: Default to Jump
           this.jump();
         }
-        this.isDucking = false;
+        if (this.duckMinTime <= 0) this.isDucking = false;
         this.isSwiping = false;
       }
     });
     this.app.stage.on("pointerupoutside", () => {
       if (this.gameState === "PLAYING") {
-        this.isDucking = false;
+        if (this.duckMinTime <= 0) this.isDucking = false;
         this.isSwiping = false;
       }
     });

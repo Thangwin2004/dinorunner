@@ -34,7 +34,9 @@ Text.defaultAutoResolution = false;
     resizeTo: container,
     antialias: true,
     autoDensity: true,
-    resolution: Math.max(window.devicePixelRatio || 1, 2),
+    // A 1.5x cap keeps the large parallax textures sharp without making the
+    // mobile render target four times larger on high-density screens.
+    resolution: Math.min(window.devicePixelRatio || 1, 1.5),
     preference: "webgl",
     roundPixels: true,
   });

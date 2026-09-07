@@ -1,6 +1,14 @@
 import { Assets } from "pixi.js";
 import { audio } from "./audio";
-import { saveStats, getStats, getLeaderboardData, AdManager } from "./utils";
+import {
+  saveStats,
+  getStats,
+  getLeaderboardData,
+  fetchLeaderboardData,
+  getEffectiveUser,
+  AdManager,
+} from "./utils";
+import { winkGame } from "./integrations/wink/wink-adapter.js";
 import { getAvatarColors } from "./avatar";
 
 export function injectHTMLPopupStyles() {
@@ -937,95 +945,111 @@ export function showHTMLAchievements(game) {
   // Score entries
   const listContainer = document.createElement("div");
   listContainer.className = "game-achievements-list";
-
-  const data = getLeaderboardData();
-  if (data.length === 0) {
-    const emptyText = document.createElement("div");
-    emptyText.style.cssText =
-      "padding:24px;text-align:center;font-weight:700;color:#5D4037;";
-    emptyText.innerText =
-      "Chưa có thành tích. Hãy chơi để thiết lập kỷ lục đầu tiên.";
-    listContainer.appendChild(emptyText);
-  }
-  for (let i = 0; i < 6; i++) {
-    const entry = data[i];
-    if (!entry) break;
-
-    const row = document.createElement("div");
-    row.className = `game-achievements-row rank-${i}`;
-
-    const rankMedals = ["🥇", "🥈", "🥉"];
-    const rankText = document.createElement("span");
-    rankText.className = "game-achievements-rank";
-    rankText.innerText = rankMedals[i] || `${i + 1}`;
-    row.appendChild(rankText);
-
-    const info = document.createElement("div");
-    info.className = "game-achievements-info";
-
-    const avatarContainer = document.createElement("div");
-    avatarContainer.className = "game-achievements-avatar-container";
-    const avatarImg = document.createElement("img");
-    avatarImg.className = "game-achievements-avatar";
-    avatarImg.src = entry.avatar;
-    avatarContainer.appendChild(avatarImg);
-    info.appendChild(avatarContainer);
-
-    const nameText = document.createElement("span");
-    nameText.className = `game-achievements-name${entry.isPlayer ? " player" : ""}`;
-    nameText.innerText = entry.name;
-    info.appendChild(nameText);
-
-    row.appendChild(info);
-
-    const scoreText = document.createElement("span");
-    scoreText.className = "game-achievements-score";
-    scoreText.innerText = entry.score;
-    row.appendChild(scoreText);
-
-    listContainer.appendChild(row);
-  }
   card.appendChild(listContainer);
 
-  // Pinned Footer (Personal Best)
-  const playerEntry = data.find((e) => e.isPlayer);
-  const playerRank = data.findIndex((e) => e.isPlayer) + 1;
+  const footer = document.createElement("div");
+  footer.className = "game-achievements-footer";
+  card.appendChild(footer);
 
-  if (playerEntry) {
-    const footer = document.createElement("div");
-    footer.className = "game-achievements-footer";
+  const renderEntries = (data) => {
+    listContainer.innerHTML = "";
+    if (!data || data.length === 0) {
+      const emptyText = document.createElement("div");
+      emptyText.style.cssText =
+        "padding:24px;text-align:center;font-weight:700;color:#5D4037;";
+      emptyText.innerText =
+        "Chưa có thành tích. Hãy chơi để thiết lập kỷ lục đầu tiên.";
+      listContainer.appendChild(emptyText);
+      return;
+    }
+    const limit = Math.min(10, data.length);
+    for (let i = 0; i < limit; i++) {
+      const entry = data[i];
+      if (!entry) break;
 
+      const row = document.createElement("div");
+      row.className = `game-achievements-row rank-${i}`;
+
+      const rankMedals = ["🥇", "🥈", "🥉"];
+      const rankNum = entry.rank || i + 1;
+      const rankText = document.createElement("span");
+      rankText.className = "game-achievements-rank";
+      rankText.innerText = rankMedals[rankNum - 1] || `${rankNum}`;
+      row.appendChild(rankText);
+
+      const info = document.createElement("div");
+      info.className = "game-achievements-info";
+
+      const avatarContainer = document.createElement("div");
+      avatarContainer.className = "game-achievements-avatar-container";
+      const avatarImg = document.createElement("img");
+      avatarImg.className = "game-achievements-avatar";
+      avatarImg.src =
+        entry.avatar || "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
+      avatarContainer.appendChild(avatarImg);
+      info.appendChild(avatarContainer);
+
+      const nameText = document.createElement("span");
+      nameText.className = `game-achievements-name${entry.isPlayer ? " player" : ""}`;
+      nameText.innerText = entry.name;
+      info.appendChild(nameText);
+
+      row.appendChild(info);
+
+      const scoreText = document.createElement("span");
+      scoreText.className = "game-achievements-score";
+      scoreText.innerText = entry.score;
+      row.appendChild(scoreText);
+
+      listContainer.appendChild(row);
+    }
+  };
+
+  const updateFooter = (pb) => {
+    const user = getEffectiveUser();
+    const stats = getStats();
+    const localHighScore = stats?.highScore || 0;
+    const pScore =
+      pb?.score !== undefined && pb?.score !== null ? pb.score : localHighScore;
+    const pName =
+      pb?.displayName ||
+      (user
+        ? user.name
+        : winkGame?.isAuthenticated
+          ? "Thành viên"
+          : "Bạn (Khách)");
+    const pAvatar =
+      user?.avatar ||
+      window.selectedAvatarUrl ||
+      "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
+    const rankNum = pb?.rank || (pScore > 0 ? 1 : 0);
     const rankMedals = ["🥇", "🥈", "🥉"];
-    const rankText = document.createElement("span");
-    rankText.className = "game-achievements-rank";
-    rankText.innerText = rankMedals[playerRank - 1] || `${playerRank}`;
-    footer.appendChild(rankText);
+    const rankDisplay =
+      rankNum > 0 ? rankMedals[rankNum - 1] || `#${rankNum}` : "—";
 
-    const info = document.createElement("div");
-    info.className = "game-achievements-info";
+    footer.innerHTML = `
+      <span class="game-achievements-rank">${rankDisplay}</span>
+      <div class="game-achievements-info">
+        <div class="game-achievements-avatar-container">
+          <img class="game-achievements-avatar" src="${pAvatar}" />
+        </div>
+        <span class="game-achievements-name player">${pName} (Bạn)</span>
+      </div>
+      <span class="game-achievements-score">${pScore}</span>
+    `;
+  };
 
-    const avatarContainer = document.createElement("div");
-    avatarContainer.className = "game-achievements-avatar-container";
-    const avatarImg = document.createElement("img");
-    avatarImg.className = "game-achievements-avatar";
-    avatarImg.src = playerEntry.avatar;
-    avatarContainer.appendChild(avatarImg);
-    info.appendChild(avatarContainer);
+  // Initial render
+  renderEntries(getLeaderboardData());
+  updateFooter(winkGame?.personalBest);
 
-    const nameText = document.createElement("span");
-    nameText.className = "game-achievements-name player";
-    nameText.innerText = `${playerEntry.name} (Bạn)`;
-    info.appendChild(nameText);
-
-    footer.appendChild(info);
-
-    const scoreText = document.createElement("span");
-    scoreText.className = "game-achievements-score";
-    scoreText.innerText = playerEntry.score;
-    footer.appendChild(scoreText);
-
-    card.appendChild(footer);
-  }
+  // Async API fetch
+  fetchLeaderboardData().then((fetchedData) => {
+    if (fetchedData && fetchedData.length > 0) {
+      renderEntries(fetchedData);
+    }
+    updateFooter(winkGame?.personalBest);
+  });
 
   overlay.appendChild(card);
   const appContainer = document.getElementById("app") || document.body;

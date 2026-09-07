@@ -4,6 +4,13 @@ import { winkGame } from "./integrations/wink/wink-adapter.js";
 export const LOCAL_STORAGE_KEY = "bolacdauphong_dino_stats";
 
 export function getEffectiveUser() {
+  if (winkGame && winkGame.personalBest?.displayName) {
+    return {
+      name: winkGame.personalBest.displayName,
+      avatar: "/assest/image/imagenobackgrd/001_avatar_laclac.webp",
+    };
+  }
+
   try {
     const savedUser = localStorage.getItem("google_user");
     if (savedUser) {
@@ -241,14 +248,18 @@ export function saveStats(stats) {
 export function getLeaderboardData() {
   const stats = getStats();
   const personalBest = stats.highScore || 0;
-  if (personalBest <= 0) return [];
-
   const user = getEffectiveUser();
-  const playerName = user ? user.name : "Bạn (Khách)";
+  const playerName = user
+    ? user.name
+    : winkGame?.isAuthenticated
+      ? "Thành viên"
+      : "Bạn (Khách)";
   const playerAvatar =
     user?.avatar ||
     window.selectedAvatarUrl ||
     "/assest/image/imagenobackgrd/001_avatar_laclac.webp";
+
+  if (personalBest <= 0) return [];
 
   return [
     {
@@ -256,8 +267,42 @@ export function getLeaderboardData() {
       score: personalBest,
       avatar: playerAvatar,
       isPlayer: true,
+      rank: 1,
     },
   ];
+}
+
+export async function fetchLeaderboardData() {
+  const localList = getLeaderboardData();
+  if (!winkGame) return localList;
+
+  try {
+    const [lbRes, pbRes] = await Promise.all([
+      winkGame.refreshLeaderboard({ limit: 10 }),
+      winkGame.getPersonalBest(),
+    ]);
+
+    if (lbRes && Array.isArray(lbRes.entries) && lbRes.entries.length > 0) {
+      return lbRes.entries.map((item, idx) => ({
+        name:
+          item.displayName ||
+          item.name ||
+          `Thành viên #${item.rank || idx + 1}`,
+        score: item.score || 0,
+        avatar:
+          item.avatarUrl ||
+          "/assest/image/imagenobackgrd/001_avatar_laclac.webp",
+        rank: item.rank || idx + 1,
+        isPlayer: Boolean(
+          item.userId && pbRes?.me?.userId && item.userId === pbRes.me.userId,
+        ),
+      }));
+    }
+  } catch (e) {
+    console.warn("fetchLeaderboardData error:", e);
+  }
+
+  return localList;
 }
 
 export const palettes = {
