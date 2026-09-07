@@ -611,11 +611,6 @@ export function showHTMLSettings(game) {
       sfxRow.labelElement.innerText = "🔊 " + i18n.t("settings.sfx");
       label.innerText = i18n.t("settings.language");
       select.setAttribute("aria-label", i18n.t("settings.language"));
-      select.innerHTML = `
-        <option value="en">${i18n.t("settings.english")}</option>
-        <option value="vi">${i18n.t("settings.vietnamese")}</option>
-      `;
-      select.value = i18n.language;
       versionText.innerText = i18n.t("settings.version");
     });
 
@@ -771,11 +766,6 @@ export function showHTMLPaused(game) {
       sfxRow.labelElement.innerText = "🔊 " + i18n.t("settings.sfx");
       label.innerText = i18n.t("settings.language");
       select.setAttribute("aria-label", i18n.t("settings.language"));
-      select.innerHTML = `
-        <option value="en">${i18n.t("settings.english")}</option>
-        <option value="vi">${i18n.t("settings.vietnamese")}</option>
-      `;
-      select.value = i18n.language;
       homeBtn.setAttribute("aria-label", i18n.t("pause.home"));
       replayBtn.setAttribute("aria-label", i18n.t("pause.replay"));
       resumeBtn.setAttribute("aria-label", i18n.t("pause.resume"));

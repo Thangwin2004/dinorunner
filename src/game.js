@@ -3833,24 +3833,75 @@ export class GameController extends Container {
   }
 
   syncLanguage() {
-    if (this.menuHighScoreText) {
-      this.menuHighScoreText.text = i18n.t("menu.highScore", {
+    // 1. DOM Main Menu Title Signboard
+    const titleParts = (i18n.t("game.title") || "BƠ LẠC\nTHIẾT CƯỚC").split(
+      "\n",
+    );
+    const line1 = document.querySelector(".title-line-1");
+    if (line1) line1.textContent = titleParts[0] || "BƠ LẠC";
+    const line2 = document.querySelector(".title-line-2");
+    if (line2) line2.textContent = titleParts[1] || "THIẾT CƯỚC";
+
+    // 2. DOM HUD labels
+    const hudScoreLabel = document.querySelector("#hud-score .hud-badge-label");
+    if (hudScoreLabel) {
+      hudScoreLabel.textContent =
+        i18n.t("hud.score", { score: "" }).replace(":", "").trim() + ":";
+    }
+    const hudHighscoreLabel = document.querySelector(
+      "#hud-highscore .hud-badge-label",
+    );
+    if (hudHighscoreLabel) {
+      hudHighscoreLabel.textContent =
+        i18n.t("hud.best", { score: "" }).replace(":", "").trim() + ":";
+    }
+
+    if (this.menuTitleText && !this.menuTitleText.destroyed) {
+      this.menuTitleText.text = i18n.t("game.title").replace("\n", " ");
+    }
+    if (this.menuHighScoreText && !this.menuHighScoreText.destroyed) {
+      this.menuHighScoreText.text = `🏆 ${i18n.t("menu.highScore", {
         score: this.highScore,
-      });
+      })}`;
     }
     if (this.playBtn && typeof this.playBtn.setLabelText === "function") {
       this.playBtn.setLabelText(i18n.t("menu.play"));
     }
-    if (this.scoreText) {
+    if (this.scoreText && !this.scoreText.destroyed) {
       this.scoreText.text = i18n.t("hud.score", {
         score: Math.floor(this.score || 0),
       });
     }
-    if (this.highScoreText) {
+    if (this.highScoreText && !this.highScoreText.destroyed) {
       this.highScoreText.text = i18n.t("hud.best", {
         score: this.highScore || 0,
       });
     }
+    if (this.settingsTitle && !this.settingsTitle.destroyed) {
+      this.settingsTitle.text = i18n.t("settings.title");
+    }
+    if (this.settingsVersionText && !this.settingsVersionText.destroyed) {
+      this.settingsVersionText.text = i18n.t("settings.version");
+    }
+    if (this.instructionsTitle && !this.instructionsTitle.destroyed) {
+      this.instructionsTitle.text = i18n.t("instructions.title");
+    }
+    if (
+      this.instructionsUnderstandBtn &&
+      typeof this.instructionsUnderstandBtn.setLabelText === "function"
+    ) {
+      this.instructionsUnderstandBtn.setLabelText(i18n.t("instructions.gotIt"));
+    }
+    if (this.charTitle && !this.charTitle.destroyed) {
+      this.charTitle.text = i18n.t("charSelect.title");
+    }
+    if (this.gameOverTitle && !this.gameOverTitle.destroyed) {
+      this.gameOverTitle.text = i18n.t("gameover.title");
+    }
+    if (this.pauseTitle && !this.pauseTitle.destroyed) {
+      this.pauseTitle.text = i18n.t("pause.title");
+    }
+
     this.syncDOMScoreAndHighScore();
 
     const menuPlayBtn = document.getElementById("menu-play-btn");
