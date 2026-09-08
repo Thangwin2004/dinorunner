@@ -34,18 +34,8 @@ class AudioManager {
     // Global mobile audio unlocker
     const unlockAudio = () => {
       if (!this.initialized) this.init();
-      if (this.ctx && this.ctx.state === "suspended") {
-        this.ctx.resume();
-      }
-      if (this.bgm && this.bgm.paused && !this.musicMuted && !this.hostMuted) {
-        this.bgm
-          .play()
-          .then(() => {
-            document.removeEventListener("touchend", unlockAudio);
-            document.removeEventListener("click", unlockAudio);
-          })
-          .catch(() => {});
-      } else if (this.bgm && !this.bgm.paused) {
+      this.startBgm();
+      if (this.bgm && !this.bgm.paused) {
         document.removeEventListener("touchend", unlockAudio);
         document.removeEventListener("click", unlockAudio);
       }
@@ -82,22 +72,36 @@ class AudioManager {
         this._loadSfxBuffer("collect", "/assest/music/LabelCollect.mp3");
       }
 
-      // Cấu hình BGM qua Web Audio API để đồng bộ âm lượng trên iOS
-      this.bgm = new Audio("/assest/music/music.mp3");
+      // CC0 runner loop: https://opengameart.org/content/osiris-tomb
+      this.bgm = new Audio("/assest/music/osiris_tomb_3-1_loop.mp3");
       this.bgm.loop = true;
+      this.bgm.preload = "auto";
 
-      const source = this.ctx.createMediaElementSource(this.bgm);
-      const localGain = this.ctx.createGain();
-      localGain.gain.value = 0.05; // Giảm âm lượng nhạc nền xuống 5%
-      source.connect(localGain);
-      localGain.connect(this.bgmGain);
+      // Keep BGM on the shared Web Audio gain path when available. The direct
+      // play fallback keeps the music audible on browsers without Web Audio.
+      if (this.ctx && this.bgmGain) {
+        const source = this.ctx.createMediaElementSource(this.bgm);
+        const localGain = this.ctx.createGain();
+        localGain.gain.value = 0.14;
+        source.connect(localGain);
+        localGain.connect(this.bgmGain);
+      }
 
-      // Play once and never pause it to prevent iOS Safari bug
-      this.ctx.resume().then(() => {
-        this.bgm.play().catch((e) => console.log("BGM play deferred:", e));
-      });
+      this.startBgm();
     } catch (e) {
       console.warn("Audio initialization deferred/failed:", e);
+    }
+  }
+
+  startBgm() {
+    if (!this.initialized) this.init();
+    if (!this.bgm || this.musicMuted || this.hostMuted) return;
+
+    if (this.ctx && this.ctx.state === "suspended") {
+      this.ctx.resume().catch(() => {});
+    }
+    if (this.bgm.paused) {
+      this.bgm.play().catch((e) => console.log("BGM play deferred:", e));
     }
   }
 

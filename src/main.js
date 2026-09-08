@@ -179,6 +179,22 @@ Text.defaultAutoResolution = false;
     alias: "prop_reddrink",
     src: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/reddrink.webp",
   });
+  PixiAssets.add({
+    alias: "obstacle_stone",
+    src: "/assest/image/obstacles/stone.webp",
+  });
+  PixiAssets.add({
+    alias: "obstacle_crate",
+    src: "/assest/image/obstacles/crate.webp",
+  });
+  PixiAssets.add({
+    alias: "obstacle_rock_monster",
+    src: "/assest/image/obstacles/rock-monster.webp",
+  });
+  PixiAssets.add({
+    alias: "obstacle_spikes",
+    src: "/assest/image/obstacles/spikes.webp",
+  });
 
   await PixiAssets.load([
     "home_btn",
@@ -208,6 +224,10 @@ Text.defaultAutoResolution = false;
     "prop_bluetable",
     "prop_bunhin",
     "prop_reddrink",
+    "obstacle_stone",
+    "obstacle_crate",
+    "obstacle_rock_monster",
+    "obstacle_spikes",
   ]);
 
   // 4. Create the game manager container

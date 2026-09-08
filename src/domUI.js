@@ -1464,29 +1464,29 @@ export function showHTMLInstructions(game) {
 
   const allItems = [
     {
-      label: i18n.t("instructions.tire"),
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/lopxeoto.webp",
+      label: i18n.t("instructions.stone"),
+      img: "/assest/image/obstacles/stone.webp",
       tag: i18n.t("instructions.tagJump"),
       type: "danger",
       tagClass: "jump",
     },
     {
-      label: i18n.t("instructions.fence"),
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HangRao_01.webp",
+      label: i18n.t("instructions.crate"),
+      img: "/assest/image/obstacles/crate.webp",
       tag: i18n.t("instructions.tagJump"),
       type: "danger",
       tagClass: "jump",
     },
     {
-      label: i18n.t("instructions.table"),
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/bluetable.webp",
+      label: i18n.t("instructions.rockMonster"),
+      img: "/assest/image/obstacles/rock-monster.webp",
       tag: i18n.t("instructions.tagJump"),
       type: "danger",
       tagClass: "jump",
     },
     {
-      label: i18n.t("instructions.scarecrow"),
-      img: "/assest/image/Ref-20260630T071202Z-3-001/Ref/Props/HinhNomBuNhin.webp",
+      label: i18n.t("instructions.spikes"),
+      img: "/assest/image/obstacles/spikes.webp",
       tag: i18n.t("instructions.tagJump"),
       type: "danger",
       tagClass: "jump",

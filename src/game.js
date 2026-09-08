@@ -1636,6 +1636,102 @@ export class GameController extends Container {
     });
   }
 
+  clearMilestoneFeedback() {
+    if (!this.milestoneFeedback) return;
+
+    if (this.milestoneTimeline) {
+      this.milestoneTimeline.kill();
+      this.milestoneTimeline = null;
+    }
+    if (this.milestoneFeedback.parent) {
+      this.milestoneFeedback.parent.removeChild(this.milestoneFeedback);
+    }
+    this.milestoneFeedback.destroy({ children: true });
+    this.milestoneFeedback = null;
+  }
+
+  showMilestoneFeedback(milestone) {
+    this.clearMilestoneFeedback();
+
+    const sw = this.app.screen.width;
+    const sh = this.app.screen.height;
+    const scale = Math.min(1, sw / 450, sh / 650);
+    const feedback = new Container();
+    const shadow = new Graphics()
+      .roundRect(-102, -25, 204, 58, 24)
+      .fill({ color: 0x5d1f12, alpha: 0.45 });
+    shadow.y = 8;
+
+    const rays = new Graphics();
+    for (let i = 0; i < 12; i++) {
+      const angle = (Math.PI * 2 * i) / 12;
+      const inner = 112;
+      const outer = i % 2 === 0 ? 138 : 126;
+      rays
+        .moveTo(Math.cos(angle) * inner, Math.sin(angle) * inner)
+        .lineTo(Math.cos(angle) * outer, Math.sin(angle) * outer)
+        .stroke({ color: 0xffd34e, width: 4, alpha: 0.9 });
+    }
+
+    const badge = new Graphics()
+      .roundRect(-102, -29, 204, 58, 24)
+      .fill({ color: 0xff7b22 })
+      .stroke({ color: 0xfff5c5, width: 4 });
+    const label = new Text({
+      text: `${milestone}!`,
+      style: new TextStyle({
+        fontFamily: "Be Vietnam Pro",
+        fontSize: 27,
+        fontWeight: "900",
+        fill: 0xffffff,
+        stroke: { color: 0x713016, width: 4 },
+        align: "center",
+      }),
+      resolution: 3,
+    });
+    label.anchor.set(0.5);
+
+    feedback.addChild(rays, shadow, badge, label);
+    feedback.position.set(sw / 2, sh * 0.22);
+    feedback.scale.set(0.65 * scale);
+    feedback.alpha = 0;
+    this.gamePlayContainer.addChild(feedback);
+    this.milestoneFeedback = feedback;
+
+    const timeline = gsap.timeline({
+      onComplete: () => {
+        if (feedback.parent) feedback.parent.removeChild(feedback);
+        feedback.destroy({ children: true });
+        if (this.milestoneFeedback === feedback) this.milestoneFeedback = null;
+        if (this.milestoneTimeline === timeline) this.milestoneTimeline = null;
+      },
+    });
+    this.milestoneTimeline = timeline;
+    timeline
+      .to(feedback, { alpha: 1, duration: 0.14, ease: "power2.out" })
+      .to(
+        feedback.scale,
+        {
+          x: 1.08 * scale,
+          y: 1.08 * scale,
+          duration: 0.32,
+          ease: "back.out(2)",
+        },
+        "<",
+      )
+      .to(feedback, {
+        y: feedback.y - 18 * scale,
+        duration: 0.65,
+        ease: "power1.out",
+      })
+      .to(feedback, { alpha: 0, duration: 0.24, ease: "power1.in" }, "-=0.2");
+    timeline.to(
+      rays,
+      { rotation: Math.PI / 6, duration: 0.9, ease: "none" },
+      0,
+    );
+  }
+
   setupCharSelectUI() {
     this.charSelectBackdrop = new Graphics();
     this.charSelectContainer.addChild(this.charSelectBackdrop);
@@ -1832,24 +1928,24 @@ export class GameController extends Container {
     // Column 1: Tránh Né (Left column)
     this.instructionsLeftItemsData = [
       {
-        key: "instructions.tire",
+        key: "instructions.stone",
         tagKey: "instructions.tagJump",
-        sprite: "prop_lopxe",
+        sprite: "obstacle_stone",
       },
       {
-        key: "instructions.fence",
+        key: "instructions.crate",
         tagKey: "instructions.tagJump",
-        sprite: "prop_hangrao",
+        sprite: "obstacle_crate",
       },
       {
-        key: "instructions.table",
+        key: "instructions.rockMonster",
         tagKey: "instructions.tagJump",
-        sprite: "prop_bluetable",
+        sprite: "obstacle_rock_monster",
       },
       {
-        key: "instructions.scarecrow",
+        key: "instructions.spikes",
         tagKey: "instructions.tagJump",
-        sprite: "prop_bunhin",
+        sprite: "obstacle_spikes",
       },
       {
         key: "instructions.slipper",
@@ -2132,11 +2228,13 @@ export class GameController extends Container {
 
     if (menuOverlay) {
       menuOverlay.style.display = newState === "MAIN_MENU" ? "flex" : "none";
-      if (newState === "MAIN_MENU") {
-        const menuAvatarImg = document.getElementById("menu-avatar-img");
-        if (menuAvatarImg) {
-          menuAvatarImg.src = "/assest/image/player_pet/run/run-01.webp";
-        }
+    }
+
+    if (newState === "MAIN_MENU") {
+      audio.startBgm();
+      const menuAvatarImg = document.getElementById("menu-avatar-img");
+      if (menuAvatarImg) {
+        menuAvatarImg.src = "/assest/image/player_pet/run/run-01.webp";
       }
     }
 
@@ -2250,6 +2348,7 @@ export class GameController extends Container {
   resetGame() {
     audio.syncMuteState();
     audio.stopGameOver();
+    this.clearMilestoneFeedback();
     this.score = 0;
     this.speed = 6;
     this.gameTime = 0;
@@ -2346,14 +2445,12 @@ export class GameController extends Container {
       }
     }
 
-    // Play milestone sound every 100 points
-    if (
-      currentIntScore > 0 &&
-      currentIntScore % 100 === 0 &&
-      currentIntScore > this.lastMilestoneScore
-    ) {
+    // Play sound and show visual feedback whenever a 100-point milestone is crossed.
+    const reachedMilestone = Math.floor(currentIntScore / 100) * 100;
+    if (reachedMilestone > 0 && reachedMilestone > this.lastMilestoneScore) {
       audio.playMilestone();
-      this.lastMilestoneScore = currentIntScore;
+      this.showMilestoneFeedback(reachedMilestone);
+      this.lastMilestoneScore = reachedMilestone;
     }
 
     // Apply gravity
