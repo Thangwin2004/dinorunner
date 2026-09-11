@@ -5,15 +5,7 @@ export default [
   // .worktrees holds a full duplicate checkout (241MB). Without it here,
   // `eslint .` walks the copy and `pnpm build` takes minutes instead of seconds.
   {
-    ignores: [
-      "dist",
-      "public",
-      "public/**",
-      "**/wink-bridge.js",
-      "**/build-wink-warm.mjs",
-      ".worktrees",
-      ".worktrees/**",
-    ],
+    ignores: ["dist", "public", "public/**", ".worktrees", ".worktrees/**"],
   },
   js.configs.recommended,
   prettier,

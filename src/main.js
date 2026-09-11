@@ -264,7 +264,7 @@ Text.defaultAutoResolution = false;
     resizeObserver.observe(container);
   }
 
-  // ── Wink Bridge lifecycle binding ──
+  // ── Wink SDK lifecycle binding ──
   winkGame.bindLifecycle({
     onPause: focusPause.pauseFromHost,
     onResume: focusPause.resumeFromHost,
@@ -273,7 +273,6 @@ Text.defaultAutoResolution = false;
   });
 
   winkGame.observe((state) => {
-    console.log("[WinkBridge] phase:", state.phase);
     i18n.syncFromWink(state);
   });
   i18n.syncFromWink(winkGame.state);
